@@ -1,0 +1,40 @@
+<app-header [breadcrumb]="breadcrumb"></app-header>
+
+<div class="row justify-content-center content">
+  @if (is_verwaltung==true) {
+    @for (modul of module; track modul) {
+      <div class="col-12 col-md-6 col-xl-4 content-item">
+        <mat-card routerLink="/verwaltung/{{modul.link}}">
+          <mat-card-header>
+            <mat-card-subtitle>{{modul.name}}</mat-card-subtitle>
+          </mat-card-header>
+        </mat-card>
+      </div>
+    }
+  }
+  @if (is_staff==true) {
+    <div class="col-12 col-md-6 col-xl-4 content-item" >
+      <mat-card routerLink="/verwaltung/benutzer" class="user">
+        <mat-card-header>
+          <mat-card-subtitle>Benutzer</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+    </div>
+  }
+  @if (is_staff==true) {
+    <div class="col-12 col-md-6 col-xl-4 content-item" >
+      <mat-card routerLink="/verwaltung/konfiguration" class="konfig">
+        <mat-card-header>
+          <mat-card-subtitle>Konfiguration</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+    </div>
+  }
+  <div class="col-12 col-md-6 col-xl-4 content-item" >
+    <mat-card routerLink="/verwaltung/self">
+      <mat-card-header>
+        <mat-card-subtitle>Eigenes Passwort ändern</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</div>

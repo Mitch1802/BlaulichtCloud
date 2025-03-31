@@ -1,0 +1,23 @@
+export interface IGefahr {
+    id: number,
+    name: string,
+    reihenfolge: number,
+    kuerzel: string,
+    beschreibung: string,
+    ausloeser: string,
+    feld1Name: string,
+    feld1Value: string,
+    feld2Name: string,
+    feld2Value: string,
+    feld3Name: string,
+    feld3Value: string,
+    feld4Name: string,
+    feld4Value: string,
+    feld5Name: string,
+    feld5Value: string,
+    folgen: string,
+    gefahren: string,
+    rollen: [],
+    massnahmen: [],
+    dokumente: []
+}

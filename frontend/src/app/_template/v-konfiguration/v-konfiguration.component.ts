@@ -1,0 +1,224 @@
+import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GlobalDataService } from 'src/app/_service/global-data.service';
+import { IKMaterial } from 'src/app/_interface/kmaterial';
+import { IKonfiguration } from 'src/app/_interface/konfiguration';
+import { MatCardModule } from '@angular/material/card';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatIcon } from '@angular/material/icon';
+import { environment } from "src/environments/environment";
+import { Router } from '@angular/router';
+
+@Component({
+    selector: 'app-v-konfiguration',
+    templateUrl: './v-konfiguration.component.html',
+    styleUrls: ['./v-konfiguration.component.sass'],
+    standalone: true,
+    imports: [MatCardModule, FormsModule, ReactiveFormsModule, MatButton, MatFormField, MatLabel, MatInput, MatError, MatList, MatListItem, MatIcon]
+})
+export class VKonfigurationComponent implements OnInit {
+  globalDataService = inject(GlobalDataService);
+  router = inject(Router);
+
+  title: string = "Konfiguration";
+  title2: string = "Backup & Wiederherstellen";
+  modul: string = "konfiguration";
+
+  @Output() breadcrumbout = new EventEmitter<any[]>();
+
+  konfig: IKMaterial[] = [];
+  file: HTMLInputElement = <HTMLInputElement>document.getElementById("backupUpload");
+  uploadText: string = "";
+  backups: any = [];
+  backup_msg: string = "";
+
+  formModul = new FormGroup({
+    id: new FormControl(0),
+    plz: new FormControl('', Validators.required),
+    ort: new FormControl('', Validators.required)
+  });
+
+  ngOnInit(): void {
+    sessionStorage.setItem("KatPlanPageNumber", "3");
+    sessionStorage.setItem("KatPlanPage3", "V_KO");
+    this.breadcrumbout.emit(this.globalDataService.ladeBreadcrumb());
+    this.formModul.disable();
+
+    this.globalDataService.get(this.modul).subscribe({
+      next: (erg: any) => {
+        try {
+          this.formModul.enable();
+          if (erg.data.main.length > 0){
+            let details: IKonfiguration = erg.data.main[0];
+            this.formModul.setValue({
+              id: details.id,
+              plz: details.plz,
+              ort: details.ort
+            })
+            this.uploadText="";
+          }
+          this.backups = this.convertBackups(erg.data.backups);
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
+
+  datenSpeichern(): void {
+    let object = this.formModul.value;
+
+    let idValue = this.formModul.controls["id"].value;
+    if (idValue === 0 || idValue === null) {
+      this.globalDataService.post(this.modul, object, false).subscribe({
+        next: (erg: any) => {
+          try {
+            let details: IKonfiguration = erg.data;
+            this.formModul.setValue({
+              id: details.id,
+              plz: details.plz,
+              ort: details.ort
+            })
+            this.globalDataService.erstelleMessage("success","Konfiguration erfolgreich gespeichert!");
+          } catch (e: any) {
+            this.globalDataService.erstelleMessage("error", e);
+          }
+        },
+        error: (error: any) => {
+          this.globalDataService.errorAnzeigen(error);
+        }
+      });
+    } else {
+      this.globalDataService.patch(this.modul, idValue, object, false).subscribe({
+        next: (erg: any) => {
+          try {
+            let details: IKonfiguration = erg.data;
+            this.formModul.setValue({
+              id: details.id,
+              plz: details.plz,
+              ort: details.ort
+            })
+            this.globalDataService.erstelleMessage("success","Konfiguration erfolgreich geändert!");
+          } catch (e: any) {
+            this.globalDataService.erstelleMessage("error", e);
+          }
+        },
+        error: (error: any) => {
+          this.globalDataService.errorAnzeigen(error);
+        }
+      });
+    }
+  }
+
+  backupImport(backup_name: any): void {
+    let object = {
+      "backup": backup_name.name
+    }
+
+    this.globalDataService.post("backup/restore", object, false).subscribe({
+      next: (erg: any) => {
+        try {
+          this.backup_msg = erg.msg;
+          this.globalDataService.erstelleMessage("success",this.backup_msg);
+          sessionStorage.clear();
+          document.cookie.split('; ').forEach(cookie => {
+            const [name] = cookie.split('=');
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+          });
+          this.router.navigate(['/login']);
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
+
+  backupErstellen(): void {
+    this.globalDataService.post("backup", {}, false).subscribe({
+      next: (erg: any) => {
+        try {
+          this.backup_msg = erg.msg;
+          this.backups = this.convertBackups(erg.backups);
+          this.globalDataService.erstelleMessage("success",this.backup_msg);
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
+
+  backupDownload(backup_name: any): void {
+    let object = {
+      "backup": backup_name.name
+    }
+
+    this.globalDataService.postBlob("backup/file", object).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = backup_name.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
+
+  backupLoeschen(backup_name: any): void {
+    let object = {
+      "backup": backup_name.name
+    }
+  
+    this.globalDataService.post("backup/delete", object, false).subscribe({
+      next: (erg: any) => {
+        try {
+          this.backup_msg = erg.msg;
+          this.backups = this.convertBackups(erg.backups);
+          this.globalDataService.erstelleMessage("success",this.backup_msg);
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
+  
+
+  convertBackups(backup_array:any ): any {
+    let version = environment.version;
+    let data = [];
+    for (let i = 0; i < backup_array.length; i++) {
+      let file = backup_array[i];
+      let backup_version = file.split('_');
+      backup_version = backup_version[1];
+
+      if (backup_version == version) {
+        let dict = {
+          "name": file,
+        }
+        data.push(dict);
+      }
+    }
+    data = this.globalDataService.arraySortByKeyDesc(data, "name");
+    return data;
+  }
+}

@@ -1,0 +1,35 @@
+<app-header [breadcrumb]="breadcrumbin"></app-header>
+
+@if (modul=='katastrophe') {
+  <app-v-katastrophe (breadcrumbout)="updateBreadcrumb($event)"></app-v-katastrophe>
+}
+@if (modul=='gefahr') {
+  <app-v-gefahr (breadcrumbout)="updateBreadcrumb($event)"></app-v-gefahr>
+}
+@if (modul=='massnahme') {
+  <app-v-massnahme (breadcrumbout)="updateBreadcrumb($event)"></app-v-massnahme>
+}
+@if (modul=='rolle') {
+  <app-v-rolle (breadcrumbout)="updateBreadcrumb($event)"></app-v-rolle>
+}
+@if (modul=='kontakt') {
+  <app-v-kontakt (breadcrumbout)="updateBreadcrumb($event)"></app-v-kontakt>
+}
+@if (modul=='dokument') {
+  <app-v-dokument (breadcrumbout)="updateBreadcrumb($event)"></app-v-dokument>
+}
+@if (modul=='fahrzeug') {
+  <app-v-fahrzeug (breadcrumbout)="updateBreadcrumb($event)"></app-v-fahrzeug>
+}
+@if (modul=='kmaterial') {
+  <app-v-kmaterial (breadcrumbout)="updateBreadcrumb($event)"></app-v-kmaterial>
+}
+@if (modul=='benutzer') {
+  <app-v-user (breadcrumbout)="updateBreadcrumb($event)"></app-v-user>
+}
+@if (modul=='konfiguration') {
+  <app-v-konfiguration (breadcrumbout)="updateBreadcrumb($event)"></app-v-konfiguration>
+}
+@if (modul=='self') {
+  <app-v-self (breadcrumbout)="updateBreadcrumb($event)"></app-v-self>
+}
