@@ -5,7 +5,7 @@ on:
     branches:
       - main
   workflow_dispatch:
-  
+
 env:
   CONTAINER_NAME: 'my_postgres'
   DB_USER: 'sh17vFE9ttPIuk1'
@@ -48,7 +48,6 @@ jobs:
           echo ""
           echo "Docker Container Logs:"
           docker logs ${{ env.CONTAINER_NAME }}
-        
 
       - name: Set up Python environment
         uses: actions/setup-python@v4
@@ -120,10 +119,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build the Docker Images
+        id: build-docker-image
         run: |
           docker compose -f docker-compose.yml build
 
       - name: Push the Docker Images
+        id: push-docker-image
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:db-${{ env.VERSION }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:api-${{ env.VERSION }}
