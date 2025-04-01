@@ -1,5 +1,5 @@
 from dj_rest_auth.registration.views import RegisterView
-from dj_rest_auth.views import LoginView, LogoutView
+from dj_rest_auth.views import LoginView
 from core_apps.users.views import ForceLogoutView
 from django.urls import include, path
 from django.conf import settings

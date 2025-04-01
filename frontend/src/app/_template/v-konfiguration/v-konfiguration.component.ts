@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
-import { IKMaterial } from 'src/app/_interface/kmaterial';
 import { IKonfiguration } from 'src/app/_interface/konfiguration';
 import { MatCardModule } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
@@ -29,7 +28,6 @@ export class VKonfigurationComponent implements OnInit {
 
   @Output() breadcrumbout = new EventEmitter<any[]>();
 
-  konfig: IKMaterial[] = [];
   file: HTMLInputElement = <HTMLInputElement>document.getElementById("backupUpload");
   uploadText: string = "";
   backups: any = [];

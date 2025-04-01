@@ -41,7 +41,6 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
         FormsModule,
         BrowserAnimationsModule,
         ReactiveFormsModule,
-        PdfViewerModule
         MatButtonModule,
         MatCardModule,
         MatInputModule,

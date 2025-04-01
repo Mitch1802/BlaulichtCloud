@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   version: "dev",
   apiUrl: "https://blaulichtcloud.michael-web.at/api/v1/"
+  // apiUrl: "https://test.katplan.app/api/v3/"
 };
 
 /*

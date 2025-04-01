@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IBenutzer } from 'src/app/_interface/benutzer';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
+import { HeaderComponent } from '../_template/header/header.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
@@ -17,7 +18,7 @@ import { Router } from '@angular/router';
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.sass'],
     standalone: true,
-    imports: [MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInput, MatError, MatCheckbox]
+    imports: [ HeaderComponent, MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInput, MatError, MatCheckbox]
 })
 export class UserComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
@@ -27,9 +28,8 @@ export class UserComponent implements OnInit {
   modul: string = "users";
   username: string = "";
 
-  @Output() breadcrumbout = new EventEmitter<any[]>();
-
   benutzer: IBenutzer[] = [];
+  breadcrumb: any = [];
 
   formAuswahl = new FormGroup({
     benutzer: new FormControl(0)
@@ -47,9 +47,9 @@ export class UserComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    sessionStorage.setItem("KatPlanPageNumber", "3");
-    sessionStorage.setItem("KatPlanPage3", "V_B");
-    this.breadcrumbout.emit(this.globalDataService.ladeBreadcrumb());
+    sessionStorage.setItem("PageNumber", "2");
+    sessionStorage.setItem("Page2", "V_B");
+    this.breadcrumb = this.globalDataService.ladeBreadcrumb();
     this.formModul.disable();
 
     this.globalDataService.get(this.modul).subscribe({

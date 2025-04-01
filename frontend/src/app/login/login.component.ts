@@ -7,7 +7,6 @@ import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { OfflineDataService } from '../_service/offline-data.service';
 
 @Component({
     selector: 'app-login',
@@ -21,12 +20,10 @@ export class LoginComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
   private globalDataService = inject(GlobalDataService);
-  private offlineDataService = inject(OfflineDataService);
 
   modul: string = "auth/login";
   form!: FormGroup;
   footer: string = "";
-  networkStatus: any;
 
   public showPassword: boolean = false;
 
@@ -35,50 +32,21 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.offlineDataService.checkNetworkStatus();
-    this.networkStatus = this.offlineDataService.networkStatus;
 
-    if (sessionStorage.getItem("KatPlanToken")) {
+    if (sessionStorage.getItem("Token")) {
       this.router.navigate(['/start']);
     } else {
       this.ladeFooter();
       sessionStorage.clear();
 
-      if (this.networkStatus) {
-        this.form = this.formBuilder.group({
-          user: ['', Validators.required],
-          pwd: ['', Validators.required]
-        });
-      }else{
-        this.form = this.formBuilder.group({
-          user: ['', Validators.required]
-        });
-      }
+      this.form = this.formBuilder.group({
+        user: ['', Validators.required],
+        pwd: ['', Validators.required]
+      });
     }
   }
 
   get f() { return this.form.controls; }
-
-  async offlineAnmelden() {
-    let username: string = this.f.user.value;
-    let user: any = [];
-    let networkStatus = navigator.onLine;
-    if (networkStatus == true){
-      this.anmelden();
-    }else {
-      const data = await this.offlineDataService.getOfflineData();
-      user = JSON.parse(data["benutzer"]);
-    }
-
-    for (let i = 0; i <user.length; i++) {
-      let child = user[i];
-      if (username == child["username"]) {
-        sessionStorage.setItem('KatPlanVerwaltung', String(child.is_verwaltung));
-        sessionStorage.setItem('KatPlanBenutzerVerwaltung', String(child.is_staff));
-        this.router.navigate(['/start']);
-      }
-    }
-  }
 
   anmelden(): void {
     let data = {
@@ -89,10 +57,9 @@ export class LoginComponent implements OnInit {
     this.globalDataService.post(this.modul, data, false).subscribe({
       next: (erg: any) => {
         try {
-          sessionStorage.setItem("KatPlanToken", erg.access_token);
-          sessionStorage.setItem('KatPlanBenutzername', erg.user.username);
-          sessionStorage.setItem('KatPlanVerwaltung', String(erg.user.is_verwaltung));
-          sessionStorage.setItem('KatPlanBenutzerVerwaltung', String(erg.user.is_staff));
+          sessionStorage.setItem("Token", erg.access_token);
+          sessionStorage.setItem('Benutzername', erg.user.username);
+          sessionStorage.setItem('BenutzerVerwaltung', String(erg.user.is_staff));
           this.router.navigate(['/start']);
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);

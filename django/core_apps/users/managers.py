@@ -36,7 +36,6 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
 
         extra_fields.setdefault("is_staff", False)
-        extra_fields.setdefault("is_verwaltung", False)
         extra_fields.setdefault("is_superuser", False)
 
         user.save(using=self._db)
@@ -47,14 +46,10 @@ class CustomUserManager(BaseUserManager):
     ):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_verwaltung", True)
         extra_fields.setdefault("is_active", True)
 
         if not username:
             raise ValueError(_("Superuser müssen einen Benutzernamen haben!"))
-
-        if extra_fields.get("is_verwaltung") is not True:
-            raise ValueError(_("Superuser müssen is_verwaltung=True haben!"))
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError(_("Superuser müssen is_staff=True haben!"))

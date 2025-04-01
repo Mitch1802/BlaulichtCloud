@@ -1,14 +1,12 @@
 <app-header [breadcrumb]="breadcrumb"></app-header>
 
 <div class="row justify-content-center content">
-  @for (modul of module; track modul) {
-    <div class="col-6 col-md-4 col-lg-4 col-xl-1 content-item link-card">
-      <mat-card routerLink="/modul/{{modul.kuerzel}}">
-        <img mat-card-sm-image src="../../assets/images/{{modul.icon}}.svg" alt="{{modul.icon}}">
-        <mat-card-footer>{{modul.bezeichnung}}</mat-card-footer>
-      </mat-card>
-    </div>
-  }
+  <div class="col-6 col-md-4 col-lg-4 col-xl-2 content-item link-card">
+    <mat-card routerLink="/user">
+      <img mat-card-sm-image src="../../assets/images/settings.svg" >
+      <mat-card-footer>Benutzerverwaltung</mat-card-footer>
+    </mat-card>
+  </div>
 </div>
 
 
