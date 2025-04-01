@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+  <img src="../assets/images/Logo_white_48x60.png" width="60" alt="Logo" routerLink="/start"/>
+  <span class="ps-3 title" routerLink="/start">{{title}}</span>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="this.globalDataService.abmelden()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="breadcrumb">
+  @for (link of breadcrumb; track link) {
+    <div>
+      @if (link.active) {
+        <button mat-raised-button color="primary" (click)="onClick(link.link, link.number)">{{link.kuerzel}}</button>
+      } @else {
+        <button mat-raised-button (click)="onClick(link.link, link.number)">{{link.kuerzel}}</button>
+      }
+    </div>
+  }
+</div>
