@@ -46,7 +46,7 @@
        url(../fonts/material-icons-outlined.woff) format('woff');
 }
 
-.material-icons {
+.material-icons-outlined {
   font-family: 'Material Icons Outlined';
   font-weight: normal;
   font-style: normal;

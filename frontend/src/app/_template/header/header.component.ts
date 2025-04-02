@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
@@ -15,7 +15,7 @@ import { MatIcon } from '@angular/material/icon';
     MatToolbar,
     RouterLink,
     MatIconButton,
-    MatIcon,
+    MatIconModule,
     MatButton
 ],
 })
