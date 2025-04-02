@@ -23,7 +23,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { LoadingInterceptor } from './_interceptor/loading.interceptor';
-import { VKonfigurationComponent } from './_template/v-konfiguration/v-konfiguration.component';
+import { KonfigurationComponent } from './konfiguration/konfiguration.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -60,7 +60,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
         LoginComponent,
         StartComponent,
         UserComponent,
-        VKonfigurationComponent,
+        KonfigurationComponent,
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },

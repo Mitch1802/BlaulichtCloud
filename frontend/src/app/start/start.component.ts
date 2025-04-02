@@ -3,6 +3,7 @@ import { GlobalDataService } from '../_service/global-data.service';
 import { HeaderComponent } from '../_template/header/header.component';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-start',
@@ -12,7 +13,8 @@ import { RouterLink } from '@angular/router';
     imports: [
         HeaderComponent,
         MatCardModule,
-        RouterLink
+        RouterLink,
+        MatIconModule
     ],
 })
 export class StartComponent implements OnInit {
@@ -27,29 +29,5 @@ export class StartComponent implements OnInit {
 
 
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
-
-    this.globalDataService.get('module').subscribe({
-      next: (erg: any) => {
-        try {
-          if (erg.konfiguration.length > 0) {
-            delete erg.konfiguration[0].pkid;
-            delete erg.konfiguration[0].id;
-            delete erg.konfiguration[0].password;
-            delete erg.konfiguration[0].created_at;
-            delete erg.konfiguration[0].updated_at;
-            sessionStorage.setItem('Konfig', JSON.stringify(erg.konfiguration[0]));
-          } else {
-            alert('Keine Konfiguration vorhanden!');
-          }
-          let is_verwaltung = sessionStorage.getItem('Verwaltung');
-          let bool_is_verwaltung = is_verwaltung?.toLowerCase() === 'true';
-        } catch (e: any) {
-          this.globalDataService.erstelleMessage('error', e);
-        }
-      },
-      error: (error: any) => {
-        this.globalDataService.errorAnzeigen(error);
-      },
-    });
   }
 }

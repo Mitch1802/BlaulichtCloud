@@ -19,9 +19,18 @@ mat-toolbar
     height: 50px
     display: flex
     flex-wrap: wrap
+    background-color: $app-primary !important
 
     .spacer 
         flex: 1 1 auto 
+
+    .title 
+        font-size: 20px
+        font-weight: 600
+        color: white
+    
+    mat-icon
+        color: white
 
 button, a, .link-card, .link-card *
     cursor: pointer !important  
@@ -57,6 +66,7 @@ div:has(> .mat-mdc-button-disabled)
 
 mat-card
     padding: 10px
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important
 
 .mat-mdc-card-title
     font-size: 2rem !important

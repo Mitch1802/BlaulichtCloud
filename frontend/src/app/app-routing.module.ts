@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { StartComponent } from './start/start.component';
 import { UserComponent } from './user/user.component';
+import { KonfigurationComponent } from './konfiguration/konfiguration.component';
 
 const routes: Routes = [
   {
@@ -15,7 +16,10 @@ const routes: Routes = [
     path: 'start', component: StartComponent
   },
   {
-    path: 'user', component: UserComponent
+    path: 'benutzer', component: UserComponent
+  },
+  {
+    path: 'konfiguration', component: KonfigurationComponent
   },
   // {
   //   path: 'modul/:kuerzel', component: ModulComponent, data: { reuseComponent: true }

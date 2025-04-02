@@ -49,8 +49,7 @@
               "crypto-js"
             ],
             "buildOptimizer": true,
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json",
+            "serviceWorker": false,
             "baseHref": "/"
           },
           "configurations": {

@@ -109,15 +109,9 @@
             </div>
           </section>
           @if (username == "admin") {
-          <input hidden type="checkbox" formControlName="is_verwaltung" />
           <input hidden type="checkbox" formControlName="is_staff" />
           } @else {
           <section class="row mt-2">
-            <div class="col-12 col-lg-6 mb-3">
-              <mat-checkbox formControlName="is_verwaltung"
-                >Verwaltungsrechte</mat-checkbox
-              >
-            </div>
             <div class="col-12 col-lg-6 mb-3">
               <mat-checkbox formControlName="is_staff"
                 >Benutzerverwaltungsrechte</mat-checkbox

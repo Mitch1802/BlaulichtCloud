@@ -72,12 +72,6 @@ export class GlobalDataService {
 
   }
 
-  loadOtherDetail(modul: string, id: number) {
-    this.router.navigate(['/detail/' + modul + '/' + id]);
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.navigate(['/detail/' + modul + '/' + id]);
-  }
-
   arraySortByKey(array: Array<any>, key: any) {
     array.sort(function (a: any, b: any) {
       return a[key] == b[key] ? 0 : +(a[key] > b[key]) || -1;
@@ -364,7 +358,7 @@ export class GlobalDataService {
       link = '/start';
       kuerzel = 'Start';
     } else if (page == 'V_B') {
-      link = '/verwaltung/benutzer';
+      link = '/benutzer';
       kuerzel = 'Benutzer';
     } else if (page == 'V_KO') {
       link = '/verwaltung/konfiguration';

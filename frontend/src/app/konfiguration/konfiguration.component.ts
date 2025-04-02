@@ -10,17 +10,19 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
 import { environment } from "src/environments/environment";
 import { Router } from '@angular/router';
+import { HeaderComponent } from '../_template/header/header.component';
 
 @Component({
-    selector: 'app-v-konfiguration',
-    templateUrl: './v-konfiguration.component.html',
-    styleUrls: ['./v-konfiguration.component.sass'],
+    selector: 'app-konfiguration',
+    templateUrl: './konfiguration.component.html',
+    styleUrls: ['./konfiguration.component.sass'],
     standalone: true,
-    imports: [MatCardModule, FormsModule, ReactiveFormsModule, MatButton, MatFormField, MatLabel, MatInput, MatError, MatList, MatListItem, MatIcon]
+    imports: [HeaderComponent, MatCardModule, FormsModule, ReactiveFormsModule, MatButton, MatFormField, MatLabel, MatInput, MatError, MatList, MatListItem, MatIcon]
 })
-export class VKonfigurationComponent implements OnInit {
+export class KonfigurationComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
+  breadcrumb: any = [];
 
   title: string = "Konfiguration";
   title2: string = "Backup & Wiederherstellen";
@@ -40,9 +42,9 @@ export class VKonfigurationComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    sessionStorage.setItem("KatPlanPageNumber", "3");
-    sessionStorage.setItem("KatPlanPage3", "V_KO");
-    this.breadcrumbout.emit(this.globalDataService.ladeBreadcrumb());
+    sessionStorage.setItem("PageNumber", "2");
+    sessionStorage.setItem("Page2", "V_KO");
+    this.breadcrumb = this.globalDataService.ladeBreadcrumb();
     this.formModul.disable();
 
     this.globalDataService.get(this.modul).subscribe({
