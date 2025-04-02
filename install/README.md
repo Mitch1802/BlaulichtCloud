@@ -11,7 +11,7 @@ export DOCKER_TOKEN="dckr_pat_4_cVZgoCf_1l0YatblpjAsWa68A"
 ```
 Schritt3: Herunterladen des Install/Update Skriptes
 ```
-curl -sSL -o app_manager.sh "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/app_manager.sh"
+curl -sSL -H "Authorization: token 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" -o app_manager.sh "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/app_manager.sh"
 ```
 Schritt4: Schreibrechte vergeben
 ```

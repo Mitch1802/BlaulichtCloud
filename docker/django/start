@@ -6,6 +6,6 @@ set -o nounset
 
 python /app/manage.py migrate --noinput
 
-exec /usr/local/bin/gunicorn katplan_api.wsgi:application \
+exec /usr/local/bin/gunicorn blaulichtcloud_api.wsgi:application \
     --bind 0.0.0.0:9999 \
     --chdir=/app

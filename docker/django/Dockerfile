@@ -48,7 +48,6 @@ RUN mkdir -p ${APP_HOME}/mediafiles && \
   chown django:django ${APP_HOME}/mediafiles && \
   chmod 775 ${APP_HOME}/mediafiles
 
-COPY --chown=django:django ./docker/backups ${APP_HOME}/backups/.
 COPY --from=python-build-stage /usr/src/app/wheels /wheels/
 
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
