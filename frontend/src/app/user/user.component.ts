@@ -136,9 +136,9 @@ export class UserComponent implements OnInit {
 
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "Benutzer nicht gespeichert!");
-    this.router.navigate(['/verwaltung/benutzer']);
+    this.router.navigate(['/benutzer']);
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.navigate(['/verwaltung/benutzer']);
+    this.router.navigate(['/benutzer']);
   }
 
   datenSpeichern(): void {
