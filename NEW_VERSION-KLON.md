@@ -18,7 +18,6 @@
 - frontend/package.json -> Versionsanpassung
 - install/... -> Readme, App_Manager und Docker-Compose anpassen
 - .env -> Version, API Version, Docker Repo anpassen
-- docker-compose.yml -> Docker Image anpassen
 - README.md
 
 ## Github Actions Secrets neu setzen
