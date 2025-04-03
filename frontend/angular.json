@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "blaulichtcloud-app": {
+    "web-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -89,10 +89,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "blaulichtcloud-app:build:production"
+              "buildTarget": "web-app:build:production"
             },
             "development": {
-              "buildTarget": "blaulichtcloud-app:build:development"
+              "buildTarget": "web-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -100,7 +100,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "blaulichtcloud-app:build"
+            "buildTarget": "web-app:build"
           }
         },
         "test": {

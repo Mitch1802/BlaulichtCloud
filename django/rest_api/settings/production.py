@@ -20,7 +20,7 @@ CSRF_COOKIE_SECURE = True
 
 SECURE_HSTS_SECONDS = 518400
 
-SITE_NAME = "BlaulichtCloud"
+SITE_NAME = "RestAPI"
 
 LOGGING = {
     "version": 1,

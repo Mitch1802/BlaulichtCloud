@@ -1,10 +1,10 @@
 {
-  "name": "blaulichtcloud-app",
+  "name": "web-app",
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build blaulichtcloud-app --configuration production",
+    "build": "ng build web-app --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

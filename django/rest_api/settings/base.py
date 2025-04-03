@@ -45,7 +45,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
-    "blaulichtcloud_api.settings.middleware.APICacheControlMiddleware",
+    "rest_api.settings.middleware.APICacheControlMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -57,7 +57,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "blaulichtcloud_api.urls"
+ROOT_URLCONF = "rest_api.urls"
 
 TEMPLATES = [
     {
@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "blaulichtcloud_api.wsgi.application"
+WSGI_APPLICATION = "rest_api.wsgi.application"
 
 
 # Database
@@ -158,7 +158,7 @@ REST_FRAMEWORK = {
 
 REST_AUTH = {
     "USE_JWT": True,
-    "JWT_AUTH_COOKIE": "blaulichtcloud-access-token",
+    "JWT_AUTH_COOKIE": "app-access-token",
     "REGISTER_SERIALIZER": "core_apps.users.serializers.CustomRegisterSerializer",
     'REGISTER_PERMISSION_CLASSES': ("core_apps.users.permissions.IsStaffOrReadOnly",),
     "USER_DETAILS_SERIALIZER": "core_apps.users.serializers.UserDetailSerializer",

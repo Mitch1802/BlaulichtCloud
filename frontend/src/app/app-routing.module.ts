@@ -21,9 +21,6 @@ const routes: Routes = [
   {
     path: 'konfiguration', component: KonfigurationComponent
   },
-  // {
-  //   path: 'modul/:kuerzel', component: ModulComponent, data: { reuseComponent: true }
-  // },
   {
     path: '*', component: LoginComponent
   }

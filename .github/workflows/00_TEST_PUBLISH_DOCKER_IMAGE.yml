@@ -126,20 +126,20 @@ jobs:
       - name: Push the Docker Images
         id: push-docker-image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:db-${{ env.VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:api-${{ env.VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:nginx-${{ env.VERSION }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }}
 
       - name: Verify Docker Images Integrity
         run: |
           echo "Überprüfe das PostgreSQL-Image:"
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:db-${{ env.VERSION }} psql --version
+          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }} psql --version
 
           echo "Überprüfe das API-Image:"
-          docker run --rm --entrypoint gunicorn ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:api-${{ env.VERSION }} --version
+          docker run --rm --entrypoint gunicorn ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }} --version
 
           echo "Überprüfe das Nginx-Image:"
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/blaulichtcloud:nginx-${{ env.VERSION }} nginx -v
+          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }} nginx -v
 
       - name: List local Docker images
         run: docker images
