@@ -5,7 +5,7 @@ from core_apps.common.models import TimeStampedModel
 
 
 class Mitglied(TimeStampedModel):
-    stbnr = models.IntegerField(verbose_name=_("Standesbuchnummer"), max_length=5, unique=True)
+    stbnr = models.IntegerField(verbose_name=_("Standesbuchnummer"), unique=True)
     vorname = models.CharField(verbose_name=_("Vorname"), max_length=255)
     nachname = models.CharField(verbose_name=_("Nachname"), max_length=255)
     svnr = models.CharField(verbose_name=_("Sozialversichungsnummer"), max_length=4, blank=True)
