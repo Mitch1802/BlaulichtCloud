@@ -39,7 +39,10 @@ LOCAL_APPS = [
     "core_apps.common",
     "core_apps.users",
     "core_apps.konfiguration",
-    "core_apps.backup"
+    "core_apps.backup",
+    "core_apps.mitglieder",
+    "core_apps.modul_konfiguration",
+    "core_apps.fmd"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
