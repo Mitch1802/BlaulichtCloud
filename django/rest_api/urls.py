@@ -10,6 +10,8 @@ urlpatterns = [
     path(settings.API_URL + "auth/logout/", ForceLogoutView.as_view(), name="force_logout"),
     path(settings.API_URL + "auth/registration/", RegisterView.as_view(), name="rest_register"),
     path(settings.API_URL + "users/", include("core_apps.users.urls")),
+    path(settings.API_URL + "fmd/", include("core_apps.fmd.urls")),
+    path(settings.API_URL + "mitglieder/", include("core_apps.mitglieder.urls")),
     path(settings.API_URL + "konfiguration/", include("core_apps.konfiguration.urls")),
     path(settings.API_URL + "backup/", include("core_apps.backup.urls")),
 ]
