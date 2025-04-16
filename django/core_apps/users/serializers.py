@@ -1,5 +1,3 @@
-import logging
-
 from allauth.account.adapter import get_adapter
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from django.contrib.auth import get_user_model
@@ -7,8 +5,6 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
 User = get_user_model()
-
-logger = logging.getLogger(__name__)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         instance.last_name = validated_data.get("last_name", instance.last_name)
         instance.email = validated_data.get("email", instance.email)
         instance.is_staff = validated_data.get("is_staff", instance.is_staff)
+        instance.role = validated_data.get("role", instance.role)
         instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
 
         instance.save()
@@ -49,6 +46,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
     is_staff = serializers.BooleanField(required=True)
+    role = serializers.CharField(required=True)
 
     def get_cleaned_data(self):
         super().get_cleaned_data()
@@ -59,6 +57,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             "first_name": self.validated_data.get("first_name", ""),
             "last_name": self.validated_data.get("last_name", ""),
             "is_staff": self.validated_data.get("is_staff", ""),
+            "role": self.validated_data.get("role", ""),
         }
 
     def save(self, request):
@@ -74,6 +73,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.first_name = self.cleaned_data.get("first_name")
         user.last_name = self.cleaned_data.get("last_name")
         user.is_staff = self.cleaned_data.get("is_staff")
+        user.role = self.cleaned_data.get("role")
 
         return user
 
@@ -81,7 +81,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "is_staff"]
+        fields = ["id", "username", "is_staff", "role"]
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
