@@ -3,8 +3,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
 
-from core_apps.users.models import User
-
 
 class CustomUserManager(BaseUserManager):
     """
@@ -16,7 +14,7 @@ class CustomUserManager(BaseUserManager):
             return True
         except ValidationError:
             raise ValueError(_("Die Email ist nicht gültig!"))
-        
+
     def create_user(
         self,
         username,
@@ -40,19 +38,22 @@ class CustomUserManager(BaseUserManager):
             email = self.normalize_email(email)
             self.email_validator(email)
 
-        # Standardwerte für Flags und Rolle setzen
+        # Standardwerte für Flags
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
-        extra_fields.setdefault("role", role or User.Role.MEMBER)
+        # Rolle setzen (Default MEMBER)
+        default_role = getattr(self.model, 'Role').MEMBER
+        extra_fields.setdefault("role", role or default_role)
 
         # User-Instanz erstellen
+        filtered_fields = {k: v for k, v in extra_fields.items() if k not in ['role']}
         user = self.model(
             username=username,
             email=email,
             first_name=first_name,
             last_name=last_name,
             role=extra_fields.get("role"),
-            **{k: v for k, v in extra_fields.items() if k not in ['role']}
+            **filtered_fields
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -71,9 +72,9 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
-
         # Rolle beim Superuser festlegen
-        extra_fields.setdefault("role", User.Role.ADMIN)
+        default_admin_role = getattr(self.model, 'Role').ADMIN
+        extra_fields.setdefault("role", default_admin_role)
 
         # Validierungen
         if extra_fields.get("is_staff") is not True:
