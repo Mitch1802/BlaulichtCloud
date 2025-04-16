@@ -3,13 +3,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
 
-from .models import Role
-
 
 class CustomUserManager(BaseUserManager):
-    """
-    Manager zur Erstellung von Usern mit Mehrfach-Rollen
-    """
     def email_validator(self, email):
         try:
             validate_email(email)
@@ -38,11 +33,9 @@ class CustomUserManager(BaseUserManager):
             email = self.normalize_email(email)
             self.email_validator(email)
 
-        # Default-Flags
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
 
-        # User erstellen
         user = self.model(
             username=username,
             email=email,
@@ -53,11 +46,12 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        # Rollen zuweisen (falls angegeben)
+        # Rollen setzen, falls übergeben (über self.model.Role zugreifen)
         if roles:
-            # roles expected as list of keys
+            Role = self.model.roles.rel.model  # Zugriff auf Role-Modell über User.roles
             role_objs = Role.objects.filter(key__in=roles)
             user.roles.set(role_objs)
+
         return user
 
     def create_superuser(
@@ -80,15 +74,12 @@ class CustomUserManager(BaseUserManager):
         if not password:
             raise ValueError(_("Superuser müssen ein Passwort haben!"))
 
-        # Superuser erstellen und Rolle ADMIN zuweisen
-        roles = ["ADMIN"]
-        user = self.create_user(
+        return self.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
             password=password,
             email=email,
-            roles=roles,
+            roles=["ADMIN"],
             **extra_fields
         )
-        return user
