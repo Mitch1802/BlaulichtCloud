@@ -16,8 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
         instance.first_name = validated_data.get("first_name", instance.first_name)
         instance.last_name = validated_data.get("last_name", instance.last_name)
         instance.email = validated_data.get("email", instance.email)
-        instance.is_staff = validated_data.get("is_staff", instance.is_staff)
-        instance.role = validated_data.get("role", instance.role)
+        instance.roles = validated_data.get("roles", instance.roles)
         instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
 
         instance.save()
@@ -45,8 +44,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required=False)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
-    is_staff = serializers.BooleanField(required=True)
-    role = serializers.CharField(required=True)
+    roles = serializers.CharField(required=True)
 
     def get_cleaned_data(self):
         super().get_cleaned_data()
@@ -56,8 +54,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             "password1": self.validated_data.get("password1", ""),
             "first_name": self.validated_data.get("first_name", ""),
             "last_name": self.validated_data.get("last_name", ""),
-            "is_staff": self.validated_data.get("is_staff", ""),
-            "role": self.validated_data.get("role", ""),
+            "roles": self.validated_data.get("roles", ""),
         }
 
     def save(self, request):
@@ -72,7 +69,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.password = self.cleaned_data.get("password1")
         user.first_name = self.cleaned_data.get("first_name")
         user.last_name = self.cleaned_data.get("last_name")
-        user.is_staff = self.cleaned_data.get("is_staff")
         user.role = self.cleaned_data.get("role")
 
         return user
@@ -81,7 +77,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "is_staff", "role"]
+        fields = ["id", "username", "roles"]
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
@@ -89,7 +85,6 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('password',)
-
 
     def update(self, instance, validated_data):
         instance.set_password(validated_data['password'])

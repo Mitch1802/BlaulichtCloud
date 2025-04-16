@@ -8,14 +8,18 @@ from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    class Role(models.TextChoices):
-        ADMIN          = "ADMIN",      "Administrator"
-        FMD            = "FMD",        "FMD"
-        VERWALTUNG     = "VERWALTUNG", "Verwaltung"
-        ATEMSCHUTZ     = "ATEMSCHUTZ", "Atemschutz"
-        MEMBER         = "MEMBER",     "Mitglied"
+class Role(models.Model):
+    """
+    Rollendefinition für Benutzer (z.B. Administrator, FMD, Verwaltung, Atemschutz)
+    """
+    key = models.CharField(max_length=20, unique=True)
+    verbose_name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.verbose_name
+
+
+class User(AbstractBaseUser, PermissionsMixin):
     pkid = models.BigAutoField(primary_key=True, editable=False)
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     first_name = models.CharField(verbose_name=_("first name"), max_length=50)
@@ -26,16 +30,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name=_("email address"), null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.MEMBER,
-        verbose_name="Benutzerrolle"
-    )
     date_joined = models.DateTimeField(default=timezone.now)
 
-    USERNAME_FIELD = "username"
+    # Multiple roles pro User
+    roles = models.ManyToManyField(
+        Role,
+        blank=True,
+        related_name="users",
+        verbose_name="Benutzerrollen"
+    )
 
+    USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
     objects = CustomUserManager()
@@ -43,8 +48,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("user")
         verbose_name_plural = _("users")
-
-    
 
     def __str__(self):
         return self.username

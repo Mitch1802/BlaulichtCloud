@@ -7,7 +7,7 @@ from dj_rest_auth.views import LogoutView
 from .models import User
 from .renderers import UsersJSONRenderer, UserJSONRenderer
 from .serializers import UserSerializer, ChangePasswordSerializer
-from .permissions import IsStaffOrReadOnly
+from .permissions import IsAdminOrReadOnly
 
 
 class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
@@ -24,7 +24,7 @@ class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, IsAdminOrReadOnly]
     renderer_classes = [UsersJSONRenderer]
 
     def list(self, request):
@@ -39,7 +39,7 @@ class UserListView(generics.ListAPIView):
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, IsAdminOrReadOnly]
     lookup_field = "id"
     renderer_classes = [UserJSONRenderer]
 

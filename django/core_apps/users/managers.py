@@ -3,10 +3,12 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
 
+from .models import Role
+
 
 class CustomUserManager(BaseUserManager):
     """
-    Custom manager to handle user creation with role assignment.
+    Manager zur Erstellung von Usern mit Mehrfach-Rollen
     """
     def email_validator(self, email):
         try:
@@ -22,10 +24,9 @@ class CustomUserManager(BaseUserManager):
         last_name,
         password,
         email=None,
-        role=None,
+        roles=None,
         **extra_fields
     ):
-        # Pflichtfelder prüfen
         if not username:
             raise ValueError(_("Benutzer müssen einen Benutzernamen haben!"))
         if not first_name:
@@ -33,30 +34,30 @@ class CustomUserManager(BaseUserManager):
         if not last_name:
             raise ValueError(_("Benutzer müssen einen Nachnamen haben!"))
 
-        # Email validieren (optional)
         if email:
             email = self.normalize_email(email)
             self.email_validator(email)
 
-        # Standardwerte für Flags
+        # Default-Flags
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
-        # Rolle setzen (Default MEMBER)
-        default_role = getattr(self.model, 'Role').MEMBER
-        extra_fields.setdefault("role", role or default_role)
 
-        # User-Instanz erstellen
-        filtered_fields = {k: v for k, v in extra_fields.items() if k not in ['role']}
+        # User erstellen
         user = self.model(
             username=username,
             email=email,
             first_name=first_name,
             last_name=last_name,
-            role=extra_fields.get("role"),
-            **filtered_fields
+            **extra_fields,
         )
         user.set_password(password)
         user.save(using=self._db)
+
+        # Rollen zuweisen (falls angegeben)
+        if roles:
+            # roles expected as list of keys
+            role_objs = Role.objects.filter(key__in=roles)
+            user.roles.set(role_objs)
         return user
 
     def create_superuser(
@@ -68,15 +69,10 @@ class CustomUserManager(BaseUserManager):
         email=None,
         **extra_fields
     ):
-        # Superuser-Flags
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
-        # Rolle beim Superuser festlegen
-        default_admin_role = getattr(self.model, 'Role').ADMIN
-        extra_fields.setdefault("role", default_admin_role)
 
-        # Validierungen
         if extra_fields.get("is_staff") is not True:
             raise ValueError(_("Superuser müssen is_staff=True haben!"))
         if extra_fields.get("is_superuser") is not True:
@@ -84,17 +80,15 @@ class CustomUserManager(BaseUserManager):
         if not password:
             raise ValueError(_("Superuser müssen ein Passwort haben!"))
 
-        # Email validieren (optional)
-        if email:
-            email = self.normalize_email(email)
-            self.email_validator(email)
-
-        # Superuser erstellen
-        return self.create_user(
+        # Superuser erstellen und Rolle ADMIN zuweisen
+        roles = ["ADMIN"]
+        user = self.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
             password=password,
             email=email,
+            roles=roles,
             **extra_fields
         )
+        return user
