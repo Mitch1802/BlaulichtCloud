@@ -5,6 +5,6 @@ export interface IBenutzer {
     first_name: string,
     last_name: string,
     is_active: boolean,
-    is_staff: boolean,
-    password: string
+    password: string,
+    roles: any
 }
