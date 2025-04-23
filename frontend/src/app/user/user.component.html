@@ -108,17 +108,24 @@
               </mat-form-field>
             </div>
           </section>
-          @if (username == "admin") {
-          <input hidden type="checkbox" formControlName="is_staff" />
-          } @else {
           <section class="row mt-2">
+            <input hidden type="checkbox" formControlName="is_staff" />
             <div class="col-12 col-lg-6 mb-3">
-              <mat-checkbox formControlName="is_staff"
+              <mat-checkbox
+                >FMD</mat-checkbox
+              >
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <mat-checkbox
+                >Mitglieder</mat-checkbox
+              >
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <mat-checkbox
                 >Benutzerverwaltungsrechte</mat-checkbox
               >
             </div>
           </section>
-          }
           @if (formModul.controls['id'].value) {
           <hr />
           <section class="row mt-3">
