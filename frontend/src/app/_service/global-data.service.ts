@@ -357,6 +357,12 @@ export class GlobalDataService {
     if (page.toLowerCase() == 'start') {
       link = '/start';
       kuerzel = 'Start';
+    } else if (page == 'FMD') {
+      link = '/fmd';
+      kuerzel = 'FMD';
+    } else if (page == 'V_M') {
+      link = '/mitglied';
+      kuerzel = 'Mitglieder';
     } else if (page == 'V_B') {
       link = '/benutzer';
       kuerzel = 'Benutzer';

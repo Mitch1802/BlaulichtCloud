@@ -4,6 +4,8 @@ import { LoginComponent } from './login/login.component';
 import { StartComponent } from './start/start.component';
 import { UserComponent } from './user/user.component';
 import { KonfigurationComponent } from './konfiguration/konfiguration.component';
+import { MitgliedComponent } from './mitglied/mitglied.component';
+import { FmdComponent } from './fmd/fmd.component';
 
 const routes: Routes = [
   {
@@ -14,6 +16,12 @@ const routes: Routes = [
   },
   {
     path: 'start', component: StartComponent
+  },
+  {
+    path: 'fmd', component: FmdComponent
+  },
+  {
+    path: 'mitglied', component: MitgliedComponent
   },
   {
     path: 'benutzer', component: UserComponent

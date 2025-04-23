@@ -29,6 +29,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { FmdComponent } from './fmd/fmd.component';
+import { MitgliedComponent } from './mitglied/mitglied.component';
 
 
 @NgModule({
@@ -61,6 +63,8 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
         StartComponent,
         UserComponent,
         KonfigurationComponent,
+        FmdComponent,
+        MitgliedComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
