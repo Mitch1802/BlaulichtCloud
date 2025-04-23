@@ -154,6 +154,8 @@ export class UserComponent implements OnInit {
     // Nur für Ersteintrag
     if (object.username == "admin") {
       object.roles = ['ADMIN']
+    }else {
+      object.roles = []
     }
     
 
