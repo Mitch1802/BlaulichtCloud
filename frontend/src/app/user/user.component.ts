@@ -46,7 +46,6 @@ export class UserComponent implements OnInit {
     username: new FormControl('', Validators.required),
     first_name: new FormControl('', Validators.required),
     last_name: new FormControl('', Validators.required),
-    is_staff: new FormControl(false),
     password1: new FormControl('', Validators.minLength(8)),
     password2: new FormControl('',Validators.minLength(8))
   });
@@ -90,7 +89,6 @@ export class UserComponent implements OnInit {
             username: details.username,
             first_name: details.first_name,
             last_name: details.last_name,
-            is_staff: details.is_staff,
             password1: "",
             password2: ""
           })
@@ -126,7 +124,7 @@ export class UserComponent implements OnInit {
           }
           this.username = "";
           this.benutzer = dataNew;
-          this.formModul.reset({ username: '', first_name: '', last_name: '', is_staff: false, password1: '', password2: '' });
+          this.formModul.reset({ username: '', first_name: '', last_name: '', password1: '', password2: '' });
           this.formModul.disable();
           this.setzeSelectZurueck();
           this.globalDataService.erstelleMessage("success","Benutzer erfolgreich gelöscht!");
@@ -157,7 +155,7 @@ export class UserComponent implements OnInit {
     }else {
       object.roles = []
     }
-    
+
 
     if (idValue === 0 || idValue === null) {
       if (this.formModul.controls["password1"].value == "" || this.formModul.controls["password1"].value == "") {
@@ -172,7 +170,7 @@ export class UserComponent implements OnInit {
           try {
             this.username = "";
             this.benutzer.push(erg.user);
-            this.formModul.reset({ username: '', first_name: '', last_name: '', is_staff: false, password1: '', password2: '' });
+            this.formModul.reset({ username: '', first_name: '', last_name: '', password1: '', password2: '' });
             this.formModul.disable();
             this.setzeSelectZurueck();
             this.globalDataService.erstelleMessage("success","Benutzer erfolgreich gespeichert!");
@@ -186,7 +184,7 @@ export class UserComponent implements OnInit {
       });
     } else {
       delete object.password2;
-      
+
       this.globalDataService.patch(this.modul, idValue, object, false).subscribe({
         next: (erg: any) => {
           try {
@@ -201,7 +199,7 @@ export class UserComponent implements OnInit {
             }
             this.username = "";
             this.benutzer = dataNew;
-            this.formModul.reset({ username: '', first_name: '', last_name: '', is_staff: false, password1: '', password2: '' });
+            this.formModul.reset({ username: '', first_name: '', last_name: '', password1: '', password2: '' });
             this.formModul.disable();
             this.globalDataService.erstelleMessage("success","Benutzer erfolgreich geändert!");
           } catch (e: any) {
