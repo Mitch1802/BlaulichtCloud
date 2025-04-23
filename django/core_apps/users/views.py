@@ -24,7 +24,8 @@ class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticated, IsAdminOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated] # Nur für Adminerstellung
     renderer_classes = [UsersJSONRenderer]
 
     def list(self, request):
