@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
+from core_apps.users.models import Role
+
 User = get_user_model()
 
 
@@ -16,8 +18,12 @@ class UserSerializer(serializers.ModelSerializer):
         instance.first_name = validated_data.get("first_name", instance.first_name)
         instance.last_name = validated_data.get("last_name", instance.last_name)
         instance.email = validated_data.get("email", instance.email)
-        instance.roles = validated_data.get("roles", instance.roles)
         instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
+
+        role_keys = validated_data.pop("roles", None)
+        if role_keys is not None:
+            role_objs = Role.objects.filter(key__in=role_keys)
+            instance.roles.set(role_objs)
 
         instance.save()
         return instance
@@ -44,7 +50,10 @@ class CustomRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required=False)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
-    roles = serializers.CharField(required=True)
+    roles = serializers.ListField(
+        child=serializers.CharField(), required=True,
+        help_text="Liste von Rollen-Keys (z. B. ['ADMIN', 'FMD'])"
+    )
 
     def get_cleaned_data(self):
         super().get_cleaned_data()
@@ -54,22 +63,26 @@ class CustomRegisterSerializer(RegisterSerializer):
             "password1": self.validated_data.get("password1", ""),
             "first_name": self.validated_data.get("first_name", ""),
             "last_name": self.validated_data.get("last_name", ""),
-            "roles": self.validated_data.get("roles", ""),
+            "roles": self.validated_data.get("roles", []),
         }
 
     def save(self, request):
         adapter = get_adapter()
         user = adapter.new_user(request)
         self.cleaned_data = self.get_cleaned_data()
-        user = adapter.save_user(request, user, self)
-        user.save()
 
+        # Basisdaten setzen
         user.username = self.cleaned_data.get("username")
         user.email = self.cleaned_data.get("email")
-        user.password = self.cleaned_data.get("password1")
         user.first_name = self.cleaned_data.get("first_name")
         user.last_name = self.cleaned_data.get("last_name")
-        user.role = self.cleaned_data.get("role")
+        user.set_password(self.cleaned_data.get("password1"))
+        user.save()
+
+        # Rollen setzen
+        role_keys = self.cleaned_data.get("roles", [])
+        role_objs = Role.objects.filter(key__in=role_keys)
+        user.roles.set(role_objs)
 
         return user
 
