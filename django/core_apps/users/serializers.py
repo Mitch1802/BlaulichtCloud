@@ -4,12 +4,18 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from core_apps.users.models import Role
+from .models import Role
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    roles = serializers.SlugRelatedField(
+        many=True,
+        slug_field='key',
+        read_only=True
+    )
+
     def update(self, instance, validated_data):
         if instance.is_superuser:
             validated_data.pop("username", None)
@@ -104,3 +110,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ['id', 'key', 'verbose_name']

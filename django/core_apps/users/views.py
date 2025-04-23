@@ -1,13 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 from dj_rest_auth.views import LogoutView
 
-from .models import User
+from .models import User, Role
 from .renderers import UsersJSONRenderer, UserJSONRenderer
-from .serializers import UserSerializer, ChangePasswordSerializer
-from .permissions import IsAdminOrReadOnly
+from .serializers import UserSerializer, ChangePasswordSerializer, RoleSerializer
 
 
 class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
@@ -73,3 +72,8 @@ class ForceLogoutView(LogoutView):
         response.delete_cookie('sessionid')
         response.delete_cookie('blaulichtcloud-access-token')
         return response
+
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+    permission_classes = [permissions.IsAuthenticated]
