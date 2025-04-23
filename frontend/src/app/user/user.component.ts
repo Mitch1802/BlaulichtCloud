@@ -151,6 +151,12 @@ export class UserComponent implements OnInit {
     let object = this.formModul.value;
     let idValue = this.formModul.controls["id"].value;
 
+    // Nur für Ersteintrag
+    if (object.username == "admin") {
+      object.roles = ['ADMIN']
+    }
+    
+
     if (idValue === 0 || idValue === null) {
       if (this.formModul.controls["password1"].value == "" || this.formModul.controls["password1"].value == "") {
         this.globalDataService.erstelleMessage("error", "Passwort 1 & 2 müssen ausgefüllt sein!");
