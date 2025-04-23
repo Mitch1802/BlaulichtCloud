@@ -46,7 +46,7 @@ export class UserComponent implements OnInit {
     username: new FormControl('', Validators.required),
     first_name: new FormControl('', Validators.required),
     last_name: new FormControl('', Validators.required),
-    roles: new FormControl([]),
+    roles: new FormControl<string[]>([]),
     password1: new FormControl('', Validators.minLength(8)),
     password2: new FormControl('',Validators.minLength(8))
   });
