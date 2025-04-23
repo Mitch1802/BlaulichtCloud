@@ -28,6 +28,12 @@ export class UserComponent implements OnInit {
   modul: string = "users";
   username: string = "";
 
+  rollen: any = [
+    "ADMIN",
+    "FMD",
+    "MITGLIED"
+  ]
+
   benutzer: IBenutzer[] = [];
   breadcrumb: any = [];
 
