@@ -24,9 +24,11 @@ export class KonfigurationComponent implements OnInit {
   router = inject(Router);
   breadcrumb: any = [];
 
-  title: string = "Konfiguration";
-  title2: string = "Backup & Wiederherstellen";
-  modul: string = "konfiguration";
+  title: string = "Rollen";
+  title2: string = "Konfiguration";
+  title3: string = "Backup & Wiederherstellen";
+  modul: string = "rolle";
+  modul2: string = "konfiguration";
 
   @Output() breadcrumbout = new EventEmitter<any[]>();
 
@@ -35,7 +37,12 @@ export class KonfigurationComponent implements OnInit {
   backups: any = [];
   backup_msg: string = "";
 
-  formModul = new FormGroup({
+  formRolle = new FormGroup({
+    id: new FormControl(0),
+    rolle: new FormControl('', Validators.required)
+  });
+
+  formKonfig = new FormGroup({
     id: new FormControl(0),
     plz: new FormControl('', Validators.required),
     ort: new FormControl('', Validators.required)
@@ -45,15 +52,15 @@ export class KonfigurationComponent implements OnInit {
     sessionStorage.setItem("PageNumber", "2");
     sessionStorage.setItem("Page2", "V_KO");
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
-    this.formModul.disable();
+    this.formKonfig.disable();
 
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.formModul.enable();
+          this.formKonfig.enable();
           if (erg.data.main.length > 0){
             let details: IKonfiguration = erg.data.main[0];
-            this.formModul.setValue({
+            this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
               ort: details.ort
@@ -71,16 +78,34 @@ export class KonfigurationComponent implements OnInit {
     });
   }
 
-  datenSpeichern(): void {
-    let object = this.formModul.value;
+  rolleSpeichern(): void {
+    let object = this.formRolle.value;
 
-    let idValue = this.formModul.controls["id"].value;
+    this.globalDataService.post(this.modul, object, false).subscribe({
+      next: (erg: any) => {
+        try {
+
+          this.globalDataService.erstelleMessage("success","Rolle erfolgreich gespeichert!");
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
+
+  konfigSpeichern(): void {
+    let object = this.formKonfig.value;
+
+    let idValue = this.formKonfig.controls["id"].value;
     if (idValue === 0 || idValue === null) {
-      this.globalDataService.post(this.modul, object, false).subscribe({
+      this.globalDataService.post(this.modul2, object, false).subscribe({
         next: (erg: any) => {
           try {
             let details: IKonfiguration = erg.data;
-            this.formModul.setValue({
+            this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
               ort: details.ort
@@ -99,7 +124,7 @@ export class KonfigurationComponent implements OnInit {
         next: (erg: any) => {
           try {
             let details: IKonfiguration = erg.data;
-            this.formModul.setValue({
+            this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
               ort: details.ort
@@ -185,7 +210,7 @@ export class KonfigurationComponent implements OnInit {
     let object = {
       "backup": backup_name.name
     }
-  
+
     this.globalDataService.post("backup/delete", object, false).subscribe({
       next: (erg: any) => {
         try {
@@ -201,7 +226,7 @@ export class KonfigurationComponent implements OnInit {
       }
     });
   }
-  
+
 
   convertBackups(backup_array:any ): any {
     let version = environment.version;

@@ -9,7 +9,7 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register("roles", RoleViewSet, basename="role")
+router.register("rolle", RoleViewSet, basename="role")
 
 urlpatterns = [
     path("", UserListView.as_view(), name="user-list"),
