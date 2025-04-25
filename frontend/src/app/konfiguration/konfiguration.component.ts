@@ -32,6 +32,8 @@ export class KonfigurationComponent implements OnInit {
 
   @Output() breadcrumbout = new EventEmitter<any[]>();
 
+  rollen: any = []
+
   file: HTMLInputElement = <HTMLInputElement>document.getElementById("backupUpload");
   uploadText: string = "";
   backups: any = [];
@@ -52,11 +54,13 @@ export class KonfigurationComponent implements OnInit {
     sessionStorage.setItem("PageNumber", "2");
     sessionStorage.setItem("Page2", "V_KO");
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
+    this.formRolle.disable();
     this.formKonfig.disable();
 
-    this.globalDataService.get(this.modul).subscribe({
+    this.globalDataService.get(this.modul2).subscribe({
       next: (erg: any) => {
         try {
+          this.formRolle.enable();
           this.formKonfig.enable();
           if (erg.data.main.length > 0){
             let details: IKonfiguration = erg.data.main[0];
@@ -65,6 +69,7 @@ export class KonfigurationComponent implements OnInit {
               plz: details.plz,
               ort: details.ort
             })
+            this.rollen = erg.data.rollen;
             this.uploadText="";
           }
           this.backups = this.convertBackups(erg.data.backups);
@@ -120,7 +125,7 @@ export class KonfigurationComponent implements OnInit {
         }
       });
     } else {
-      this.globalDataService.patch(this.modul, idValue, object, false).subscribe({
+      this.globalDataService.patch(this.modul2, idValue, object, false).subscribe({
         next: (erg: any) => {
           try {
             let details: IKonfiguration = erg.data;
