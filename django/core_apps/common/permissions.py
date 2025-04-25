@@ -22,7 +22,9 @@ class HasAnyRolePermission(BasePermission):
         return type(
             f"HasAnyRole_{'_'.join(roles)}_Permission",
             (cls,),
-            {"__init__": lambda self: super(cls, self).__init__(*roles)},
+            {
+                "allowed_roles": roles,
+            },
         )
 
 
