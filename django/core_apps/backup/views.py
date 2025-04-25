@@ -1,4 +1,4 @@
-import os, datetime, subprocess, environ, zipfile, shutil, logging
+import os, datetime, subprocess, environ, zipfile, shutil
 
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.http import FileResponse
 from core_apps.common.permissions import HasAnyRolePermission
 
-logger = logging.getLogger(__name__)
 env = environ.Env()
 
 backup_path = "/app/backups/"

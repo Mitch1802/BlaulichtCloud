@@ -20,7 +20,7 @@ class HasAnyRolePermission(BasePermission):
             and hasattr(user, "has_any_role")
             and user.has_any_role(*allowed)
         )
-        logger.debug(
+        logger.info(
             f"HasAnyRolePermission: allowed_roles={allowed}, "
             f"user.has_any_role={getattr(user, 'has_any_role', None)}, "
             f"result={result}"
