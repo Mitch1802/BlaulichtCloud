@@ -8,7 +8,7 @@ from .renderers import KonfigurationenJSONRenderer, KonfigurationJSONRenderer
 from .serializers import KonfigurationSerializer
 from .permissions import IsStaffOrReadOnly
 from core_apps.backup.views import backup_path
-from users.models import Role
+from core_apps.users.models import Role
 
 
 class KonfigurationListCreateView(generics.ListCreateAPIView):
