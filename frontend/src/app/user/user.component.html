@@ -109,21 +109,19 @@
             </div>
           </section>
           <section class="row mt-2">
-            <div class="col-12 col-lg-6 mb-3">
-              <mat-checkbox
-                >FMD</mat-checkbox
+            <ng-container *ngFor="let rolle of rollen">
+              <div
+                class="col-auto mb-3"
+                *ngIf="rolle.key !== 'MITGLIED'"
               >
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-              <mat-checkbox
-                >Mitglieder</mat-checkbox
-              >
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-              <mat-checkbox
-                >Benutzerverwaltungsrechte</mat-checkbox
-              >
-            </div>
+                <mat-checkbox
+                  [checked]="formModul.controls['roles'].value?.includes(rolle.key)"
+                  (change)="rolleToggle(rolle.key, $event)"
+                >
+                  {{ rolle.verbose_name }}
+                </mat-checkbox>
+              </div>
+            </ng-container>            
           </section>
           @if (formModul.controls['id'].value) {
           <hr />

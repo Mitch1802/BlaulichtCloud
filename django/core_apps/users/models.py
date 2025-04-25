@@ -59,3 +59,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def get_short_name(self):
         return self.first_name
+    
+    def has_role(self, key: str) -> bool:
+        return self.roles.filter(key=key).exists()
+
+    def has_any_role(self, *keys: str) -> bool:
+        return self.roles.filter(key__in=keys).exists()

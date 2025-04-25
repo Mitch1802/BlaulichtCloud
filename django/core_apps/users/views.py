@@ -7,6 +7,7 @@ from dj_rest_auth.views import LogoutView
 from .models import User, Role
 from .renderers import UsersJSONRenderer, UserJSONRenderer
 from .serializers import UserSerializer, ChangePasswordSerializer, RoleSerializer
+from core_apps.common.permissions import HasRolePermission
 
 
 class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
@@ -23,8 +24,7 @@ class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAuthenticated, IsAdminOrReadOnly]
-    permission_classes = [permissions.IsAuthenticated] # Nur für Adminerstellung
+    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
     renderer_classes = [UsersJSONRenderer]
 
     def list(self, request):
@@ -41,8 +41,7 @@ class UserListView(generics.ListAPIView):
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAuthenticated, IsAdminOrReadOnly]
-    permission_classes = [permissions.IsAuthenticated] # Nur für Adminerstellung
+    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
     lookup_field = "id"
     renderer_classes = [UserJSONRenderer]
 
@@ -61,7 +60,7 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class ChangePasswordView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ChangePasswordSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN", "MITGLIED")]
     lookup_field = "id"
 
 

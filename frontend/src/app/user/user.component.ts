@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IBenutzer } from 'src/app/_interface/benutzer';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
@@ -17,7 +18,7 @@ import { Router } from '@angular/router';
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.sass'],
     standalone: true,
-    imports: [ HeaderComponent, MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInput, MatError, MatCheckbox]
+    imports: [ CommonModule, HeaderComponent, MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInput, MatError, MatCheckbox]
 })
 export class UserComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
@@ -29,6 +30,7 @@ export class UserComponent implements OnInit {
 
   benutzer: IBenutzer[] = [];
   breadcrumb: any = [];
+  rollen: any = [];
 
   formAuswahl = new FormGroup({
     benutzer: new FormControl(0)
@@ -54,6 +56,7 @@ export class UserComponent implements OnInit {
       next: (erg: any) => {
         try {
           this.benutzer = erg.data.main;
+          this.rollen = erg.data.rollen;
           this.benutzer = this.globalDataService.arraySortByKey(this.benutzer, 'username');
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
@@ -141,14 +144,15 @@ export class UserComponent implements OnInit {
   }
 
   datenSpeichern(): void {
-    let object = this.formModul.value;
-    let idValue = this.formModul.controls["id"].value;
+    const rollen = this.formModul.controls["roles"].value || [];
 
-    // Nur für Ersteintrag
-    if (object.username == "admin") {
-      object.roles = ['ADMIN']
+    if (!rollen.includes("ADMIN") && !rollen.includes("MITGLIED")) {
+      rollen.push("MITGLIED");
+      this.formModul.controls["roles"].setValue(rollen);
     }
 
+    let object = this.formModul.value;
+    let idValue = this.formModul.controls["id"].value;
 
     if (idValue === 0 || idValue === null) {
       if (this.formModul.controls["password1"].value == "" || this.formModul.controls["password1"].value == "") {
@@ -234,4 +238,14 @@ export class UserComponent implements OnInit {
       }
     });
   }
+
+  rolleToggle(key: string, event: any): void {
+    const current = this.formModul.controls["roles"].value || [];
+  
+    if (event.checked && !current.includes(key)) {
+      this.formModul.controls["roles"].setValue([...current, key]);
+    } else if (!event.checked) {
+      this.formModul.controls["roles"].setValue(current.filter(r => r !== key));
+    }
+  }  
 }
