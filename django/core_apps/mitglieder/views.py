@@ -5,13 +5,13 @@ from rest_framework.response import Response
 from .models import Mitglied
 from .renderers import MitgliedJSONRenderer, MitgliederJSONRenderer
 from .serializers import MitgliedSerializer
-from core_apps.common.permissions import HasRolePermission
+from core_apps.common.permissions import HasAnyRolePermission
 
 
 class MitgliedListCreateView(generics.ListCreateAPIView):
     queryset = Mitglied.objects.order_by('stbnr')
     serializer_class = MitgliedSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN","MITGLIED")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","MITGLIED")]
     renderer_classes = [MitgliederJSONRenderer]
 
     def list(self, request):
@@ -26,7 +26,7 @@ class MitgliedListCreateView(generics.ListCreateAPIView):
 class MitgliedRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Mitglied.objects.order_by('stbnr')
     serializer_class = MitgliedSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN","MITGLIED")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","MITGLIED")]
     lookup_field = "id"
     renderer_classes = [MitgliedJSONRenderer]
 

@@ -5,13 +5,13 @@ from rest_framework.response import Response
 from .models import ModulKonfiguration
 from .renderers import ModulKonfigurationenJSONRenderer, ModulKonfigurationJSONRenderer
 from .serializers import ModulKonfigurationSerializer
-from core_apps.common.permissions import HasRolePermission
+from core_apps.common.permissions import HasAnyRolePermission
 
 
 class ModulKonfigurationListCreateView(generics.ListCreateAPIView):
     queryset = ModulKonfiguration.objects.all()
     serializer_class = ModulKonfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
     renderer_classes = [ModulKonfigurationenJSONRenderer]
 
     def list(self, request):
@@ -26,7 +26,7 @@ class ModulKonfigurationListCreateView(generics.ListCreateAPIView):
 class ModulKonfigurationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ModulKonfiguration.objects.all()
     serializer_class = ModulKonfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
     lookup_field = "id"
     renderer_classes = [ModulKonfigurationJSONRenderer]
 

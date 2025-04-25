@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .models import Konfiguration
 from .renderers import KonfigurationenJSONRenderer, KonfigurationJSONRenderer
 from .serializers import KonfigurationSerializer
-from core_apps.common.permissions import HasRolePermission
+from core_apps.common.permissions import HasAnyRolePermission
 from core_apps.backup.views import backup_path
 from core_apps.users.models import Role
 from core_apps.users.serializers import RoleSerializer
@@ -15,7 +15,7 @@ from core_apps.users.serializers import RoleSerializer
 class KonfigurationListCreateView(generics.ListCreateAPIView):
     queryset = Konfiguration.objects.all()
     serializer_class = KonfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
     renderer_classes = [KonfigurationenJSONRenderer]
 
     def list(self, request):
@@ -34,7 +34,7 @@ class KonfigurationListCreateView(generics.ListCreateAPIView):
 class KonfigurationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Konfiguration.objects.all()
     serializer_class = KonfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
     lookup_field = "id"
     renderer_classes = [KonfigurationJSONRenderer]
 

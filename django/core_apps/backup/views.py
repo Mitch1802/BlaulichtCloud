@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.core.exceptions import ValidationError
 from django.http import FileResponse
-from core_apps.common.permissions import HasRolePermission
+from core_apps.common.permissions import HasAnyRolePermission
 
 logger = logging.getLogger(__name__)
 env = environ.Env()
@@ -32,7 +32,7 @@ excluded_tables = [
 ]
 
 class BackupGetPostView(APIView):
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
     def get(self, request, *args, **kwargs):
         backups = os.listdir(backup_path)
@@ -86,7 +86,7 @@ class BackupGetPostView(APIView):
 
 
 class RestorePostView(APIView):
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
     def post(self, request, *args, **kwargs):
         msg = ""
@@ -191,7 +191,7 @@ class RestorePostView(APIView):
 
 
 class BackupGetFileView(APIView):
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
     def post(self, request, *args, **kwargs):
         filename = request.data['backup']
@@ -212,7 +212,7 @@ class BackupGetFileView(APIView):
 
 
 class BackupDeleteView(APIView):
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
     def post(self, request, *args, **kwargs):
         backupname = request.data.get('backup', '')

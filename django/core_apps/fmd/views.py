@@ -6,13 +6,13 @@ from rest_framework.response import Response
 from .models import FMD
 from .renderers import FMDJSONRenderer, FMDsJSONRenderer
 from .serializers import FMDSerializer
-from core_apps.common.permissions import HasRolePermission
+from core_apps.common.permissions import HasAnyRolePermission
 
 
 class FMDListCreateView(generics.ListCreateAPIView):
     queryset = FMD.objects.all()
     serializer_class = FMDSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN","FMD")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","FMD")]
     renderer_classes = [FMDsJSONRenderer]
 
     def list(self, request):
@@ -27,7 +27,7 @@ class FMDListCreateView(generics.ListCreateAPIView):
 class FMDRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = FMD.objects.all()
     serializer_class = FMDSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN","FMD")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","FMD")]
     lookup_field = "id"
     renderer_classes = [FMDJSONRenderer]
 

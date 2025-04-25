@@ -7,7 +7,7 @@ from dj_rest_auth.views import LogoutView
 from .models import User, Role
 from .renderers import UsersJSONRenderer, UserJSONRenderer
 from .serializers import UserSerializer, ChangePasswordSerializer, RoleSerializer
-from core_apps.common.permissions import HasRolePermission
+from core_apps.common.permissions import HasAnyRolePermission
 
 
 class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
@@ -24,7 +24,7 @@ class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
     renderer_classes = [UsersJSONRenderer]
 
     def list(self, request):
@@ -41,7 +41,7 @@ class UserListView(generics.ListAPIView):
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
     lookup_field = "id"
     renderer_classes = [UserJSONRenderer]
 
@@ -60,7 +60,7 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class ChangePasswordView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ChangePasswordSerializer
-    permission_classes = [permissions.IsAuthenticated, HasRolePermission.with_roles("ADMIN", "MITGLIED")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "MITGLIED")]
     lookup_field = "id"
 
 
@@ -77,4 +77,4 @@ class ForceLogoutView(LogoutView):
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
