@@ -6,6 +6,8 @@ from .models import ModulKonfiguration
 from .renderers import ModulKonfigurationenJSONRenderer, ModulKonfigurationJSONRenderer
 from .serializers import ModulKonfigurationSerializer
 from core_apps.common.permissions import HasAnyRolePermission
+from core_apps.users.models import Role
+from core_apps.users.serializers import RoleSerializer
 
 
 class ModulKonfigurationListCreateView(generics.ListCreateAPIView):
@@ -17,9 +19,11 @@ class ModulKonfigurationListCreateView(generics.ListCreateAPIView):
     def list(self, request):
         mod_queryset = self.filter_queryset(self.get_queryset())
         mod_serializer = self.get_serializer(mod_queryset, many=True)
+        rollen = RoleSerializer(Role.objects.all(), many=True).data
 
         return Response({
-            'main': mod_serializer.data
+            'main': mod_serializer.data,
+            'rollen': rollen
         })
 
 
