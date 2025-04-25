@@ -8,6 +8,7 @@ from .renderers import KonfigurationenJSONRenderer, KonfigurationJSONRenderer
 from .serializers import KonfigurationSerializer
 from .permissions import IsStaffOrReadOnly
 from core_apps.backup.views import backup_path
+from users.models import Role
 
 
 class KonfigurationListCreateView(generics.ListCreateAPIView):
@@ -20,10 +21,12 @@ class KonfigurationListCreateView(generics.ListCreateAPIView):
         mod_queryset = self.filter_queryset(self.get_queryset())
         mod_serializer = self.get_serializer(mod_queryset, many=True)
         backups = os.listdir(backup_path)
+        rollen = list(Role.objects.values_list("key", flat=True))
 
         return Response({
             'main': mod_serializer.data,
-            'backups': backups
+            'backups': backups,
+            'rollen': rollen
         })
 
 
