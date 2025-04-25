@@ -31,6 +31,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { FmdComponent } from './fmd/fmd.component';
 import { MitgliedComponent } from './mitglied/mitglied.component';
+import { MatChipsModule } from '@angular/material/chips';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ import { MitgliedComponent } from './mitglied/mitglied.component';
         MatExpansionModule,
         MatAutocompleteModule,
         MatProgressBarModule,
+        MatChipsModule,
         SpinnerComponent,
         HeaderComponent,
         LoginComponent,

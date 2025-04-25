@@ -13,26 +13,25 @@ class UserSerializer(serializers.ModelSerializer):
     roles = serializers.SlugRelatedField(
         many=True,
         slug_field='key',
-        read_only=True
+        queryset=Role.objects.all()
     )
 
     def update(self, instance, validated_data):
         if instance.is_superuser:
             validated_data.pop("username", None)
 
-        instance.username = validated_data.get("username", instance.username)
-        instance.first_name = validated_data.get("first_name", instance.first_name)
-        instance.last_name = validated_data.get("last_name", instance.last_name)
-        instance.email = validated_data.get("email", instance.email)
-        instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
+        roles = validated_data.pop("roles", None)
 
-        role_keys = validated_data.pop("roles", None)
-        if role_keys is not None:
-            role_objs = Role.objects.filter(key__in=role_keys)
-            instance.roles.set(role_objs)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
 
         instance.save()
+
+        if roles is not None:
+            instance.roles.set(roles)
+
         return instance
+
     
     def delete(self, instance):
         if instance.is_superuser:
