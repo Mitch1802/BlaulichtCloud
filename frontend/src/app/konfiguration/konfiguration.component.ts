@@ -114,7 +114,7 @@ export class KonfigurationComponent implements OnInit {
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
-          this.rollen = this.rollen.filter(r => r.id !== id);
+          // this.rollen = this.rollen.filter(r => r.id !== id);
           this.globalDataService.erstelleMessage("success",this.backup_msg);
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
