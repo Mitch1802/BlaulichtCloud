@@ -56,7 +56,8 @@ class CustomRegisterSerializer(RegisterSerializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
     roles = serializers.ListField(
-        child=serializers.CharField(), required=True,
+        child=serializers.CharField(), 
+        required=True,
         help_text="Liste von Rollen-Keys (z. B. ['ADMIN', 'FMD'])"
     )
 
@@ -113,4 +114,4 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ['id', 'key', 'verbose_name']
+        fields = ['key', 'verbose_name']
