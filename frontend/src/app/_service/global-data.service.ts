@@ -367,7 +367,7 @@ export class GlobalDataService {
       link = '/benutzer';
       kuerzel = 'Benutzer';
     } else if (page == 'V_KO') {
-      link = '/verwaltung/konfiguration';
+      link = '/konfiguration';
       kuerzel = 'Konfiguration';
     }
 

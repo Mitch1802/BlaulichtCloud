@@ -42,7 +42,7 @@ export class KonfigurationComponent implements OnInit {
   backup_msg: string = "";
 
   formRolle = new FormGroup({
-    rolle: new FormControl('', Validators.required)
+    rolle: new FormControl('')
   });
 
   formKonfig = new FormGroup({
@@ -97,7 +97,10 @@ export class KonfigurationComponent implements OnInit {
     this.globalDataService.post(this.modul, post, false).subscribe({
       next: (erg: any) => {
         try {
-
+          this.formRolle.reset();
+          if (!this.rollen.find((r: any) => r.key === erg.key)) {
+            this.rollen.push(erg);
+          }
           this.globalDataService.erstelleMessage("success","Rolle erfolgreich gespeichert!");
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
@@ -114,8 +117,8 @@ export class KonfigurationComponent implements OnInit {
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
-          // this.rollen = this.rollen.filter(r => r.id !== id);
-          this.globalDataService.erstelleMessage("success",this.backup_msg);
+          this.rollen = this.rollen.filter((r: any) => r.id !== id);
+          this.globalDataService.erstelleMessage("success", "Rolle erfolgreich gelöscht!");
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
