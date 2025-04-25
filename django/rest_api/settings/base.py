@@ -163,7 +163,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "app-access-token",
     "REGISTER_SERIALIZER": "core_apps.users.serializers.CustomRegisterSerializer",
-    'REGISTER_PERMISSION_CLASSES': ("core_apps.users.permissions.IsAdminOrReadOnly",),
+    'REGISTER_PERMISSION_CLASSES': ("core_apps.common.permissions.IsAdminPermission",),
     "USER_DETAILS_SERIALIZER": "core_apps.users.serializers.UserDetailSerializer",
 }
 

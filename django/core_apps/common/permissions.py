@@ -24,3 +24,10 @@ class HasAnyRolePermission(BasePermission):
             (cls,),
             {"__init__": lambda self: super(cls, self).__init__(*roles)},
         )
+
+
+class IsAdminPermission(HasAnyRolePermission.with_roles("ADMIN")):
+    """
+    Spezielle Permission für ADMIN User. Nur für Settings oder globalen Einsatz gedacht.
+    """
+    pass
