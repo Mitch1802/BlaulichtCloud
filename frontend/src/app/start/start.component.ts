@@ -21,13 +21,26 @@ export class StartComponent implements OnInit {
   private globalDataService = inject(GlobalDataService);
 
   breadcrumb: any = [];
+  konfig:any = [];
 
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '1');
     sessionStorage.setItem('Page1', 'Start');
     sessionStorage.setItem('Page2', '');
 
-
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
+
+    this.globalDataService.get("modul_konfiguration").subscribe({
+      next: (erg: any) => {
+        try {
+          this.konfig = erg.data.main;
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
   }
 }

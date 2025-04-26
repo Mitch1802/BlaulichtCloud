@@ -12,6 +12,7 @@ urlpatterns = [
     path(settings.API_URL + "users/", include("core_apps.users.urls")),
     path(settings.API_URL + "fmd/", include("core_apps.fmd.urls")),
     path(settings.API_URL + "mitglieder/", include("core_apps.mitglieder.urls")),
+    path(settings.API_URL + "modul_konfiguration/", include("core_apps.modul_konfiguration.urls")),
     path(settings.API_URL + "konfiguration/", include("core_apps.konfiguration.urls")),
     path(settings.API_URL + "backup/", include("core_apps.backup.urls")),
 ]

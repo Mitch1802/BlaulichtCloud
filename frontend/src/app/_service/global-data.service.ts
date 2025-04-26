@@ -363,6 +363,9 @@ export class GlobalDataService {
     } else if (page == 'V_M') {
       link = '/mitglied';
       kuerzel = 'Mitglieder';
+    } else if (page == 'V_MK') {
+      link = '/modul_konfiguration';
+      kuerzel = 'Modul Konfiguration';
     } else if (page == 'V_B') {
       link = '/benutzer';
       kuerzel = 'Benutzer';

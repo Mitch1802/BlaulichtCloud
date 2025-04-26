@@ -6,6 +6,7 @@ import { UserComponent } from './user/user.component';
 import { KonfigurationComponent } from './konfiguration/konfiguration.component';
 import { MitgliedComponent } from './mitglied/mitglied.component';
 import { FmdComponent } from './fmd/fmd.component';
+import { ModulKonfigurationComponent } from './modul-konfiguration/modul-konfiguration.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,9 @@ const routes: Routes = [
   },
   {
     path: 'mitglied', component: MitgliedComponent
+  },
+  {
+    path: 'modul_konfiguration', component: ModulKonfigurationComponent
   },
   {
     path: 'benutzer', component: UserComponent
