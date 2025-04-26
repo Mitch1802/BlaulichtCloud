@@ -114,4 +114,4 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ['key', 'verbose_name']
+        fields = ['id', 'key', 'verbose_name']

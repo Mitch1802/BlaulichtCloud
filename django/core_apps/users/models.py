@@ -28,7 +28,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_("username"), max_length=50, db_index=True, unique=True
     )
     email = models.EmailField(verbose_name=_("email address"), null=True, blank=True)
-    is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
 
