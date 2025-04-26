@@ -31,27 +31,7 @@ export class HeaderComponent implements OnInit {
     this.title = this.globalDataService.Titel;
   }
 
-  onClick(link: string, pageNumber: number): void {
-    if (pageNumber == 2) {
-      sessionStorage.setItem("KatPlanPageNumber","2")
-      sessionStorage.setItem("KatPlanPage3", "");
-      sessionStorage.setItem("KatPlanPage4", "");
-      sessionStorage.setItem("KatPlanPage5", "");
-      sessionStorage.setItem("KatPlanPage6", "");
-    } else if (pageNumber == 3) {
-      sessionStorage.setItem("KatPlanPageNumber","3")
-      sessionStorage.setItem("KatPlanPage4", "");
-      sessionStorage.setItem("KatPlanPage5", "");
-      sessionStorage.setItem("KatPlanPage6", "");
-    } else if (pageNumber == 4) {
-      sessionStorage.setItem("KatPlanPageNumber","4")
-      sessionStorage.setItem("KatPlanPage5", "");
-      sessionStorage.setItem("KatPlanPage6", "");
-    } else if (pageNumber == 5) {
-      sessionStorage.setItem("KatPlanPageNumber","5")
-      sessionStorage.setItem("KatPlanPage6", "");
-    }
-
+  onClick(link: string): void {
     this.globalDataService.ladeBreadcrumb();
     this.router.navigate([link]);
   }
