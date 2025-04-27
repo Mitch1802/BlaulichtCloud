@@ -4,6 +4,23 @@ from .models import FMD
 
 
 class FMDSerializer(serializers.ModelSerializer):
+    letzte_untersuchung = serializers.DateField(
+        format='%d.%m.%Y',
+        input_formats=['%d.%m.%Y', 'iso-8601'],
+        required=False,
+        allow_null=True
+    )
+    fdisk_aenderung = serializers.DateField(
+        format='%d.%m.%Y',
+        input_formats=['%d.%m.%Y', 'iso-8601'],
+        required=False,
+        allow_null=True
+    )
+    naechste_untersuchung = serializers.IntegerField(
+        required=False,
+        allow_null=True
+    )
+
     def create(self, validated_data):
         instance = FMD.objects.create(**validated_data)
         return instance
