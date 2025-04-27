@@ -28,10 +28,13 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { FmdComponent } from './fmd/fmd.component';
 import { MitgliedComponent } from './mitglied/mitglied.component';
 import { MatChipsModule } from '@angular/material/chips';
+import { AtemschutzComponent } from './atemschutz/atemschutz.component';
+import { VerwaltungComponent } from './verwaltung/verwaltung.component';
 
 
 @NgModule({
@@ -59,6 +62,7 @@ import { MatChipsModule } from '@angular/material/chips';
         MatAutocompleteModule,
         MatProgressBarModule,
         MatChipsModule,
+        MatDatepickerModule,
         SpinnerComponent,
         HeaderComponent,
         LoginComponent,
@@ -66,7 +70,9 @@ import { MatChipsModule } from '@angular/material/chips';
         UserComponent,
         KonfigurationComponent,
         FmdComponent,
-        MitgliedComponent
+        MitgliedComponent,
+        AtemschutzComponent,
+        VerwaltungComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },

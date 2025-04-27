@@ -33,9 +33,11 @@ export class StartComponent implements OnInit {
     "modul": "Start", 
     "data": [
       {"modul": "FMD", "rolle": "ADMIN, FMD", "routerlink":"/fmd", "icon":"healing"},
+      {"modul": "Atemschutz", "rolle": "ADMIN, ATEMSCHUTZ", "routerlink":"/atemschutz", "icon":"battery_alert"},
+      {"modul": "Verwaltung", "rolle": "ADMIN, VERWALTUNG", "routerlink":"/verwaltung", "icon":"euro_symbol"},
       {"modul": "Mitglieder", "rolle": "ADMIN", "routerlink":"/mitglied", "icon":"groups"},
       {"modul": "Modul Konfiguration", "rolle": "ADMIN", "routerlink":"/modul_konfiguration", "icon":"tune"},
-      {"modul": "Benutzerverwaltung", "rolle": "ADMIN", "routerlink":"/benutzer", "icon":"account_circle"},
+      {"modul": "Benutzerverwaltung", "rolle": "ADMIN", "routerlink":"/benutzer", "icon":"engineering"},
       {"modul": "Konfiguration", "rolle": "ADMIN", "routerlink":"/konfiguration", "icon":"settings"}
     ]
   };

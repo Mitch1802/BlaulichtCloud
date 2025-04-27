@@ -7,7 +7,152 @@
         <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <button
+        mat-raised-button
+        color="accent"
+        class="me-2 mb-3"
+        [hidden]="!formModul.disabled"
+        (click)="neueDetails()"
+        type="button"
+      >
+        Hinzufügen
+      </button>
+        <form
+          [formGroup]="formAuswahl"
+          (ngSubmit)="auswahlBearbeiten()"
+          [hidden]="!formModul.disabled"
+        >
+          <section class="row mt-3 mb-3">
+            <div class="col-12 col-lg-9">
+              <mat-form-field>
+                <mat-label>Mitglied auswählen</mat-label>
+                <mat-select formControlName="mitglied">
+                  @for (opt of mitglieder; track opt) {
+                  <mat-option [value]="opt.id"> {{ opt.vorname }} {{ opt.nachname }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div
+              class="col-6 col-lg-3 m-0 row align-items-center auswahl-button"
+            >
+              <button
+                type="submit"
+                mat-raised-button
+                class="col-auto"
+                color="primary"
+                [disabled]="!formAuswahl.controls['mitglied'].value"
+              >
+                Auswahl bearbeiten
+              </button>
+            </div>
+          </section>
+        </form>
+        <form
+          [formGroup]="formModul"
+          (ngSubmit)="datenSpeichern()"
+          [hidden]="formModul.disabled"
+        >
+          <input hidden type="text" class="form-control" formControlName="id" />
+          <button
+            mat-raised-button
+            color="accent"
+            class="me-3 mb-3"
+            [hidden]="!formModul.valid"
+            type="submit"
+          >
+            Daten speichern
+          </button>
+          <button
+            mat-raised-button
+            class="mb-3"
+            color="primary"
+            [hidden]="formModul.disabled"
+            type="button"
+            (click)="abbrechen()"
+          >
+            Abbrechen
+          </button>
+          <section class="row mt-2">
+            <div class="col-12 col-lg-6 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Vorname</mat-label>
+                <input matInput type="text" formControlName="vorname" />
+                @if (formModul.controls['vorname'].hasError('required')) {
+                <mat-error> Vorname ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Nachname</mat-label>
+                <input matInput type="text" formControlName="nachname" />
+                @if (formModul.controls['nachname'].hasError('required')) {
+                <mat-error> Nachname ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Stbnr</mat-label>
+                <input matInput type="text" formControlName="stbnr" />
+                @if (formModul.controls['stbnr'].hasError('required')) {
+                <mat-error> Standesbuchnummer ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>SVNr</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="svnr"
+                  placeholder="0000"
+                  maxlength="4"
+                  minlength="4"
+                />
+                @if (
+                  formModul.controls['svnr'].hasError('minlength') ||
+                  formModul.controls['svnr'].hasError('maxlength')
+                ) {
+                  <mat-error>4 Ziffern erforderlich!</mat-error>
+                }
+              
+                @if (formModul.controls['svnr'].hasError('pattern')) {
+                  <mat-error>Nur Ziffern erlaubt!</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Geburtsdatum</mat-label>
+                <input matInput type="text" formControlName="geburtsdatum" placeholder="TT.MM.YYYY"/>
+                @if (formModul.controls['geburtsdatum'].hasError('required')) {
+                  <mat-error>Geburtsdatum ist erforderlich!</mat-error>
+                }
+              
+                @if (formModul.controls['geburtsdatum'].hasError('pattern')) {
+                  <mat-error>Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error>
+                }
+              
+                @if (formModul.controls['geburtsdatum'].hasError('dateInvalid')) {
+                  <mat-error>Kein existierendes Datum!</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </section>
 
+          <button
+            mat-raised-button
+            color="warn"
+            [hidden]="!formModul.controls['id'].value"
+            type="button"
+            (click)="datenLoeschen()"
+          >
+            Daten löschen
+          </button>
+        </form>
       </mat-card-content>
     </mat-card>
   </div>

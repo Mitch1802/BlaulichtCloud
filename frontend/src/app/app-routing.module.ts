@@ -7,6 +7,8 @@ import { KonfigurationComponent } from './konfiguration/konfiguration.component'
 import { MitgliedComponent } from './mitglied/mitglied.component';
 import { FmdComponent } from './fmd/fmd.component';
 import { ModulKonfigurationComponent } from './modul-konfiguration/modul-konfiguration.component';
+import { AtemschutzComponent } from './atemschutz/atemschutz.component';
+import { VerwaltungComponent } from './verwaltung/verwaltung.component';
 
 const routes: Routes = [
   {
@@ -23,6 +25,12 @@ const routes: Routes = [
   },
   {
     path: 'mitglied', component: MitgliedComponent
+  },
+  {
+    path: 'atemschutz', component: AtemschutzComponent
+  },
+  {
+    path: 'verwaltung', component: VerwaltungComponent
   },
   {
     path: 'modul_konfiguration', component: ModulKonfigurationComponent

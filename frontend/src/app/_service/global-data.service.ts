@@ -360,6 +360,12 @@ export class GlobalDataService {
     } else if (page == 'FMD') {
       link = '/fmd';
       kuerzel = 'FMD';
+    } else if (page == 'ATM') {
+      link = '/atemschutz';
+      kuerzel = 'Atemschutz';
+    } else if (page == 'VER') {
+      link = '/verwaltung';
+      kuerzel = 'Verwaltung';
     } else if (page == 'V_M') {
       link = '/mitglied';
       kuerzel = 'Mitglieder';

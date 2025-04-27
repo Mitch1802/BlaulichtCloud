@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-fmd',
   standalone: true,
-  imports: [HeaderComponent, MatCardModule ],
+  imports: [ HeaderComponent, MatCardModule ],
   templateUrl: './fmd.component.html',
   styleUrl: './fmd.component.sass'
 })
