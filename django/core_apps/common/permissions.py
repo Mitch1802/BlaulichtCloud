@@ -1,7 +1,4 @@
 from rest_framework.permissions import BasePermission
-import logging
-
-logger = logging.getLogger(__name__)
 
 class HasAnyRolePermission(BasePermission):
     """
@@ -19,11 +16,6 @@ class HasAnyRolePermission(BasePermission):
             user.is_authenticated
             and hasattr(user, "has_any_role")
             and user.has_any_role(*allowed)
-        )
-        logger.info(
-            f"HasAnyRolePermission: allowed_roles={allowed}, "
-            f"user.has_any_role={getattr(user, 'has_any_role', None)}, "
-            f"result={result}"
         )
         return result
 
