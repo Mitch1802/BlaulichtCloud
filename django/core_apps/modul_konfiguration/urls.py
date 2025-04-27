@@ -11,7 +11,7 @@ urlpatterns = [
     # ),
     path("", ModulKonfigurationListCreateView.as_view(), name="modul-konfiguration-list-create"),
     path(
-        "<str:module_key>/", 
+        "<str:modul_key>/", 
         ModulKonfigurationRetrieveUpdateDestroyView.as_view(), 
         name="modul-konfiguration-retrieve-update-destroy"
     ),
