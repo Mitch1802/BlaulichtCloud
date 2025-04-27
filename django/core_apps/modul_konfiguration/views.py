@@ -32,6 +32,7 @@ class ModulKonfigurationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroy
     queryset = ModulKonfiguration.objects.all()
     serializer_class = ModulKonfigurationSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
+    lookup_field = "id"
     renderer_classes = [ModulKonfigurationJSONRenderer]
 
     def retrieve(self, request, *args, **kwargs):
