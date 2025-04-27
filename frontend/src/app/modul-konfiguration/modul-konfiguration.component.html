@@ -7,7 +7,111 @@
         <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <form
+          [formGroup]="formAuswahl"
+          (ngSubmit)="auswahlBearbeiten()"
+          [hidden]="!formModul.disabled"
+        >
+          <section class="row mt-3 mb-3">
+            <div class="col-12 col-lg-9">
+              <mat-form-field>
+                <mat-label>Modul auswählen</mat-label>
+                <mat-select formControlName="modul">
+                  @for (m of modulListe; track m.id) {
+                  <mat-option [value]="m.id">{{ m.modul }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div
+              class="col-6 col-lg-3 m-0 row align-items-center auswahl-button"
+            >
+              <button
+                mat-raised-button
+                color="primary"
+                class="col-auto"
+                type="submit"
+                [disabled]="!formAuswahl.controls['modul'].value"
+              >
+                Auswahl bearbeiten
+              </button>
+            </div>
+          </section>
+        </form>
+        <button
+          mat-raised-button
+          color="accent"
+          class="me-2 mb-3"
+          [hidden]="!formModul.disabled"
+          (click)="neueDetails()"
+          type="button"
+        >
+          Hinzufügen
+        </button>
+        <form
+          [formGroup]="formModul"
+          (ngSubmit)="datenSpeichern()"
+          [hidden]="formModul.disabled"
+        >
+        <input hidden type="text" class="form-control" formControlName="id" />
+        <button
+          mat-raised-button
+          color="accent"
+          class="me-3 mb-3"
+          [hidden]="!formModul.valid"
+          type="submit"
+        >
+          Daten speichern
+        </button>
+        <button
+          mat-raised-button
+          class="mb-3"
+          color="primary"
+          [hidden]="formModul.disabled"
+          type="button"
+          (click)="abbrechen()"
+        >
+          Abbrechen
+        </button>
+          <section class="row mt-2">
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field>
+                <mat-label>Verfügbare Modul auswählen</mat-label>
+                <mat-select formControlName="modul">
+                  @for (m of verfuegbareModulListe; track m.key) {
+                  <mat-option [value]="m.key">{{ m.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field appearance="fill">
+                <mat-label>Konfiguration (JSON)</mat-label>
+                <textarea
+                  matInput
+                  formControlName="konfiguration"
+                  rows="12"
+                  placeholder="{ 'key': 'value' }"
+                ></textarea>
 
+                @if (formModul.controls['konfiguration'].hasError('required')) {
+                <mat-error>Konfiguration ist erforderlich!</mat-error>
+                } @if (formModul.controls['konfiguration'].hasError('jsonInvalid')) {
+                <mat-error>Ungültiges JSON!</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </section>
+          <button
+            mat-raised-button
+            color="warn"
+            [hidden]="!formModul.controls['id'].value"
+            type="button"
+            (click)="datenLoeschen()"
+          >
+            Daten löschen
+          </button>
+        </form>
       </mat-card-content>
     </mat-card>
   </div>

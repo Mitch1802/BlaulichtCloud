@@ -23,24 +23,11 @@ export class StartComponent implements OnInit {
   private globalDataService = inject(GlobalDataService);
 
   breadcrumb: any = [];
-  // start_konfig:any = {};
+  start_konfig:any = {};
   username: string = '';   
   meine_rollen: string = '';             
   meineRollenKeys: string[] = [];       
   visibleItems: any[] = []; 
-
-  start_konfig:any = {
-    "modul": "Start", 
-    "data": [
-      {"modul": "FMD", "rolle": "ADMIN, FMD", "routerlink":"/fmd", "icon":"healing"},
-      {"modul": "Atemschutz", "rolle": "ADMIN, ATEMSCHUTZ", "routerlink":"/atemschutz", "icon":"battery_alert"},
-      {"modul": "Verwaltung", "rolle": "ADMIN, VERWALTUNG", "routerlink":"/verwaltung", "icon":"euro_symbol"},
-      {"modul": "Mitglieder", "rolle": "ADMIN", "routerlink":"/mitglied", "icon":"groups"},
-      {"modul": "Modul Konfiguration", "rolle": "ADMIN", "routerlink":"/modul_konfiguration", "icon":"tune"},
-      {"modul": "Benutzerverwaltung", "rolle": "ADMIN", "routerlink":"/benutzer", "icon":"engineering"},
-      {"modul": "Konfiguration", "rolle": "ADMIN", "routerlink":"/konfiguration", "icon":"settings"}
-    ]
-  };
 
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '1');
@@ -54,6 +41,9 @@ export class StartComponent implements OnInit {
     this.globalDataService.get("modul_konfiguration").subscribe({
       next: (erg: any) => {
         try {
+          const startEntry = erg.data.main.find((m: any) => m.modul === 'start');
+          this.start_konfig = startEntry?.konfiguration ?? [];
+
           if (this.meine_rollen) {
             try {
               this.meineRollenKeys = JSON.parse(this.meine_rollen);
@@ -76,7 +66,7 @@ export class StartComponent implements OnInit {
             sessionStorage.setItem('Rollen', JSON.stringify(this.meineRollenKeys));
           }
 
-          this.visibleItems = this.start_konfig.data.filter((item: any) =>
+          this.visibleItems = this.start_konfig.filter((item: any) =>
             item.rolle
               .split(',')
               .map((r: string) => r.trim())

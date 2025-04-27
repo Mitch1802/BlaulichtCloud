@@ -7,6 +7,8 @@ from .models import FMD
 from .renderers import FMDJSONRenderer, FMDsJSONRenderer
 from .serializers import FMDSerializer
 from core_apps.common.permissions import HasAnyRolePermission
+from core_apps.mitglieder.models import Mitglied
+from core_apps.mitglieder.serializers import MitgliedSerializer
 
 
 class FMDListCreateView(generics.ListCreateAPIView):
@@ -18,9 +20,11 @@ class FMDListCreateView(generics.ListCreateAPIView):
     def list(self, request):
         mod_queryset = self.filter_queryset(self.get_queryset())
         mod_serializer = self.get_serializer(mod_queryset, many=True)
+        mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
 
         return Response({
-            'main': mod_serializer.data
+            'main': mod_serializer.data,
+            'mitglieder': mitglieder
         })
 
 
