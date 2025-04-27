@@ -37,8 +37,8 @@ class ModulKonfigurationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroy
         permissions.IsAuthenticated,
         HasAnyRolePermission.with_roles("ADMIN")
     ]
-    lookup_field = 'module'
-    lookup_url_kwarg = 'module_key'
+    lookup_field = 'modul'
+    lookup_url_kwarg = 'modul_key'
     renderer_classes = [ModulKonfigurationJSONRenderer]
 
     def retrieve(self, request, *args, **kwargs):
