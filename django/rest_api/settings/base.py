@@ -148,6 +148,10 @@ AUTH_USER_MODEL = "users.User"
 ACCOUNT_ADAPTER = "core_apps.users.adapter.UserAdapter"
 
 REST_FRAMEWORK = {
+    'DATE_FORMAT': '%d.%m.%Y',
+    'DATE_INPUT_FORMATS': ['%d.%m.%Y', 'iso-8601'],
+    'DATETIME_FORMAT': '%d.%m.%YT%H:%M:%S',
+    'DATETIME_INPUT_FORMATS': ['%d.%m.%YT%H:%M:%S', 'iso-8601'],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
