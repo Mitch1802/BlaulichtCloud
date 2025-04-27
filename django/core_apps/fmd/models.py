@@ -7,13 +7,13 @@ from core_apps.mitglieder.models import Mitglied
 
 class FMD(TimeStampedModel):
     mitglied_id =  models.ForeignKey(Mitglied, on_delete=models.CASCADE)
-    hausarzt =  models.CharField(verbose_name=_("Hausarzt"), max_length=255)
-    letzte_untersuchung =  models.CharField(verbose_name=_("Letzte Untersuchung"), max_length=255)
-    leistungstest =  models.CharField(verbose_name=_("Leistungstest"), max_length=255)
-    naechste_untersuchung =  models.IntegerField(verbose_name=_("Nächste Untersuchung"))
-    tauglichkeit =  models.CharField(verbose_name=_("Tauglichkeit"), max_length=55)
-    notizen =  models.TextField(verbose_name=_("Notizen"))
-    fdisk_aenderung =  models.DateField(verbose_name=_("FDISK Änderung"), max_length=255)
+    hausarzt =  models.CharField(verbose_name=_("Hausarzt"), max_length=255, blank=True)
+    letzte_untersuchung =  models.DateField(verbose_name=_("Letzte Untersuchung"), max_length=10, blank=True)
+    leistungstest =  models.CharField(verbose_name=_("Leistungstest"), max_length=255, blank=True)
+    naechste_untersuchung =  models.IntegerField(verbose_name=_("Nächste Untersuchung"), blank=True)
+    tauglichkeit =  models.CharField(verbose_name=_("Tauglichkeit"), max_length=55, blank=True)
+    notizen =  models.TextField(verbose_name=_("Notizen"), blank=True)
+    fdisk_aenderung =  models.DateField(verbose_name=_("FDISK Änderung"), max_length=10, blank=True)
 
     def __str__(self):
         return f"{self.ort}"
