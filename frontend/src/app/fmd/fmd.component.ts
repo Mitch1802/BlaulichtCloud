@@ -55,7 +55,7 @@ export class FmdComponent implements OnInit {
 
   formModul = new FormGroup({
     id: new FormControl(0),
-    mitglied_id: new FormControl(0),
+    mitglied_id: new FormControl(''),
     hausarzt: new FormControl(''),
     letzte_untersuchung: new FormControl('', [
       Validators.pattern(/^([0-3]\d)\.([0-1]\d)\.(\d{4})$/),
@@ -80,9 +80,25 @@ export class FmdComponent implements OnInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.mitglieder = erg.data.mitglieder;
-          this.atstraeger = erg.data.main;
+          const mains = erg.data.main as any[];
+          this.mitglieder = erg.data.mitglieder as any[];
+    
+          const memberMap = new Map<number, any>(
+            this.mitglieder.map((m: any) => [m.pkid, m])
+          );
+    
+          this.atstraeger = mains.map(item => {
+            const mitg = memberMap.get(item.mitglied_id) || {};
+            return {
+              ...item,
+              stbnr:    mitg.stbnr,
+              vorname:  mitg.vorname,
+              nachname: mitg.nachname
+            };
+          });
+
           this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
+          this.atstraeger = this.globalDataService.arraySortByKey(this.atstraeger, 'stbnr');
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -102,7 +118,41 @@ export class FmdComponent implements OnInit {
     this.setzeSelectZurueck();
   }
 
-  auswahlBearbeiten(): void {}
+  auswahlBearbeiten(): void {
+    const id = this.formAuswahl.controls['atstraeger'].value;
+    if (id === 0) {
+      return;
+    }
+    const abfrageUrl = `${this.modul}/${id}`;
+  
+    this.globalDataService.get(abfrageUrl).subscribe({
+      next: (erg: any) => {
+        try {
+          const details: IATSTraeger = erg.data.fmd; 
+  
+          this.formModul.enable();
+          this.formModul.setValue({
+            id: details.id,
+            mitglied_id: details.mitglied_id,
+            hausarzt: details.hausarzt,
+            letzte_untersuchung: details.letzte_untersuchung,
+            leistungstest: details.leistungstest,
+            naechste_untersuchung: details.naechste_untersuchung,
+            tauglichkeit: details.tauglichkeit,
+            notizen: details.notizen,
+            fdisk_aenderung: details.fdisk_aenderung
+          });
+  
+          this.setzeSelectZurueck();
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
 
   datenSpeichern(): void {
     if (this.formModul.invalid) {
@@ -117,9 +167,6 @@ export class FmdComponent implements OnInit {
       this.globalDataService.post(this.modul, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            // this.mitglieder.push(erg.data);
-            // this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
-
             this.formModul.reset();
             this.formModul.disable();
             this.setzeSelectZurueck();
@@ -156,7 +203,32 @@ export class FmdComponent implements OnInit {
     this.router.navigate(['/fmd']);
   }
 
-  datenLoeschen(): void {}
+  datenLoeschen(): void {
+    const id = this.formModul.controls['id'].value!;
+    if (!id) {
+      this.globalDataService.erstelleMessage('error', 'Kein ATS Träger ausgewählt zum Löschen!');
+      return;
+    }
+  
+    this.globalDataService.delete(this.modul, id).subscribe({
+      next: (erg: any) => {
+        try {
+          this.atstraeger = this.atstraeger.filter((m: any) => m.id !== id);
+  
+          this.formModul.reset();
+          this.formModul.disable();
+          this.setzeSelectZurueck();
+  
+          this.globalDataService.erstelleMessage('success', 'ATS Träger erfolgreich gelöscht!');
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
 
   private validDateDDMMYYYY(): ValidatorFn {
     return (control: AbstractControl) => {

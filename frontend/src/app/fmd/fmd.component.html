@@ -22,9 +22,9 @@
                   <mat-form-field>
                     <mat-label>Mitglied auswählen</mat-label>
                     <mat-select formControlName="atstraeger">
-                      @for (opt of mitglieder; track opt) {
+                      @for (opt of atstraeger; track opt) {
                       <mat-option [value]="opt.id">
-                        {{ opt.vorname }} {{ opt.nachname }}</mat-option
+                        {{ opt.stbnr }} - {{ opt.vorname }} {{ opt.nachname }}</mat-option
                       >
                       }
                     </mat-select>

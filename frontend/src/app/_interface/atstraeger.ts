@@ -7,5 +7,8 @@ export interface IATSTraeger {
     naechste_untersuchung: string,
     tauglichkeit: string,
     notizen: string,
-    fdisk_aenderung: string
+    fdisk_aenderung: string,
+    stbnr: string,
+    vorname: string,
+    nachname: string
 }
