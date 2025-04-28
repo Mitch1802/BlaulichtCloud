@@ -173,7 +173,17 @@ export class FmdComponent implements OnInit {
       this.globalDataService.post(this.modul, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            this.formModul.reset();
+            this.formModul.reset({
+              id: 0,
+              mitglied_id: '',
+              hausarzt: '',
+              letzte_untersuchung: '',
+              leistungstest: '',
+              naechste_untersuchung: '',
+              tauglichkeit: '',
+              notizen: '',
+              fdisk_aenderung: ''
+            });
             this.formModul.disable();
             this.setzeSelectZurueck();
 
@@ -189,6 +199,17 @@ export class FmdComponent implements OnInit {
         next: (erg: any) => {
           try {
             this.formModul.reset();
+            this.formModul.reset({
+              id: 0,
+              mitglied_id: '',
+              hausarzt: '',
+              letzte_untersuchung: '',
+              leistungstest: '',
+              naechste_untersuchung: '',
+              tauglichkeit: '',
+              notizen: '',
+              fdisk_aenderung: ''
+            });
             this.formModul.disable();
             this.setzeSelectZurueck();
 
@@ -221,7 +242,17 @@ export class FmdComponent implements OnInit {
         try {
           this.atstraeger = this.atstraeger.filter((m: any) => m.id !== id);
 
-          this.formModul.reset();
+          this.formModul.reset({
+            id: 0,
+            mitglied_id: '',
+            hausarzt: '',
+            letzte_untersuchung: '',
+            leistungstest: '',
+            naechste_untersuchung: '',
+            tauglichkeit: '',
+            notizen: '',
+            fdisk_aenderung: ''
+          });
           this.formModul.disable();
           this.setzeSelectZurueck();
 
