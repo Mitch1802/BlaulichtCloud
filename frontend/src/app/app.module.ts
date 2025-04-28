@@ -35,6 +35,7 @@ import { MitgliedComponent } from './mitglied/mitglied.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { AtemschutzComponent } from './atemschutz/atemschutz.component';
 import { VerwaltungComponent } from './verwaltung/verwaltung.component';
+import { MatTableModule } from '@angular/material/table';
 
 
 @NgModule({
@@ -63,6 +64,7 @@ import { VerwaltungComponent } from './verwaltung/verwaltung.component';
         MatProgressBarModule,
         MatChipsModule,
         MatDatepickerModule,
+        MatTableModule,
         SpinnerComponent,
         HeaderComponent,
         LoginComponent,

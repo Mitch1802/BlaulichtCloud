@@ -13,27 +13,29 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { IATSTraeger } from '../_interface/atstraeger';
 
 @Component({
   selector: 'app-fmd',
   standalone: true,
-  imports: [ 
-        CommonModule, 
-        HeaderComponent, 
-        MatCardModule, 
-        MatTabsModule, 
-        FormsModule, 
-        ReactiveFormsModule, 
-        MatFormField, 
-        MatLabel, 
-        MatSelect, 
-        MatOption, 
-        MatButton, 
-        MatInput, 
-        MatError, 
+  imports: [
+        CommonModule,
+        HeaderComponent,
+        MatCardModule,
+        MatTabsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatButton,
+        MatInput,
+        MatError,
         MatCheckbox,
-        MatHint 
+        MatHint,
+        MatTableModule
   ],
   templateUrl: './fmd.component.html',
   styleUrl: './fmd.component.sass'
@@ -48,6 +50,10 @@ export class FmdComponent implements OnInit {
   mitglieder: IMitglied[] = [];
   atstraeger: IATSTraeger[] = [];
   breadcrumb: any = [];
+
+  sichtbareSpaltenUntersuchung: string[] = ['stbnr', 'vorname', 'nachname', 'letzte_untersuchung', 'naechste_untersuchung'];
+  sichtbareSpaltenFinnentest: string[] = ['stbnr', 'vorname', 'nachname', 'leistungstest'];
+  sichtbareSpaltenTauglichkeit: string[] = ['stbnr', 'vorname', 'nachname', 'tauglichkeit'];
 
   formAuswahl = new FormGroup({
     atstraeger: new FormControl(0)
@@ -82,11 +88,11 @@ export class FmdComponent implements OnInit {
         try {
           const mains = erg.data.main as any[];
           this.mitglieder = erg.data.mitglieder as any[];
-    
+
           const memberMap = new Map<number, any>(
             this.mitglieder.map((m: any) => [m.pkid, m])
           );
-    
+
           this.atstraeger = mains.map(item => {
             const mitg = memberMap.get(item.mitglied_id) || {};
             return {
@@ -124,12 +130,12 @@ export class FmdComponent implements OnInit {
       return;
     }
     const abfrageUrl = `${this.modul}/${id}`;
-  
+
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          const details: IATSTraeger = erg.data.fmd; 
-  
+          const details: IATSTraeger = erg.data.fmd;
+
           this.formModul.enable();
           this.formModul.setValue({
             id: details.id,
@@ -142,7 +148,7 @@ export class FmdComponent implements OnInit {
             notizen: details.notizen,
             fdisk_aenderung: details.fdisk_aenderung
           });
-  
+
           this.setzeSelectZurueck();
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
@@ -159,7 +165,7 @@ export class FmdComponent implements OnInit {
       this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
       return;
     }
-  
+
     const objekt: any = this.formModul.value;
     const idValue = this.formModul.controls['id'].value;
 
@@ -170,7 +176,7 @@ export class FmdComponent implements OnInit {
             this.formModul.reset();
             this.formModul.disable();
             this.setzeSelectZurueck();
-  
+
             this.globalDataService.erstelleMessage('success', 'ATS Träger gespeichert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
@@ -181,7 +187,7 @@ export class FmdComponent implements OnInit {
     } else {
       this.globalDataService.patch(this.modul, idValue, objekt, false).subscribe({
         next: (erg: any) => {
-          try {  
+          try {
             this.formModul.reset();
             this.formModul.disable();
             this.setzeSelectZurueck();
@@ -209,16 +215,16 @@ export class FmdComponent implements OnInit {
       this.globalDataService.erstelleMessage('error', 'Kein ATS Träger ausgewählt zum Löschen!');
       return;
     }
-  
+
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
           this.atstraeger = this.atstraeger.filter((m: any) => m.id !== id);
-  
+
           this.formModul.reset();
           this.formModul.disable();
           this.setzeSelectZurueck();
-  
+
           this.globalDataService.erstelleMessage('success', 'ATS Träger erfolgreich gelöscht!');
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
