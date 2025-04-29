@@ -42,6 +42,7 @@ class FMDSerializer(serializers.ModelSerializer):
         instance.hausarzt = validated_data.get("hausarzt", instance.hausarzt)
         instance.letzte_untersuchung = validated_data.get("letzte_untersuchung", instance.letzte_untersuchung)
         instance.leistungstest = validated_data.get("leistungstest", instance.leistungstest)
+        instance.leistungstest_art = validated_data.get("leistungstest_art", instance.leistungstest_art)
         instance.naechste_untersuchung = validated_data.get("naechste_untersuchung", instance.naechste_untersuchung)
         instance.tauglichkeit = validated_data.get("tauglichkeit", instance.tauglichkeit)
         instance.notizen = validated_data.get("notizen", instance.notizen)

@@ -10,6 +10,7 @@ class FMD(TimeStampedModel):
     hausarzt =  models.CharField(verbose_name=_("Hausarzt"), max_length=255, blank=True)
     letzte_untersuchung =  models.DateField(verbose_name=_("Letzte Untersuchung"), max_length=10, blank=True, null=True)
     leistungstest =  models.CharField(verbose_name=_("Leistungstest"), max_length=255, blank=True)
+    leistungstest_art =  models.CharField(verbose_name=_("Leistungstest Art"), max_length=255, blank=True)
     naechste_untersuchung =  models.IntegerField(verbose_name=_("Nächste Untersuchung"), blank=True, null=True)
     tauglichkeit =  models.CharField(verbose_name=_("Tauglichkeit"), max_length=55, blank=True)
     notizen =  models.TextField(verbose_name=_("Notizen"), blank=True)
