@@ -9,8 +9,9 @@
       <mat-card-content>
         <mat-tab-group>
           <mat-tab label="Übersicht">
+            <br>
             Hier kommen noch Grafiken und Statistiken!
-          </mat-tab>
+            </mat-tab>
           <mat-tab label="ATS Träger">
             <form
               [formGroup]="formAuswahl"
@@ -66,12 +67,6 @@
                 class="form-control"
                 formControlName="id"
               />
-              <input
-                hidden
-                type="text"
-                class="form-control"
-                formControlName="id"
-              />
               <button
                 mat-raised-button
                 color="accent"
@@ -96,7 +91,7 @@
                   <mat-form-field>
                     <mat-label>Mitglied auswählen</mat-label>
                     <mat-select formControlName="mitglied_id">
-                      @for (opt of mitglieder; track opt) {
+                      @for (opt of dropdownMitglieder; track opt) {
                       <mat-option [value]="opt.pkid">
                         {{ opt.stbnr }} - {{ opt.vorname }} {{ opt.nachname }}</mat-option
                       >
@@ -112,22 +107,20 @@
                 </div>
                 <div class="col-12 col-lg-4 mb-3">
                   <mat-form-field>
-                    <mat-label>Tauchlichkeit</mat-label>
-                    <input
-                      matInput
-                      type="text"
-                      formControlName="tauglichkeit"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="col-12 col-lg-4 mb-3">
-                  <mat-form-field>
                     <mat-label>Letzte Untersuchung</mat-label>
                     <input
                       matInput
                       type="text"
                       formControlName="letzte_untersuchung"
+                      placeholder="TT.MM.YYYY"
                     />
+                    @if (formModul.controls['fdisk_aenderung'].hasError('pattern'))
+                    {
+                    <mat-error>Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error>
+                    } @if (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
+                    {
+                    <mat-error>Kein existierendes Datum!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-4 mb-3">
@@ -142,18 +135,14 @@
                 </div>
                 <div class="col-12 col-lg-4 mb-3">
                   <mat-form-field>
-                    <mat-label>Nächste Untersuchung</mat-label>
-                    <input
-                      matInput
-                      type="text"
-                      formControlName="naechste_untersuchung"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="col-12 col-lg-12 mb-3">
-                  <mat-form-field>
-                    <mat-label>Notizen</mat-label>
-                    <input matInput type="text" formControlName="notizen" />
+                    <mat-label>Leistungstest Art</mat-label>
+                    <mat-select formControlName="leistungstest_art">
+                      @for (opt of leistungstestarten; track opt) {
+                      <mat-option [value]="opt">
+                        {{ opt }}</mat-option
+                      >
+                      }
+                    </mat-select>
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-4 mb-3">
@@ -165,17 +154,19 @@
                       formControlName="fdisk_aenderung"
                       placeholder="TT.MM.YYYY"
                     />
-                    @if
-                    (formModul.controls['fdisk_aenderung'].hasError('pattern'))
+                    @if (formModul.controls['fdisk_aenderung'].hasError('pattern'))
                     {
-                    <mat-error
-                      >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
-                    >
-                    } @if
-                    (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
+                    <mat-error>Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error>
+                    } @if (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
                     {
                     <mat-error>Kein existierendes Datum!</mat-error>
                     }
+                  </mat-form-field>
+                </div>
+                <div class="col-12 col-lg-12 mb-3">
+                  <mat-form-field>
+                    <mat-label>Notizen</mat-label>
+                    <input matInput type="text" formControlName="notizen" />
                   </mat-form-field>
                 </div>
               </section>
@@ -211,14 +202,14 @@
               </ng-container>
               <ng-container matColumnDef="naechste_untersuchung">
                 <th mat-header-cell *matHeaderCellDef> Nächste Untersuchung </th>
-                <td mat-cell *matCellDef="let element"> {{element.naechste_untersuchung}} </td>
+                <td mat-cell *matCellDef="let element" [class.red-cell]="+element.naechste_untersuchung === currentYear"> {{element.naechste_untersuchung}} </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenUntersuchung"></tr>
               <tr mat-row *matRowDef="let row; columns: sichtbareSpaltenUntersuchung;"></tr>
             </table>
           </mat-tab>
-          <mat-tab label="Finnentest">
+          <mat-tab label="Leistungstest">
             <table mat-table [dataSource]="atstraeger" class="mat-elevation-z8">
               <ng-container matColumnDef="stbnr">
                 <th mat-header-cell *matHeaderCellDef> Stbnr. </th>
@@ -234,11 +225,15 @@
               </ng-container>
               <ng-container matColumnDef="leistungstest">
                 <th mat-header-cell *matHeaderCellDef> Leistungstest </th>
-                <td mat-cell *matCellDef="let element"> {{element.leistungstest}} </td>
+                <td mat-cell *matCellDef="let element" [class.red-cell]="getYearFromDate(element.leistungstest) !== currentYear"> {{element.leistungstest}} </td>
+              </ng-container>
+              <ng-container matColumnDef="leistungstest_art">
+                <th mat-header-cell *matHeaderCellDef> Leistungstest Art </th>
+                <td mat-cell *matCellDef="let element"> {{element.leistungstest_art}} </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenFinnentest"></tr>
-              <tr mat-row *matRowDef="let row; columns: sichtbareSpaltenFinnentest;"></tr>
+              <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenLeistungstest"></tr>
+              <tr mat-row *matRowDef="let row; columns: sichtbareSpaltenLeistungstest;"></tr>
             </table>
           </mat-tab>
           <mat-tab label="Tauglichkeit">
@@ -257,7 +252,7 @@
               </ng-container>
               <ng-container matColumnDef="tauglichkeit">
                 <th mat-header-cell *matHeaderCellDef> Tauglichkeit </th>
-                <td mat-cell *matCellDef="let element"> {{element.tauglichkeit}} </td>
+                <td mat-cell *matCellDef="let element" [class.red-cell]="element.tauglichkeit === 'nein'"> {{element.tauglichkeit}} </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenTauglichkeit"></tr>

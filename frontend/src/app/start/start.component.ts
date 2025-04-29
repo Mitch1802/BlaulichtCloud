@@ -23,7 +23,7 @@ export class StartComponent implements OnInit {
   private globalDataService = inject(GlobalDataService);
 
   breadcrumb: any = [];
-  start_konfig:any = {};
+  start_konfig:any = [];
   username: string = '';   
   meine_rollen: string = '';             
   meineRollenKeys: string[] = [];       
@@ -41,8 +41,8 @@ export class StartComponent implements OnInit {
     this.globalDataService.get("modul_konfiguration").subscribe({
       next: (erg: any) => {
         try {
-          const startEntry = erg.data.main.find((m: any) => m.modul === 'start');
-          this.start_konfig = startEntry?.konfiguration ?? [];
+          const konfigs = erg.data.main.find((m: any) => m.modul === 'start');
+          this.start_konfig = konfigs?.konfiguration ?? [];
 
           if (this.meine_rollen) {
             try {
