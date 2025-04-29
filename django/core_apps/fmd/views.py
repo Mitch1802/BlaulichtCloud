@@ -9,6 +9,8 @@ from .serializers import FMDSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 from core_apps.mitglieder.models import Mitglied
 from core_apps.mitglieder.serializers import MitgliedSerializer
+from core_apps.modul_konfiguration.models import ModulKonfiguration
+from core_apps.modul_konfiguration.serializers import ModulKonfigurationSerializer
 
 
 class FMDListCreateView(generics.ListCreateAPIView):
@@ -21,10 +23,12 @@ class FMDListCreateView(generics.ListCreateAPIView):
         mod_queryset = self.filter_queryset(self.get_queryset())
         mod_serializer = self.get_serializer(mod_queryset, many=True)
         mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
+        modul_konfig = ModulKonfigurationSerializer(ModulKonfiguration.objects.all(), many=True).data
 
         return Response({
             'main': mod_serializer.data,
-            'mitglieder': mitglieder
+            'mitglieder': mitglieder,
+            'modul_konfig': modul_konfig
         })
 
 
