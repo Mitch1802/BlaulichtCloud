@@ -9,9 +9,14 @@
       <mat-card-content>
         <mat-tab-group>
           <mat-tab label="Übersicht">
-            <br>
-            Hier kommen noch Grafiken und Statistiken!
-            </mat-tab>
+            <h2>Einsatzverteilung</h2>
+            <div style="display: block; width: 400px; height: 400px;">
+              <canvas baseChart
+                      [data]="pieChartData"
+                      [type]="pieChartType">
+              </canvas>
+            </div>
+          </mat-tab>
           <mat-tab label="ATS Träger">
             <form
               [formGroup]="formAuswahl"

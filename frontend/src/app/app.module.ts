@@ -36,10 +36,15 @@ import { MatChipsModule } from '@angular/material/chips';
 import { AtemschutzComponent } from './atemschutz/atemschutz.component';
 import { VerwaltungComponent } from './verwaltung/verwaltung.component';
 import { MatTableModule } from '@angular/material/table';
+import { RouterOutlet } from '@angular/router';
 
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [
+        AppComponent,
+        RouterOutlet,       
+        SpinnerComponent 
+    ],
     bootstrap: [AppComponent],
     imports: [
         BrowserModule,
@@ -65,7 +70,6 @@ import { MatTableModule } from '@angular/material/table';
         MatChipsModule,
         MatDatepickerModule,
         MatTableModule,
-        SpinnerComponent,
         HeaderComponent,
         LoginComponent,
         StartComponent,

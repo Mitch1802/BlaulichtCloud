@@ -15,6 +15,8 @@ import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { IATSTraeger } from '../_interface/atstraeger';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartData, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-fmd',
@@ -35,7 +37,8 @@ import { IATSTraeger } from '../_interface/atstraeger';
     MatError,
     MatCheckbox,
     MatHint,
-    MatTableModule
+    MatTableModule,
+    BaseChartDirective
   ],
   templateUrl: './fmd.component.html',
   styleUrl: './fmd.component.sass'
@@ -81,6 +84,15 @@ export class FmdComponent implements OnInit {
   sichtbareSpaltenUntersuchung: string[] = ['stbnr', 'vorname', 'nachname', 'letzte_untersuchung', 'naechste_untersuchung'];
   sichtbareSpaltenLeistungstest: string[] = ['stbnr', 'vorname', 'nachname', 'leistungstest', 'leistungstest_art'];
   sichtbareSpaltenTauglichkeit: string[] = ['stbnr', 'vorname', 'nachname', 'tauglichkeit'];
+
+  public pieChartType: ChartType = 'doughnut';
+
+  public pieChartData: ChartData<'doughnut', number[], string | string[]> = {
+    labels: [ 'Fahrzeuge', 'Feuerwehr', 'Polizei' ],
+    datasets: [
+      { data: [12, 19, 7] }
+    ]
+  };
 
   formAuswahl = new FormGroup({
     atstraeger: new FormControl(0)
