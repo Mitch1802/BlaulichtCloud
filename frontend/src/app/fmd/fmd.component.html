@@ -9,13 +9,41 @@
       <mat-card-content>
         <mat-tab-group>
           <mat-tab label="Übersicht">
-            <h2>Einsatzverteilung</h2>
-            <div style="display: block; width: 400px; height: 400px;">
-              <canvas baseChart
-                      [data]="pieChartData"
-                      [type]="pieChartType">
-              </canvas>
-            </div>
+            <section class="row mt-3 mb-3 mx-0">
+              <div class="col-12 col-lg-4">
+                <h2>Tauglichkeit</h2>
+                <canvas
+                  #chartTauglichkeitView="baseChart"
+                  baseChart
+                  [data]="chartTauglichkeit"
+                  [type]="pieChartType"
+                  [options]="pieChartOptions"
+                >
+                </canvas>
+              </div>
+              <div class="col-12 col-lg-4">
+                <h2>Untersuchung</h2>
+                <canvas
+                  #chartUntersuchungView="baseChart"
+                  baseChart
+                  [data]="chartUntersuchung"
+                  [type]="pieChartType"
+                  [options]="pieChartOptions"
+                >
+                </canvas>
+              </div>
+              <div class="col-12 col-lg-4">
+                <h2>Alter</h2>
+                <canvas
+                  #chartAlterView="baseChart"
+                  baseChart
+                  [data]="chartAlter"
+                  [type]="pieChartType"
+                  [options]="pieChartOptions"
+                >
+                </canvas>
+              </div>
+            </section>
           </mat-tab>
           <mat-tab label="ATS Träger">
             <form
@@ -30,7 +58,8 @@
                     <mat-select formControlName="atstraeger">
                       @for (opt of atstraeger; track opt) {
                       <mat-option [value]="opt.id">
-                        {{ opt.stbnr }} - {{ opt.vorname }} {{ opt.nachname }}</mat-option
+                        {{ opt.stbnr }} - {{ opt.vorname }}
+                        {{ opt.nachname }}</mat-option
                       >
                       }
                     </mat-select>
@@ -98,7 +127,8 @@
                     <mat-select formControlName="mitglied_id">
                       @for (opt of dropdownMitglieder; track opt) {
                       <mat-option [value]="opt.pkid">
-                        {{ opt.stbnr }} - {{ opt.vorname }} {{ opt.nachname }}</mat-option
+                        {{ opt.stbnr }} - {{ opt.vorname }}
+                        {{ opt.nachname }}</mat-option
                       >
                       }
                     </mat-select>
@@ -119,10 +149,14 @@
                       formControlName="letzte_untersuchung"
                       placeholder="TT.MM.YYYY"
                     />
-                    @if (formModul.controls['fdisk_aenderung'].hasError('pattern'))
+                    @if
+                    (formModul.controls['fdisk_aenderung'].hasError('pattern'))
                     {
-                    <mat-error>Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error>
-                    } @if (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
+                    <mat-error
+                      >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
+                    >
+                    } @if
+                    (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
                     {
                     <mat-error>Kein existierendes Datum!</mat-error>
                     }
@@ -143,9 +177,7 @@
                     <mat-label>Leistungstest Art</mat-label>
                     <mat-select formControlName="leistungstest_art">
                       @for (opt of leistungstestarten; track opt) {
-                      <mat-option [value]="opt">
-                        {{ opt }}</mat-option
-                      >
+                      <mat-option [value]="opt"> {{ opt }}</mat-option>
                       }
                     </mat-select>
                   </mat-form-field>
@@ -159,10 +191,14 @@
                       formControlName="fdisk_aenderung"
                       placeholder="TT.MM.YYYY"
                     />
-                    @if (formModul.controls['fdisk_aenderung'].hasError('pattern'))
+                    @if
+                    (formModul.controls['fdisk_aenderung'].hasError('pattern'))
                     {
-                    <mat-error>Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error>
-                    } @if (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
+                    <mat-error
+                      >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
+                    >
+                    } @if
+                    (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
                     {
                     <mat-error>Kein existierendes Datum!</mat-error>
                     }
@@ -190,78 +226,134 @@
           <mat-tab label="Untersuchungen">
             <table mat-table [dataSource]="atstraeger" class="mat-elevation-z8">
               <ng-container matColumnDef="stbnr">
-                <th mat-header-cell *matHeaderCellDef> Stbnr. </th>
-                <td mat-cell *matCellDef="let element"> {{element.stbnr}} </td>
+                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
               </ng-container>
               <ng-container matColumnDef="vorname">
-                <th mat-header-cell *matHeaderCellDef> Vorname </th>
-                <td mat-cell *matCellDef="let element"> {{element.vorname}} </td>
+                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.vorname }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="nachname">
-                <th mat-header-cell *matHeaderCellDef> Nachname </th>
-                <td mat-cell *matCellDef="let element"> {{element.nachname}} </td>
+                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.nachname }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="letzte_untersuchung">
-                <th mat-header-cell *matHeaderCellDef> Letzte Untersuchung </th>
-                <td mat-cell *matCellDef="let element"> {{element.letzte_untersuchung}} </td>
+                <th mat-header-cell *matHeaderCellDef>Letzte Untersuchung</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.letzte_untersuchung }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="naechste_untersuchung">
-                <th mat-header-cell *matHeaderCellDef> Nächste Untersuchung </th>
-                <td mat-cell *matCellDef="let element" [class.red-cell]="+element.naechste_untersuchung === currentYear"> {{element.naechste_untersuchung}} </td>
+                <th mat-header-cell *matHeaderCellDef>Nächste Untersuchung</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [class.red-cell]="
+                    +element.naechste_untersuchung === currentYear
+                  "
+                >
+                  {{ element.naechste_untersuchung }}
+                </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenUntersuchung"></tr>
-              <tr mat-row *matRowDef="let row; columns: sichtbareSpaltenUntersuchung;"></tr>
+              <tr
+                mat-header-row
+                *matHeaderRowDef="sichtbareSpaltenUntersuchung"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: sichtbareSpaltenUntersuchung"
+              ></tr>
             </table>
           </mat-tab>
           <mat-tab label="Leistungstest">
             <table mat-table [dataSource]="atstraeger" class="mat-elevation-z8">
               <ng-container matColumnDef="stbnr">
-                <th mat-header-cell *matHeaderCellDef> Stbnr. </th>
-                <td mat-cell *matCellDef="let element"> {{element.stbnr}} </td>
+                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
               </ng-container>
               <ng-container matColumnDef="vorname">
-                <th mat-header-cell *matHeaderCellDef> Vorname </th>
-                <td mat-cell *matCellDef="let element"> {{element.vorname}} </td>
+                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.vorname }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="nachname">
-                <th mat-header-cell *matHeaderCellDef> Nachname </th>
-                <td mat-cell *matCellDef="let element"> {{element.nachname}} </td>
+                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.nachname }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="leistungstest">
-                <th mat-header-cell *matHeaderCellDef> Leistungstest </th>
-                <td mat-cell *matCellDef="let element" [class.red-cell]="getYearFromDate(element.leistungstest) !== currentYear"> {{element.leistungstest}} </td>
+                <th mat-header-cell *matHeaderCellDef>Leistungstest</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [class.red-cell]="
+                    getYearFromDate(element.leistungstest) !== currentYear
+                  "
+                >
+                  {{ element.leistungstest }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="leistungstest_art">
-                <th mat-header-cell *matHeaderCellDef> Leistungstest Art </th>
-                <td mat-cell *matCellDef="let element"> {{element.leistungstest_art}} </td>
+                <th mat-header-cell *matHeaderCellDef>Leistungstest Art</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.leistungstest_art }}
+                </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenLeistungstest"></tr>
-              <tr mat-row *matRowDef="let row; columns: sichtbareSpaltenLeistungstest;"></tr>
+              <tr
+                mat-header-row
+                *matHeaderRowDef="sichtbareSpaltenLeistungstest"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: sichtbareSpaltenLeistungstest"
+              ></tr>
             </table>
           </mat-tab>
           <mat-tab label="Tauglichkeit">
             <table mat-table [dataSource]="atstraeger" class="mat-elevation-z8">
               <ng-container matColumnDef="stbnr">
-                <th mat-header-cell *matHeaderCellDef> Stbnr. </th>
-                <td mat-cell *matCellDef="let element"> {{element.stbnr}} </td>
+                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
               </ng-container>
               <ng-container matColumnDef="vorname">
-                <th mat-header-cell *matHeaderCellDef> Vorname </th>
-                <td mat-cell *matCellDef="let element"> {{element.vorname}} </td>
+                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.vorname }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="nachname">
-                <th mat-header-cell *matHeaderCellDef> Nachname </th>
-                <td mat-cell *matCellDef="let element"> {{element.nachname}} </td>
+                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.nachname }}
+                </td>
               </ng-container>
               <ng-container matColumnDef="tauglichkeit">
-                <th mat-header-cell *matHeaderCellDef> Tauglichkeit </th>
-                <td mat-cell *matCellDef="let element" [class.red-cell]="element.tauglichkeit === 'nein'"> {{element.tauglichkeit}} </td>
+                <th mat-header-cell *matHeaderCellDef>Tauglichkeit</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [class.red-cell]="element.tauglichkeit === 'nein'"
+                >
+                  {{ element.tauglichkeit }}
+                </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenTauglichkeit"></tr>
-              <tr mat-row *matRowDef="let row; columns: sichtbareSpaltenTauglichkeit;"></tr>
+              <tr
+                mat-header-row
+                *matHeaderRowDef="sichtbareSpaltenTauglichkeit"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: sichtbareSpaltenTauglichkeit"
+              ></tr>
             </table>
           </mat-tab>
         </mat-tab-group>

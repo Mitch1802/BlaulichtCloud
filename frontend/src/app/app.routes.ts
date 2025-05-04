@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { StartComponent } from './start/start.component';
 import { UserComponent } from './user/user.component';
@@ -10,7 +9,7 @@ import { ModulKonfigurationComponent } from './modul-konfiguration/modul-konfigu
 import { AtemschutzComponent } from './atemschutz/atemschutz.component';
 import { VerwaltungComponent } from './verwaltung/verwaltung.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '', redirectTo: 'login', pathMatch: 'full'
   },
@@ -45,13 +44,3 @@ const routes: Routes = [
     path: '*', component: LoginComponent
   }
 ];
-
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {onSameUrlNavigation: "reload"})
-  ],
-  exports: [
-    RouterModule
-  ]
-})
-export class AppRoutingModule { }

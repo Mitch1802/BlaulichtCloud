@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { IMitglied } from 'src/app/_interface/mitglied';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { HeaderComponent } from '../_template/header/header.component';
@@ -16,7 +16,10 @@ import { MatSelect } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { IATSTraeger } from '../_interface/atstraeger';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartData, ChartType } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Chart, ChartData, ChartOptions } from 'chart.js';
+
+Chart.register(ChartDataLabels);
 
 @Component({
   selector: 'app-fmd',
@@ -85,13 +88,36 @@ export class FmdComponent implements OnInit {
   sichtbareSpaltenLeistungstest: string[] = ['stbnr', 'vorname', 'nachname', 'leistungstest', 'leistungstest_art'];
   sichtbareSpaltenTauglichkeit: string[] = ['stbnr', 'vorname', 'nachname', 'tauglichkeit'];
 
-  public pieChartType: ChartType = 'doughnut';
+  public pieChartType: 'doughnut' = 'doughnut';
+  public pieChartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    plugins: {
+      datalabels: {
+        color: '#000',
+        font: {
+          weight: 'bold',
+          size: 14
+        },
+        formatter: (value, ctx) => {
+          return value;
+        }
+      }
+    }
+  };
 
-  public pieChartData: ChartData<'doughnut', number[], string | string[]> = {
-    labels: [ 'Fahrzeuge', 'Feuerwehr', 'Polizei' ],
-    datasets: [
-      { data: [12, 19, 7] }
-    ]
+  chartAlter: ChartData<'doughnut', number[], string | string[]> = {
+    labels: ['16-18', '19-39', '40-54', '55-65'],
+    datasets: [{ data: [], backgroundColor: ['#69c7a8', '#c973c4', '#d6b36d', '#cfc95d'] }]
+  };
+
+  chartTauglichkeit: ChartData<'doughnut', number[], string | string[]> = {
+    labels: ['tauglich', 'kein Arzt', 'kein Leistungstest'],
+    datasets: [{ data: [], backgroundColor: ['#32a852', '#bf6763', '#fcba56'] }]
+  };
+
+  chartUntersuchung: ChartData<'doughnut', number[], string | string[]> = {
+    labels: ['Hauptberuflich', 'kein Arzt', 'gültig'],
+    datasets: [{ data: [], backgroundColor: ['#999794', '#bf6763', '#32a852'] }]
   };
 
   formAuswahl = new FormGroup({
@@ -123,6 +149,10 @@ export class FmdComponent implements OnInit {
 
   modul_konfig: any = {};
 
+  @ViewChild('chartAlterView') chartAlterView?: BaseChartDirective;
+  @ViewChild('chartTauglichkeitView') chartTauglichkeitView?: BaseChartDirective;
+  @ViewChild('chartUntersuchungView') chartUntersuchungView?: BaseChartDirective;
+
   ngOnInit(): void {
     sessionStorage.setItem("PageNumber", "2");
     sessionStorage.setItem("Page2", "FMD");
@@ -152,8 +182,8 @@ export class FmdComponent implements OnInit {
 
           this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
           this.atstraeger = this.globalDataService.arraySortByKey(this.atstraeger, 'stbnr');
-
           this.updateTauglichkeitFürAlle();
+          this.updateChartData();
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -276,6 +306,7 @@ export class FmdComponent implements OnInit {
             
             this.atstraeger.push(newTraeger);
             this.atstraeger = this.globalDataService.arraySortByKey(this.atstraeger, 'stbnr');
+            this.updateChartData();
 
             this.formModul.reset({
               id: 0,
@@ -289,7 +320,6 @@ export class FmdComponent implements OnInit {
             });
             this.formModul.disable();
             this.setzeSelectZurueck();
-
             this.globalDataService.erstelleMessage('success', 'ATS Träger gespeichert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
@@ -324,6 +354,7 @@ export class FmdComponent implements OnInit {
             });
             this.formModul.disable();
             this.setzeSelectZurueck();
+            this.updateChartData();
 
             this.globalDataService.erstelleMessage('success', 'ATS Träger geändert!');
           } catch (e: any) {
@@ -353,6 +384,7 @@ export class FmdComponent implements OnInit {
       next: (erg: any) => {
         try {
           this.atstraeger = this.atstraeger.filter((m: any) => m.id !== id);
+          this.updateChartData();
 
           this.formModul.reset({
             id: 0,
@@ -382,7 +414,7 @@ export class FmdComponent implements OnInit {
     return (control: AbstractControl) => {
       const v: string = control.value;
       if (!v || !/^([0-3]\d)\.([0-1]\d)\.(\d{4})$/.test(v)) {
-        return null; // let pattern-Validator die Format-Fehler melden
+        return null;
       }
       const [t, m, j] = v.split('.').map(x => +x);
       const d = new Date(j, m - 1, t);
@@ -393,33 +425,14 @@ export class FmdComponent implements OnInit {
   }
 
   berechneAlter(geburtsdatum?: string | Date | null): number {
-    if (!geburtsdatum) {
-      return 0;
-    }
-
-    let geb: Date;
-    if (typeof geburtsdatum === 'string') {
-      const parts = geburtsdatum.split('.');
-      if (parts.length !== 3) {
-        return 0;
-      }
-      const [t, m, j] = parts.map(n => parseInt(n, 10));
-      geb = new Date(j, m - 1, t);
-      if (isNaN(geb.getTime())) {
-        return 0;
-      }
-    } else {
-      geb = geburtsdatum;
-    }
-
+    if (!geburtsdatum) return 0;
+    let geb = typeof geburtsdatum === 'string' ? new Date(geburtsdatum) : geburtsdatum;
     const today = new Date();
-    let age = today.getFullYear() - geb.getFullYear();
-    const monDiff = today.getMonth() - geb.getMonth();
-    const dayDiff = today.getDate() - geb.getDate();
-    if (monDiff < 0 || (monDiff === 0 && dayDiff < 0)) {
-      age--;
+    let alter = today.getFullYear() - geb.getFullYear();
+    if (today.getMonth() < geb.getMonth() || (today.getMonth() === geb.getMonth() && today.getDate() < geb.getDate())) {
+      alter--;
     }
-    return age;
+    return alter;
   }
 
   updateTauglichkeitFürAlle(): void {
@@ -451,5 +464,52 @@ export class FmdComponent implements OnInit {
     if (!dateStr) return NaN;
     const parts = dateStr.split('.');
     return parts.length === 3 ? parseInt(parts[2], 10) : NaN;
+  }
+
+  updateChartData(): void {
+    this.updateAlterChart();
+    this.updateTauglichkeitChart();
+    this.updateUntersuchungChart();
+  }
+
+  updateAlterChart(): void {
+    const zaehler = [0, 0, 0, 0];
+
+    this.atstraeger.forEach(traeger => {
+      const alter = this.berechneAlter(traeger.geburtsdatum);
+      if (alter >= 16 && alter <= 18) zaehler[0]++;
+      else if (alter >= 19 && alter <= 39) zaehler[1]++;
+      else if (alter >= 40 && alter <= 54) zaehler[2]++;
+      else if (alter >= 55 && alter <= 65) zaehler[3]++;
+    });
+
+    this.chartAlter.datasets[0].data = zaehler;
+    this.chartAlterView?.update();
+  }
+
+  updateTauglichkeitChart(): void {
+    const zaehler = [0, 0, 0];
+
+    this.atstraeger.forEach(traeger => {
+      if (traeger.tauglichkeit === 'tauglich') zaehler[0]++;
+      else if (!traeger.leistungstest) zaehler[2]++;
+      else zaehler[1]++;
+    });
+
+    this.chartTauglichkeit.datasets[0].data = zaehler;
+    this.chartTauglichkeitView?.update();
+  }
+
+  updateUntersuchungChart(): void {
+    const zaehler = [0, 0, 0];
+
+    this.atstraeger.forEach(traeger => {
+      if (traeger.hausarzt) zaehler[0]++;
+      else if (!traeger.letzte_untersuchung) zaehler[1]++;
+      else zaehler[2]++;
+    });
+
+    this.chartUntersuchung.datasets[0].data = zaehler;
+    this.chartUntersuchungView?.update();
   }
 }
