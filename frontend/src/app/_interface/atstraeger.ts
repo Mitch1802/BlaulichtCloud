@@ -13,4 +13,5 @@ export interface IATSTraeger {
     vorname?: string,
     nachname?: string,
     geburtsdatum?: string
+    hauptberuflich?: boolean
 }

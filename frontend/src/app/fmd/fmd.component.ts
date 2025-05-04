@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { IMitglied } from 'src/app/_interface/mitglied';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { HeaderComponent } from '../_template/header/header.component';
@@ -49,6 +49,7 @@ Chart.register(ChartDataLabels);
 export class FmdComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
+  cd = inject(ChangeDetectorRef)
 
   title = "FMD";
   modul = "fmd";
@@ -107,17 +108,17 @@ export class FmdComponent implements OnInit {
 
   chartAlter: ChartData<'doughnut', number[], string | string[]> = {
     labels: ['16-18', '19-39', '40-54', '55-65'],
-    datasets: [{ data: [], backgroundColor: ['#69c7a8', '#c973c4', '#d6b36d', '#cfc95d'] }]
+    datasets: [{ data: [0,0,0,0], backgroundColor: ['#69c7a8', '#c973c4', '#d6b36d', '#cfc95d'] }]
   };
 
   chartTauglichkeit: ChartData<'doughnut', number[], string | string[]> = {
     labels: ['tauglich', 'kein Arzt', 'kein Leistungstest'],
-    datasets: [{ data: [], backgroundColor: ['#32a852', '#bf6763', '#fcba56'] }]
+    datasets: [{ data: [0,0,0], backgroundColor: ['#32a852', '#bf6763', '#fcba56'] }]
   };
 
   chartUntersuchung: ChartData<'doughnut', number[], string | string[]> = {
     labels: ['Hauptberuflich', 'kein Arzt', 'gültig'],
-    datasets: [{ data: [], backgroundColor: ['#999794', '#bf6763', '#32a852'] }]
+    datasets: [{ data: [0,0,0], backgroundColor: ['#999794', '#bf6763', '#32a852'] }]
   };
 
   formAuswahl = new FormGroup({
@@ -480,9 +481,17 @@ export class FmdComponent implements OnInit {
     });
   }
 
-  getYearFromDate(dateStr?: string): number {
+  getYearFromDate(dateStr?: string | Date | null): number {
     if (!dateStr) return NaN;
-    const parts = dateStr.split('.');
+    let str = '';
+
+    if (dateStr instanceof Date) {
+        str = `${dateStr.getDate()}.${dateStr.getMonth() + 1}.${dateStr.getFullYear()}`;
+    } else {
+        str = String(dateStr);
+    }
+
+    const parts = str.split('.');
     return parts.length === 3 ? parseInt(parts[2], 10) : NaN;
   }
 
@@ -490,6 +499,11 @@ export class FmdComponent implements OnInit {
     this.updateAlterChart();
     this.updateTauglichkeitChart();
     this.updateUntersuchungChart();
+  }
+
+  private triggerChartUpdate(chart?: BaseChartDirective) {
+    this.cd.detectChanges();
+    queueMicrotask(() => chart?.chart?.update());
   }
 
   updateAlterChart(): void {
@@ -504,32 +518,42 @@ export class FmdComponent implements OnInit {
     });
 
     this.chartAlter.datasets[0].data = zaehler;
-    this.chartAlterView?.chart?.update();
+    this.triggerChartUpdate(this.chartAlterView);
   }
 
   updateTauglichkeitChart(): void {
     const zaehler = [0, 0, 0];
+    const currentYear = new Date().getFullYear();
+    // ['tauglich', 'kein Arzt', 'kein Leistungstest']
 
     this.atstraeger.forEach(traeger => {
+      const nextStudy = this.getYearFromDate(traeger.naechste_untersuchung);
+      const lastTest = this.getYearFromDate(traeger.leistungstest);
       if (traeger.tauglichkeit === 'tauglich') zaehler[0]++;
-      else if (!traeger.leistungstest) zaehler[2]++;
-      else zaehler[1]++;
+      else if (nextStudy <= currentYear) zaehler[1]++;
+      else if (
+        lastTest < currentYear ||
+        traeger.leistungstest != 'nein'
+      ) zaehler[2]++;
     });
 
     this.chartTauglichkeit.datasets[0].data = zaehler;
-    this.chartTauglichkeitView?.chart?.update();
+    this.triggerChartUpdate(this.chartTauglichkeitView);
   }
 
   updateUntersuchungChart(): void {
     const zaehler = [0, 0, 0];
+    const currentYear = new Date().getFullYear();
+    // ['Hauptberuflich', 'kein Arzt', 'gültig']
 
     this.atstraeger.forEach(traeger => {
-      if (traeger.hausarzt) zaehler[0]++;
-      else if (!traeger.letzte_untersuchung) zaehler[1]++;
-      else zaehler[2]++;
+      const nextStudy = this.getYearFromDate(traeger.naechste_untersuchung);
+      if (traeger.hauptberuflich === true) zaehler[0]++;
+      else if (nextStudy <= currentYear) zaehler[1]++;
+      else if (nextStudy > currentYear) zaehler[2]++;
     });
 
     this.chartUntersuchung.datasets[0].data = zaehler;
-    this.chartUntersuchungView?.chart?.update();
+    this.triggerChartUpdate(this.chartUntersuchungView);
   }
 }
