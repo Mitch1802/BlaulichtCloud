@@ -13,29 +13,27 @@
               <div class="col-12 col-lg-4">
                 <h2>Tauglichkeit</h2>
                 <canvas
-                  #chartTauglichkeitView="baseChart"
+                  #chartTauglichkeitCanvas
                   baseChart
                   [data]="chartTauglichkeit"
                   [type]="pieChartType"
                   [options]="pieChartOptions"
-                >
-                </canvas>
+                ></canvas>
               </div>
               <div class="col-12 col-lg-4">
                 <h2>Untersuchung</h2>
                 <canvas
-                  #chartUntersuchungView="baseChart"
+                  #chartUntersuchungCanvas
                   baseChart
                   [data]="chartUntersuchung"
                   [type]="pieChartType"
                   [options]="pieChartOptions"
-                >
-                </canvas>
+                ></canvas>
               </div>
               <div class="col-12 col-lg-4">
                 <h2>Alter</h2>
                 <canvas
-                  #chartAlterView="baseChart"
+                  #chartAlterCanvas
                   baseChart
                   [data]="chartAlter"
                   [type]="pieChartType"

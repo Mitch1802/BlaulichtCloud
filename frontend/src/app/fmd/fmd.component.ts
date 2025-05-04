@@ -149,9 +149,9 @@ export class FmdComponent implements OnInit {
 
   modul_konfig: any = {};
 
-  @ViewChild('chartAlterView') chartAlterView?: BaseChartDirective;
-  @ViewChild('chartTauglichkeitView') chartTauglichkeitView?: BaseChartDirective;
-  @ViewChild('chartUntersuchungView') chartUntersuchungView?: BaseChartDirective;
+  @ViewChild('chartAlterCanvas') chartAlterView?: BaseChartDirective;
+  @ViewChild('chartTauglichkeitCanvas') chartTauglichkeitView?: BaseChartDirective;
+  @ViewChild('chartUntersuchungCanvas') chartUntersuchungView?: BaseChartDirective;
 
   ngOnInit(): void {
     sessionStorage.setItem("PageNumber", "2");
@@ -337,6 +337,7 @@ export class FmdComponent implements OnInit {
               updated.stbnr     = mitg.stbnr;
               updated.vorname  = mitg.vorname;
               updated.nachname = mitg.nachname;
+              // updated.hauptberuflich = mitg.hauptberuflich;
             }
             this.atstraeger = this.atstraeger
               .map(m => m.id === updated.id ? updated : m)
@@ -425,15 +426,34 @@ export class FmdComponent implements OnInit {
   }
 
   berechneAlter(geburtsdatum?: string | Date | null): number {
-    if (!geburtsdatum) return 0;
-    let geb = typeof geburtsdatum === 'string' ? new Date(geburtsdatum) : geburtsdatum;
-    const today = new Date();
-    let alter = today.getFullYear() - geb.getFullYear();
-    if (today.getMonth() < geb.getMonth() || (today.getMonth() === geb.getMonth() && today.getDate() < geb.getDate())) {
-      alter--;
+    if (!geburtsdatum) {
+      return 0;
     }
-    return alter;
+
+    let geb: Date;
+    if (typeof geburtsdatum === 'string') {
+      const parts = geburtsdatum.split('.');
+      if (parts.length !== 3) {
+        return 0;
+      }
+      const [t, m, j] = parts.map(n => parseInt(n, 10));
+      geb = new Date(j, m - 1, t);
+      if (isNaN(geb.getTime())) {
+        return 0;
+      }
+    } else {
+      geb = geburtsdatum;
+    }
+    const today = new Date();
+    let age = today.getFullYear() - geb.getFullYear();
+    const monDiff = today.getMonth() - geb.getMonth();
+    const dayDiff = today.getDate() - geb.getDate();
+    if (monDiff < 0 || (monDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+    return age;
   }
+
 
   updateTauglichkeitFürAlle(): void {
     const currentYear = new Date().getFullYear();
@@ -484,7 +504,7 @@ export class FmdComponent implements OnInit {
     });
 
     this.chartAlter.datasets[0].data = zaehler;
-    this.chartAlterView?.update();
+    this.chartAlterView?.chart?.update();
   }
 
   updateTauglichkeitChart(): void {
@@ -497,7 +517,7 @@ export class FmdComponent implements OnInit {
     });
 
     this.chartTauglichkeit.datasets[0].data = zaehler;
-    this.chartTauglichkeitView?.update();
+    this.chartTauglichkeitView?.chart?.update();
   }
 
   updateUntersuchungChart(): void {
@@ -510,6 +530,6 @@ export class FmdComponent implements OnInit {
     });
 
     this.chartUntersuchung.datasets[0].data = zaehler;
-    this.chartUntersuchungView?.update();
+    this.chartUntersuchungView?.chart?.update();
   }
 }
