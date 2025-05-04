@@ -134,7 +134,7 @@ export class ModulKonfigurationComponent implements OnInit {
       return;
     }
   
-    let objekt: any = this.formModul.value;
+    const objekt: any = this.formModul.value;
     objekt.konfiguration = JSON.parse(objekt.konfiguration);
     const idValue = this.formModul.controls['id'].value;
 

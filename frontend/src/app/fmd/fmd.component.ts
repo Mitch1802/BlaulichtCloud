@@ -47,8 +47,8 @@ export class FmdComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
-  title: string = "FMD";
-  modul: string = "fmd";
+  title = "FMD";
+  modul = "fmd";
 
   mitglieder: IMitglied[] = [];
   atstraeger: IATSTraeger[] = [];

@@ -21,11 +21,11 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private globalDataService = inject(GlobalDataService);
 
-  modul: string = "auth/login";
+  modul = "auth/login";
   form!: FormGroup;
-  footer: string = "";
+  footer = "";
 
-  public showPassword: boolean = false;
+  public showPassword = false;
 
   public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
   get f() { return this.form.controls; }
 
   anmelden(): void {
-    let data = {
+    const data = {
       "username": this.f.user.value,
       "password": this.f.pwd.value
     };

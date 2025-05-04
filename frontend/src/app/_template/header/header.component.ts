@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   private router = inject(Router);
 
-  title: string = '';
+  title = '';
 
   @Input() breadcrumb!: any;
 

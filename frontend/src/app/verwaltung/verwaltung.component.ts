@@ -15,8 +15,8 @@ export class VerwaltungComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
-  title: string = "Verwaltung";
-  modul: string = "verwaltung";
+  title = "Verwaltung";
+  modul = "verwaltung";
 
   breadcrumb: any = [];
 

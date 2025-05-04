@@ -24,8 +24,8 @@ export class StartComponent implements OnInit {
 
   breadcrumb: any = [];
   start_konfig:any = [];
-  username: string = '';   
-  meine_rollen: string = '';             
+  username = '';   
+  meine_rollen = '';             
   meineRollenKeys: string[] = [];       
   visibleItems: any[] = []; 
 

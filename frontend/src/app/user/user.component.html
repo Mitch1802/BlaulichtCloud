@@ -73,7 +73,7 @@
           >
             Abbrechen
           </button>
-          @if (username == "admin") {
+          @if (username === "admin") {
           <input hidden type="text" formControlName="username" />
           } @else {
           <section class="row mt-2">
@@ -170,7 +170,7 @@
               </button>
             </div>
           </section>
-          @if (username != "admin") {
+          @if (username !== "admin") {
             @if (formModul.controls['id'].value) {
               <hr />
             }

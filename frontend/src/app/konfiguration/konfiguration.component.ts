@@ -26,20 +26,20 @@ export class KonfigurationComponent implements OnInit {
   router = inject(Router);
   breadcrumb: any = [];
 
-  title: string = "Aktive Rollen";
-  title2: string = "Konfiguration";
-  title3: string = "Backup & Wiederherstellen";
-  modul: string = "users/rolle";
-  modul2: string = "konfiguration";
+  title = "Aktive Rollen";
+  title2 = "Konfiguration";
+  title3 = "Backup & Wiederherstellen";
+  modul = "users/rolle";
+  modul2 = "konfiguration";
 
   @Output() breadcrumbout = new EventEmitter<any[]>();
 
   rollen: any = []
 
-  file: HTMLInputElement = <HTMLInputElement>document.getElementById("backupUpload");
-  uploadText: string = "";
+  file: HTMLInputElement = document.getElementById("backupUpload") as HTMLInputElement;
+  uploadText = "";
   backups: any = [];
-  backup_msg: string = "";
+  backup_msg = "";
 
   formRolle = new FormGroup({
     rolle: new FormControl('')
@@ -64,7 +64,7 @@ export class KonfigurationComponent implements OnInit {
           this.formRolle.enable();
           this.formKonfig.enable();
           if (erg.data.main.length > 0){
-            let details: IKonfiguration = erg.data.main[0];
+            const details: IKonfiguration = erg.data.main[0];
             this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
@@ -85,10 +85,10 @@ export class KonfigurationComponent implements OnInit {
   }
 
   rolleSpeichern(): void {
-    let object = this.formRolle.value;
-    let rolle_neu = object.rolle;
+    const object = this.formRolle.value;
+    const rolle_neu = object.rolle;
 
-    let post = {
+    const post = {
       "key": rolle_neu,
       "verbose_name": rolle_neu
     }
@@ -130,14 +130,14 @@ export class KonfigurationComponent implements OnInit {
   }
 
   konfigSpeichern(): void {
-    let object = this.formKonfig.value;
+    const object = this.formKonfig.value;
 
-    let idValue = this.formKonfig.controls["id"].value;
+    const idValue = this.formKonfig.controls["id"].value;
     if (idValue === 0 || idValue === null) {
       this.globalDataService.post(this.modul2, object, false).subscribe({
         next: (erg: any) => {
           try {
-            let details: IKonfiguration = erg.data;
+            const details: IKonfiguration = erg.data;
             this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
@@ -156,7 +156,7 @@ export class KonfigurationComponent implements OnInit {
       this.globalDataService.patch(this.modul2, idValue, object, false).subscribe({
         next: (erg: any) => {
           try {
-            let details: IKonfiguration = erg.data;
+            const details: IKonfiguration = erg.data;
             this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
@@ -175,7 +175,7 @@ export class KonfigurationComponent implements OnInit {
   }
 
   backupImport(backup_name: any): void {
-    let object = {
+    const object = {
       "backup": backup_name.name
     }
 
@@ -218,7 +218,7 @@ export class KonfigurationComponent implements OnInit {
   }
 
   backupDownload(backup_name: any): void {
-    let object = {
+    const object = {
       "backup": backup_name.name
     }
 
@@ -240,7 +240,7 @@ export class KonfigurationComponent implements OnInit {
   }
 
   backupLoeschen(backup_name: any): void {
-    let object = {
+    const object = {
       "backup": backup_name.name
     }
 
@@ -262,15 +262,15 @@ export class KonfigurationComponent implements OnInit {
 
 
   convertBackups(backup_array:any ): any {
-    let version = environment.version;
+    const version = environment.version;
     let data = [];
     for (let i = 0; i < backup_array.length; i++) {
-      let file = backup_array[i];
+      const file = backup_array[i];
       let backup_version = file.split('_');
       backup_version = backup_version[1];
 
       if (backup_version == version) {
-        let dict = {
+        const dict = {
           "name": file,
         }
         data.push(dict);

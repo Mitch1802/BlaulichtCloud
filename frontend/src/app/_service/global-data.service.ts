@@ -17,15 +17,15 @@ export class GlobalDataService {
   private router = inject(Router);
   private _snackBar = inject(MatSnackBar);
 
-  Titel: string = 'Blaulicht Cloud';
-  Demo: boolean = false;
-  Author: string = "Ing. M. Reichenauer";
+  Titel = 'Blaulicht Cloud';
+  Demo = false;
+  Author = "Ing. M. Reichenauer";
   AppUrl: string = environment.apiUrl;
-  MaxUploadSize: number = 20480; // 20 MB => 1024 KB = 1 MB
+  MaxUploadSize = 20480; // 20 MB => 1024 KB = 1 MB
   MessageShowInSeconds = 5; // Sekunden
 
   abmelden(): void {
-    let modul: string = 'auth/logout';
+    const modul = 'auth/logout';
     this.post(modul, null, false).subscribe({
       next: (erg: any) => {
         try {
@@ -72,14 +72,14 @@ export class GlobalDataService {
 
   }
 
-  arraySortByKey(array: Array<any>, key: any) {
+  arraySortByKey(array: any[], key: any) {
     array.sort(function (a: any, b: any) {
       return a[key] == b[key] ? 0 : +(a[key] > b[key]) || -1;
     });
     return array;
   }
 
-  arraySortByKeyDesc(array: Array<any>, key: any) {
+  arraySortByKeyDesc(array: any[], key: any) {
     array.sort(function (a: any, b: any) {
       return a[key] == b[key] ? 0 : +(a[key] < b[key]) || -1;
     });
@@ -87,11 +87,11 @@ export class GlobalDataService {
   }
 
   sucheArrayInArray(
-    gesamtArray: Array<any>,
-    teilArray: Array<any>,
+    gesamtArray: any[],
+    teilArray: any[],
     vergleichKey: string
   ) {
-    let arrayNeu = [];
+    const arrayNeu = [];
     for (let i = 0; i < gesamtArray.length; i++) {
       let count = 0;
       for (let x = 0; x < teilArray.length; x++) {
@@ -106,8 +106,8 @@ export class GlobalDataService {
     return arrayNeu;
   }
 
-  sucheNumberArrayInObjectArray(gesamtArray: Array<any>, teilArray: Array<any>, gesamtArrayKey: string) {
-    let arrayNeu = [];
+  sucheNumberArrayInObjectArray(gesamtArray: any[], teilArray: any[], gesamtArrayKey: string) {
+    const arrayNeu = [];
     for (let i = 0; i < gesamtArray.length; i++) {
       let count = 0;
       for (let x = 0; x < teilArray.length; x++) {
@@ -123,11 +123,11 @@ export class GlobalDataService {
   }
 
   vergleicheZweiArrays(
-    array1: Array<any>,
-    array2: Array<any>,
+    array1: any[],
+    array2: any[],
     vergleichKey: string
   ) {
-    let arrayNeu = array1;
+    const arrayNeu = array1;
     for (let i = 0; i < array2.length; i++) {
       let count = 0;
       for (let x = 0; x < arrayNeu.length; x++) {
@@ -144,10 +144,10 @@ export class GlobalDataService {
 
   addItemFromSelectToList(
     control: AbstractControl,
-    arrayGesamt: Array<any>,
-    array: Array<any>
+    arrayGesamt: any[],
+    array: any[]
   ): void {
-    let selectedId = control.value;
+    const selectedId = control.value;
     if (selectedId !== '0') {
       if (array.length > 0) {
         let count = 0;
@@ -188,8 +188,8 @@ export class GlobalDataService {
 
   addItemFromListToSelect(
     pkid: string,
-    arrayGesamt: Array<any>,
-    array: Array<any>
+    arrayGesamt: any[],
+    array: any[]
   ): void {
     for (let i = 0; i < array.length; i++) {
       if (pkid === array[i].pkid) {
@@ -201,12 +201,12 @@ export class GlobalDataService {
   }
 
   addFeldInArray(
-    arrayGesamt: Array<any>,
-    array: Array<any>,
+    arrayGesamt: any[],
+    array: any[],
     feldName: string
-  ): Array<any> {
+  ): any[] {
     for (let i = 0; i < array.length; i++) {
-      let kuerzel = array[i].kuerzel;
+      const kuerzel = array[i].kuerzel;
       for (let x = 0; x < arrayGesamt.length; x++) {
         if (kuerzel == arrayGesamt[x].kuerzel) {
           array[i][feldName] = arrayGesamt[x][feldName];
@@ -217,10 +217,10 @@ export class GlobalDataService {
     return array;
   }
 
-  addAllFieldsToNumberArray(arrayGesamt: Array<any>, array: Array<any>): Array<any> {
-    let data_new = [];
+  addAllFieldsToNumberArray(arrayGesamt: any[], array: any[]): any[] {
+    const data_new = [];
     for (let i = 0; i < array.length; i++) {
-      let pkid = array[i];
+      const pkid = array[i];
       for (let x = 0; x < arrayGesamt.length; x++) {
         if (pkid == arrayGesamt[x].pkid) {
           data_new.push(arrayGesamt[x]);
@@ -232,7 +232,7 @@ export class GlobalDataService {
   }
 
   ladeHeaders(filesVorhanden: boolean): any {
-    let token: string = sessionStorage.getItem('Token')!;
+    const token: string = sessionStorage.getItem('Token')!;
     let headers = {};
 
     if (token != undefined) {
@@ -251,10 +251,10 @@ export class GlobalDataService {
   }
 
   get(modul: string, param?: any): Observable<any[]> {
-    let headers = this.ladeHeaders(false);
+    const headers = this.ladeHeaders(false);
     let url = this.AppUrl + modul;
     let paramUrl = '';
-    for (var prop in param) {
+    for (const prop in param) {
       if (param.hasOwnProperty(prop)) {
         if (paramUrl == '') {
           paramUrl += '?' + prop + '=' + param[prop];
@@ -270,15 +270,15 @@ export class GlobalDataService {
       url += paramUrl;
     }
 
-    let response: any = this.http.get<any[]>(url, { headers: headers });
+    const response: any = this.http.get<any[]>(url, { headers: headers });
 
     return response;
   }
 
   post(modul: string, daten: any, filesVorhanden: boolean): Observable<any[]> {
-    let headers = this.ladeHeaders(filesVorhanden);
-    let url = this.AppUrl + modul + '/';
-    let response: any = this.http.post<any[]>(url, daten, { headers: headers });
+    const headers = this.ladeHeaders(filesVorhanden);
+    const url = this.AppUrl + modul + '/';
+    const response: any = this.http.post<any[]>(url, daten, { headers: headers });
 
     return response;
   }
@@ -289,8 +289,8 @@ export class GlobalDataService {
       ...headers,
       'Accept': '*/*'
     };
-    let url = this.AppUrl + modul + '/';
-    let response: any = this.http.post(url, daten, {
+    const url = this.AppUrl + modul + '/';
+    const response: any = this.http.post(url, daten, {
       headers: headers,
       responseType: 'blob' as 'json'
     }) as Observable<Blob>;
@@ -304,9 +304,9 @@ export class GlobalDataService {
     daten: any,
     filesVorhanden: boolean
   ): Observable<any[]> {
-    let headers = this.ladeHeaders(filesVorhanden);
-    let url = this.AppUrl + modul + '/' + id + '/';
-    let response: any = this.http.patch<any[]>(url, daten, {
+    const headers = this.ladeHeaders(filesVorhanden);
+    const url = this.AppUrl + modul + '/' + id + '/';
+    const response: any = this.http.patch<any[]>(url, daten, {
       headers: headers,
     });
 
@@ -314,21 +314,21 @@ export class GlobalDataService {
   }
 
   delete(modul: string, id: number): Observable<any[]> {
-    let headers = this.ladeHeaders(false);
-    let url = this.AppUrl + modul + '/' + id + '/';
-    let response: any = this.http.delete<any[]>(url, { headers: headers });
+    const headers = this.ladeHeaders(false);
+    const url = this.AppUrl + modul + '/' + id + '/';
+    const response: any = this.http.delete<any[]>(url, { headers: headers });
 
     return response;
   }
 
   ladeBreadcrumb(): any[] {
-    let list: any = [];
-    let pageNumber: number = parseInt(
+    const list: any = [];
+    const pageNumber: number = parseInt(
       sessionStorage.getItem('PageNumber')!
     );
 
-    let page1: string = sessionStorage.getItem('Page1')!;
-    let page2: string = sessionStorage.getItem('Page2')!;
+    const page1: string = sessionStorage.getItem('Page1')!;
+    const page2: string = sessionStorage.getItem('Page2')!;
 
 
     if (pageNumber == 1) {
@@ -351,8 +351,8 @@ export class GlobalDataService {
   }
 
   erstelleBreadcrumbLink(pagename: string, active: boolean): any {
-    let link: string = '';
-    let page = pagename.replace(' ', '');
+    let link = '';
+    const page = pagename.replace(' ', '');
     let kuerzel = '';
     if (page.toLowerCase() == 'start') {
       link = '/start';
@@ -380,7 +380,7 @@ export class GlobalDataService {
       kuerzel = 'Konfiguration';
     }
 
-    let btn = {
+    const btn = {
       name: pagename,
       link: link,
       number: 0,
@@ -392,11 +392,11 @@ export class GlobalDataService {
   }
 
   setzeNeueBreadcrumbDaten(pageNeu: string, pageNumber: number): any {
-    let pageNumberBack: number = pageNumber - 1;
-    let pageNumberForward: number = pageNumber + 1;
-    let pageBack: string = sessionStorage.getItem("Page" + pageNumberBack)!;
-    let page: string = sessionStorage.getItem("Page" + pageNumber)!;
-    let pageForward: string = '';
+    const pageNumberBack: number = pageNumber - 1;
+    const pageNumberForward: number = pageNumber + 1;
+    const pageBack: string = sessionStorage.getItem("Page" + pageNumberBack)!;
+    const page: string = sessionStorage.getItem("Page" + pageNumber)!;
+    let pageForward = '';
 
     if (pageNumberForward <= 6) {
       pageForward = sessionStorage.getItem("Page" + pageNumberForward)!;
@@ -415,9 +415,9 @@ export class GlobalDataService {
   }
 
   erstelleMessage(art: string, msg: string) {
-    let horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-    let verticalPosition: MatSnackBarVerticalPosition = 'bottom';
-    let panelClass: string = '';
+    const horizontalPosition: MatSnackBarHorizontalPosition = 'center';
+    const verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+    let panelClass = '';
 
     if (art == 'success') {
       panelClass = 'msg-snackbar-success';
@@ -436,9 +436,9 @@ export class GlobalDataService {
   }
 
   ladeFooter(): string {
-    let year = new Date().getFullYear();
-    let author = this.Author;
-    let footer = "Version " + environment.version + "\n" + String.fromCharCode(169) + " " + year + " by " + author;
+    const year = new Date().getFullYear();
+    const author = this.Author;
+    const footer = "Version " + environment.version + "\n" + String.fromCharCode(169) + " " + year + " by " + author;
     return footer;
   }
 

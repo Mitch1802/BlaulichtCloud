@@ -38,9 +38,9 @@ export class UserComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
-  title: string = "Benutzer Verwaltung";
-  modul: string = "users";
-  username: string = "";
+  title = "Benutzer Verwaltung";
+  modul = "users";
+  username = "";
 
   benutzer: IBenutzer[] = [];
   breadcrumb: any = [];
@@ -83,16 +83,16 @@ export class UserComponent implements OnInit {
   }
 
   auswahlBearbeiten(): void {
-    let id = this.formAuswahl.controls["benutzer"].value;
+    const id = this.formAuswahl.controls["benutzer"].value;
     if (id == 0) {
       return;
     }
-    let abfrageUrl = this.modul + "/" + id;
+    const abfrageUrl = this.modul + "/" + id;
 
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          let details: IBenutzer = erg.data.user;
+          const details: IBenutzer = erg.data.user;
           this.username = details.username;
           this.formModul.enable();
           this.formModul.setValue({
@@ -122,13 +122,13 @@ export class UserComponent implements OnInit {
   }
 
   datenLoeschen(): void {
-    let id = this.formModul.controls["id"].value!;
+    const id = this.formModul.controls["id"].value!;
 
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
-          let data = this.benutzer;
-          let dataNew: any[] = [];
+          const data = this.benutzer;
+          const dataNew: any[] = [];
           for (let i = 0; i < data.length; i++) {
             if (data[i].id !== id) {
               dataNew.push(data[i]);
@@ -165,8 +165,8 @@ export class UserComponent implements OnInit {
       this.formModul.controls["roles"].setValue(rollen);
     }
 
-    let object = this.formModul.value;
-    let idValue = this.formModul.controls["id"].value;
+    const object = this.formModul.value;
+    const idValue = this.formModul.controls["id"].value;
 
     if (idValue === 0 || idValue === null) {
       if (this.formModul.controls["password1"].value == "" || this.formModul.controls["password1"].value == "") {
@@ -199,8 +199,8 @@ export class UserComponent implements OnInit {
       this.globalDataService.patch(this.modul, idValue, object, false).subscribe({
         next: (erg: any) => {
           try {
-            let data = this.benutzer;
-            let dataNew: any[] = [];
+            const data = this.benutzer;
+            const dataNew: any[] = [];
             for (let i = 0; i < data.length; i++) {
               if (data[i].id == erg.data.id) {
                 dataNew.push(erg.data);
@@ -233,10 +233,10 @@ export class UserComponent implements OnInit {
       this.globalDataService.erstelleMessage("error","Die Passwörter müssen übereinstimmen!");
       return
     }
-    let dict = {
+    const dict = {
       "password": this.formModul.controls["password1"].value
     }
-    let idValue = this.formModul.controls["id"].value!;
+    const idValue = this.formModul.controls["id"].value!;
     this.globalDataService.patch("users/change_password", idValue, dict, false).subscribe({
       next: (erg: any) => {
         try {

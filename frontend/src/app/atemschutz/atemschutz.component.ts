@@ -15,8 +15,8 @@ export class AtemschutzComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
-  title: string = "Atemschutz";
-  modul: string = "atemschutz";
+  title = "Atemschutz";
+  modul = "atemschutz";
 
   breadcrumb: any = [];
 

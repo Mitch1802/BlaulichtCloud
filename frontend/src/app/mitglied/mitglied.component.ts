@@ -39,8 +39,8 @@ export class MitgliedComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
-  title: string = "Mitglieder Verwaltung";
-  modul: string = "mitglieder";
+  title = "Mitglieder Verwaltung";
+  modul = "mitglieder";
 
   mitglieder: IMitglied[] = [];
   breadcrumb: any = [];
