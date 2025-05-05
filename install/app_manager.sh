@@ -19,8 +19,8 @@ DOMAIN=${3:-"blaulichtcloud.michael-web.at"}
 PORT=${4:-"2432"}
 
 # Hinweis: DOCKER_TOKEN und GITHUB_TOKEN bitte als Environment Variablen übergeben.
-: "${DOCKER_TOKEN:?Fehler: Bitte DOCKER_TOKEN als Umgebungsvariable setzen!}"
-: "${GITHUB_TOKEN:?Fehler: Bitte GITHUB_TOKEN als Umgebungsvariable setzen!}"
+# : "${DOCKER_TOKEN:?Fehler: Bitte DOCKER_TOKEN als Umgebungsvariable setzen!}"
+# : "${GITHUB_TOKEN:?Fehler: Bitte GITHUB_TOKEN als Umgebungsvariable setzen!}"
 
 if [ "$ACTION" != "install" ] && [ "$ACTION" != "update" ]; then
     echo "Usage: app_manager.sh [install|update] [VERSION]"
@@ -80,8 +80,7 @@ EOF
 
     # 4) Docker Compose File holen (Raw-Link aus privatem GitHub-Repo)
     echo "Lade docker-compose.yml ..."
-    curl -sSL -H "Authorization: token $GITHUB_TOKEN" \
-        -o "$INSTALL_PATH/docker-compose.yml" \
+    curl -sSL -o "$INSTALL_PATH/docker-compose.yml" \
         "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/docker-compose.yml" || {
         echo "Fehler beim Herunterladen der docker-compose.yml"
         exit 1
@@ -97,11 +96,11 @@ EOF
     fi
 
     # 6) Docker-Login und Images ziehen
-    echo "Melde dich am privaten Docker-Repo an ..."
-    echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin || {
-        echo "Docker-Login fehlgeschlagen."
-        exit 1
-    }
+    # echo "Melde dich am privaten Docker-Repo an ..."
+    # echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin || {
+    #     echo "Docker-Login fehlgeschlagen."
+    #     exit 1
+    # }
 
     cd "$INSTALL_PATH"
     echo "Ziehe Docker Images (pull) ..."
@@ -156,19 +155,18 @@ function do_update() {
 
     # 3) Docker-Compose neu herunterladen (falls Änderungen)
     echo "Aktualisiere docker-compose.yml aus GitHub ..."
-    curl -sSL -H "Authorization: token $GITHUB_TOKEN" \
-        -o "docker-compose.yml" \
+    curl -sSL -o "docker-compose.yml" \
         "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/docker-compose.yml" || {
         echo "Fehler beim Herunterladen der docker-compose.yml"
         exit 1
     }
 
     # 4) Docker-Login, um neue Images zu ziehen
-    echo "Melde dich am privaten Docker-Repo an ..."
-    echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin || {
-        echo "Docker-Login fehlgeschlagen."
-        exit 1
-    }
+    # echo "Melde dich am privaten Docker-Repo an ..."
+    # echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin || {
+    #     echo "Docker-Login fehlgeschlagen."
+    #     exit 1
+    # }
 
     # 5) Versions-Eintrag in Env-Files aktualisieren
     echo "Aktualisiere Versionseintrag auf $VERSION in Env-Files ..."
