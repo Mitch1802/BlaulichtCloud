@@ -14,6 +14,7 @@ class MitgliedSerializer(serializers.ModelSerializer):
         instance.nachname = validated_data.get("nachname", instance.nachname)
         instance.svnr = validated_data.get("svnr", instance.svnr)
         instance.geburtsdatum = validated_data.get("geburtsdatum", instance.geburtsdatum)
+        instance.hauptberuflich = validated_data.get("hauptberuflich", instance.hauptberuflich)
         instance.updated_at = validated_data.get("updated_at", instance.updated_at)
 
         instance.save()

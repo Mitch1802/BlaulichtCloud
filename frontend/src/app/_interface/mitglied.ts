@@ -6,4 +6,5 @@ export interface IMitglied {
     nachname: string,
     svnr: string,
     geburtsdatum: string,
+    hauptberuflich: boolean
 }

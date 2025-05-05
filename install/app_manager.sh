@@ -11,16 +11,10 @@ SOFTWARE_NAME="blaulichtcloud"
 NETWORK_NAME="blaulichtcloud_nw"
 DEBUG=False
 
-# Falls man beim Update eine neue Version möchte, 
-# kann man sie als 2. Argument übergeben (z. B. update 1.1.0).
 ACTION=${1:-""}
 VERSION=${2:-"1.0.0"}
 DOMAIN=${3:-"blaulichtcloud.michael-web.at"}
 PORT=${4:-"2432"}
-
-# Hinweis: DOCKER_TOKEN und GITHUB_TOKEN bitte als Environment Variablen übergeben.
-# : "${DOCKER_TOKEN:?Fehler: Bitte DOCKER_TOKEN als Umgebungsvariable setzen!}"
-# : "${GITHUB_TOKEN:?Fehler: Bitte GITHUB_TOKEN als Umgebungsvariable setzen!}"
 
 if [ "$ACTION" != "install" ] && [ "$ACTION" != "update" ]; then
     echo "Usage: app_manager.sh [install|update] [VERSION]"
@@ -36,13 +30,13 @@ function do_install() {
     echo "INSTALLATION WIRD GESTARTET (Version: $VERSION)"
     echo "----------------------------------------"
 
-    # 1) Ordner anlegen
+    # Ordner anlegen
     if [ ! -d "$INSTALL_PATH" ]; then
         mkdir -p "$INSTALL_PATH"
         echo "Ordner $INSTALL_PATH wurde angelegt."
     fi
 
-    # 2) Env-Dateien generieren
+    # Env-Dateien generieren
     DJANGO_SECRET_KEY=$(openssl rand -hex 32)
     POSTGRES_PASSWORD=$(openssl rand -hex 16)
 
@@ -78,7 +72,7 @@ EOF
 
     echo "ENV-Dateien erstellt unter $INSTALL_PATH."
 
-    # 4) Docker Compose File holen (Raw-Link aus privatem GitHub-Repo)
+    # Docker Compose File holen
     echo "Lade docker-compose.yml ..."
     curl -sSL -o "$INSTALL_PATH/docker-compose.yml" \
         "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/docker-compose.yml" || {
@@ -87,7 +81,7 @@ EOF
     }
     echo "docker-compose.yml wurde heruntergeladen."
 
-    # 5) Netzwerk erstellen (falls nicht vorhanden)
+    # Netzwerk erstellen (falls nicht vorhanden)
     if [ -z "$(docker network ls --filter name=^$NETWORK_NAME$ --format='{{ .Name }}')" ]; then
         docker network create "$NETWORK_NAME"
         echo "Netzwerk $NETWORK_NAME erstellt."
@@ -95,24 +89,17 @@ EOF
         echo "Netzwerk $NETWORK_NAME existiert bereits."
     fi
 
-    # 6) Docker-Login und Images ziehen
-    # echo "Melde dich am privaten Docker-Repo an ..."
-    # echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin || {
-    #     echo "Docker-Login fehlgeschlagen."
-    #     exit 1
-    # }
-
     cd "$INSTALL_PATH"
     echo "Ziehe Docker Images (pull) ..."
     docker compose pull
 
-    # 7) Compose starten
+    # Container neu starten
     docker compose up -d
 
     echo "Warte 30 Sekunden, damit alles initialisiert ..."
     sleep 30
 
-    # 8) Django Superuser: Passwort generieren und setzen
+    # Django Superuser: Passwort generieren und setzen
     SUPERUSER_PASSWORD=$(openssl rand -hex 4)
     echo "Erstelle Django-Superuser (zufälliges Passwort wird gesetzt)"
 
@@ -142,7 +129,6 @@ function do_update() {
     echo "UPDATE WIRD GESTARTET (Version: $VERSION)"
     echo "----------------------------------------"
 
-    # 1) Pfad prüfen
     if [ ! -d "$INSTALL_PATH" ]; then
         echo "Fehler: Installationspfad $INSTALL_PATH existiert nicht."
         echo "Bitte zuerst install ausführen, oder Pfad anpassen."
@@ -150,10 +136,10 @@ function do_update() {
     fi
     cd "$INSTALL_PATH"
 
-    # 2) Container stoppen
+    # Container stoppen
     docker compose down
 
-    # 3) Docker-Compose neu herunterladen (falls Änderungen)
+    # Docker-Compose neu herunterladen
     echo "Aktualisiere docker-compose.yml aus GitHub ..."
     curl -sSL -o "docker-compose.yml" \
         "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/docker-compose.yml" || {
@@ -161,27 +147,20 @@ function do_update() {
         exit 1
     }
 
-    # 4) Docker-Login, um neue Images zu ziehen
-    # echo "Melde dich am privaten Docker-Repo an ..."
-    # echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin || {
-    #     echo "Docker-Login fehlgeschlagen."
-    #     exit 1
-    # }
-
-    # 5) Versions-Eintrag in Env-Files aktualisieren
+    # Versions-Eintrag in Env-Files aktualisieren
     echo "Aktualisiere Versionseintrag auf $VERSION in Env-Files ..."
     sed -i "s/^VERSION=.*/VERSION=$VERSION/" .env
     # Hier die bereinigte Version für .envs/.django:
     sed -i "s/^VERSION=.*/VERSION=${VERSION/-demo/}/" .envs/.django
 
-    # 6) Neue Images holen
+    # Neue Images holen
     echo "Ziehe neue Images (docker compose pull) ..."
     docker compose pull
 
-    # 7) Container neu starten
+    # Container neu starten
     docker compose up -d
 
-    # 8) Ungenutzte Volumes entfernen (optional)
+    # Ungenutzte Volumes entfernen
     docker volume prune -f
 
     echo "----------------------------------------"

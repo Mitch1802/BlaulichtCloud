@@ -64,6 +64,7 @@ export class MitgliedComponent implements OnInit {
       Validators.pattern(/^([0-3]\d)\.([0-1]\d)\.(\d{4})$/),
       this.validDateDDMMYYYY()
     ]),
+    hauptberuflich: new FormControl(false)
   });
 
   ngOnInit(): void {
@@ -91,7 +92,7 @@ export class MitgliedComponent implements OnInit {
     return (control: AbstractControl) => {
       const v: string = control.value;
       if (!v || !/^([0-3]\d)\.([0-1]\d)\.(\d{4})$/.test(v)) {
-        return null; // let pattern-Validator die Format-Fehler melden
+        return null;
       }
       const [t, m, j] = v.split('.').map(x => +x);
       const d = new Date(j, m - 1, t);
@@ -124,7 +125,8 @@ export class MitgliedComponent implements OnInit {
             vorname: details.vorname,
             nachname: details.nachname,
             svnr: details.svnr ?? '',
-            geburtsdatum: details.geburtsdatum ?? ''
+            geburtsdatum: details.geburtsdatum ?? '',
+            hauptberuflich: details.hauptberuflich ?? false
           });
   
           this.setzeSelectZurueck();
@@ -162,7 +164,8 @@ export class MitgliedComponent implements OnInit {
             vorname: '',
             nachname: '',
             svnr: '',
-            geburtsdatum: ''
+            geburtsdatum: '',
+            hauptberuflich: false
           });
           this.formModul.disable();
           this.setzeSelectZurueck();
@@ -207,7 +210,8 @@ export class MitgliedComponent implements OnInit {
               vorname: '',
               nachname: '',
               svnr: '',
-              geburtsdatum: ''
+              geburtsdatum: '',
+              hauptberuflich: false
             });
             this.formModul.disable();
             this.setzeSelectZurueck();
@@ -233,7 +237,8 @@ export class MitgliedComponent implements OnInit {
               vorname: '',
               nachname: '',
               svnr: '',
-              geburtsdatum: ''
+              geburtsdatum: '',
+              hauptberuflich: false
             });
             this.formModul.disable();
             this.setzeSelectZurueck();

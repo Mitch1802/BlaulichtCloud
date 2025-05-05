@@ -10,6 +10,7 @@ class Mitglied(TimeStampedModel):
     nachname = models.CharField(verbose_name=_("Nachname"), max_length=255)
     svnr = models.CharField(verbose_name=_("Sozialversichungsnummer"), max_length=4, blank=True)
     geburtsdatum = models.DateField(verbose_name=_("Geburtsdatum"), max_length=10)
+    hauptberuflich = models.BooleanField(verbose_name=_("Hauptberuflich"), default=False)
 
     def __str__(self):
         return f"{self.vorname} {self.nachname}"

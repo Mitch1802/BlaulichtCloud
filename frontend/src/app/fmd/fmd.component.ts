@@ -177,7 +177,8 @@ export class FmdComponent implements OnInit {
               stbnr: mitg.stbnr,
               vorname: mitg.vorname,
               nachname: mitg.nachname,
-              geburtsdatum: mitg.geburtsdatum
+              geburtsdatum: mitg.geburtsdatum,
+              hauptberuflich: mitg.hauptberuflich
             };
           });
 
@@ -303,6 +304,7 @@ export class FmdComponent implements OnInit {
               newTraeger.stbnr     = mitg.stbnr;
               newTraeger.vorname  = mitg.vorname;
               newTraeger.nachname = mitg.nachname;
+              newTraeger.hauptberuflich = mitg.hauptberuflich;
             }
             
             this.atstraeger.push(newTraeger);
@@ -338,7 +340,7 @@ export class FmdComponent implements OnInit {
               updated.stbnr     = mitg.stbnr;
               updated.vorname  = mitg.vorname;
               updated.nachname = mitg.nachname;
-              // updated.hauptberuflich = mitg.hauptberuflich;
+              updated.hauptberuflich = mitg.hauptberuflich;
             }
             this.atstraeger = this.atstraeger
               .map(m => m.id === updated.id ? updated : m)
