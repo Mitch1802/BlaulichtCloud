@@ -184,8 +184,6 @@ export class MitgliedComponent implements OnInit {
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "Mitglied nicht gespeichert!");
     this.router.navigate(['/mitglied']);
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.navigate(['/mitglied']);
   }
 
   datenSpeichern(): void {

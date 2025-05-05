@@ -373,8 +373,6 @@ export class FmdComponent implements OnInit {
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "ATS Träger nicht gespeichert!");
     this.router.navigate(['/fmd']);
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.navigate(['/fmd']);
   }
 
   datenLoeschen(): void {
