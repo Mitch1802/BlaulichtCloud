@@ -2,7 +2,7 @@
 
 Schritt 1: Herunterladen des Install/Update Skriptes
 ```
-curl -sSL -H "Authorization: token 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" -o app_manager.sh "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/app_manager.sh"
+curl -sSL -o app_manager.sh "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/app_manager.sh"
 ```
 Schritt2: Schreibrechte vergeben
 ```
