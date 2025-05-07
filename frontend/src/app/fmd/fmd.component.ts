@@ -89,6 +89,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   breadcrumb: any = [];
 
+  pageOptions: any[] = [5,10,50,100]
+
   dataSource = new MatTableDataSource<IATSTraeger>(this.atstraeger);
   sichtbareSpaltenATS: string[] = ['stbnr', 'vorname', 'nachname', 'actions'];
   sichtbareSpaltenUntersuchung: string[] = ['stbnr', 'vorname', 'nachname', 'letzte_untersuchung', 'naechste_untersuchung'];
@@ -208,13 +210,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
     });
   }
 
-  setzeSelectZurueck(): void {
-    this.formAuswahl.controls["atstraeger"].setValue(0, { onlySelf: true });
-  }
-
   neueDetails(): void {
     this.formModul.enable();
-    this.setzeSelectZurueck();
   }
 
   auswahlBearbeiten(element: any): void {
@@ -239,7 +236,6 @@ export class FmdComponent implements OnInit, AfterViewInit {
             notizen: details.notizen,
             fdisk_aenderung: details.fdisk_aenderung
           });
-          this.setzeSelectZurueck();
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
         }
@@ -334,7 +330,6 @@ export class FmdComponent implements OnInit, AfterViewInit {
               fdisk_aenderung: ''
             });
             this.formModul.disable();
-            this.setzeSelectZurueck();
             this.globalDataService.erstelleMessage('success', 'ATS Träger gespeichert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
@@ -371,7 +366,6 @@ export class FmdComponent implements OnInit, AfterViewInit {
               fdisk_aenderung: ''
             });
             this.formModul.disable();
-            this.setzeSelectZurueck();
             this.updateChartData();
 
             this.globalDataService.erstelleMessage('success', 'ATS Träger geändert!');
@@ -397,7 +391,6 @@ export class FmdComponent implements OnInit, AfterViewInit {
       fdisk_aenderung: ''
     });
     this.formModul.disable();
-    this.setzeSelectZurueck();
   }
 
   datenLoeschen(): void {
@@ -425,7 +418,6 @@ export class FmdComponent implements OnInit, AfterViewInit {
             fdisk_aenderung: ''
           });
           this.formModul.disable();
-          this.setzeSelectZurueck();
 
           this.globalDataService.erstelleMessage('success', 'ATS Träger erfolgreich gelöscht!');
         } catch (e: any) {

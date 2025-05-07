@@ -225,9 +225,9 @@
                 *matRowDef="let row; columns: sichtbareSpaltenATS"
               ></tr>
             </table>
-            <mat-paginator [pageSizeOptions]="[10, 50, 100]"
+            <mat-paginator [pageSizeOptions]="pageOptions"
                       showFirstLastButtons
-                      aria-label="Select page of periodic elements">
+                      aria-label="Auswahl Anzahl der sichtbaren Elemente">
             </mat-paginator>
           </mat-tab>
           <mat-tab label="Untersuchungen">
@@ -353,7 +353,6 @@
                   {{ element.tauglichkeit }}
                 </td>
               </ng-container>
-
               <tr
                 mat-header-row
                 *matHeaderRowDef="sichtbareSpaltenTauglichkeit"
