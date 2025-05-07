@@ -14,6 +14,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-mitglied',
@@ -34,7 +35,8 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
       MatCheckbox,
       MatHint,
       MatTableModule,
-      MatPaginatorModule
+      MatPaginatorModule,
+      MatIconModule
   ],
   templateUrl: './mitglied.component.html',
   styleUrl: './mitglied.component.sass'
@@ -75,7 +77,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
     hauptberuflich: new FormControl(false)
   });
 
-  sichtbareSpaltenMitglieder: string[] = ['stbnr', 'vorname', 'nachname'];
+  sichtbareSpaltenMitglieder: string[] = ['stbnr', 'vorname', 'nachname', 'actions'];
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -116,16 +118,11 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
     };
   }
 
-  setzeSelectZurueck(): void {
-    this.formAuswahl.controls["mitglied"].setValue(0, { onlySelf: true });
-  }
-
-  auswahlBearbeiten(): void {
-    const id = this.formAuswahl.controls['mitglied'].value;
-    if (id === 0) {
+  auswahlBearbeiten(element: any): void {
+    if (element.id === 0) {
       return;
     }
-    const abfrageUrl = `${this.modul}/${id}`;
+    const abfrageUrl = `${this.modul}/${element.id}`;
   
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
@@ -142,8 +139,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
             geburtsdatum: details.geburtsdatum ?? '',
             hauptberuflich: details.hauptberuflich ?? false
           });
-  
-          this.setzeSelectZurueck();
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
         }
@@ -157,7 +152,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
 
   neueDetails(): void {
     this.formModul.enable();
-    this.setzeSelectZurueck();
   }
 
   datenLoeschen(): void {
@@ -183,7 +177,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
             hauptberuflich: false
           });
           this.formModul.disable();
-          this.setzeSelectZurueck();
   
           this.globalDataService.erstelleMessage('success', 'Mitglied erfolgreich gelöscht!');
         } catch (e: any) {
@@ -198,7 +191,16 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
 
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "Mitglied nicht gespeichert!");
-    this.router.navigate(['/mitglied']);
+    this.formModul.reset({
+      id: 0,
+      stbnr: '',
+      vorname: '',
+      nachname: '',
+      svnr: '',
+      geburtsdatum: '',
+      hauptberuflich: false
+    });
+    this.formModul.disable();
   }
 
   datenSpeichern(): void {
@@ -228,7 +230,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
               hauptberuflich: false
             });
             this.formModul.disable();
-            this.setzeSelectZurueck();
   
             this.globalDataService.erstelleMessage('success', 'Mitglied erfolgreich gespeichert!');
           } catch (e: any) {
@@ -256,7 +257,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
               hauptberuflich: false
             });
             this.formModul.disable();
-            this.setzeSelectZurueck();
   
             this.globalDataService.erstelleMessage('success', 'Mitglied erfolgreich geändert!');
           } catch (e: any) {

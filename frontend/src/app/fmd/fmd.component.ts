@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { IMitglied } from 'src/app/_interface/mitglied';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { HeaderComponent } from '../_template/header/header.component';
@@ -13,11 +13,13 @@ import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
 import { IATSTraeger } from '../_interface/atstraeger';
 import { BaseChartDirective } from 'ng2-charts';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart, ChartData, ChartOptions } from 'chart.js';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 
 Chart.register(ChartDataLabels);
 
@@ -41,12 +43,14 @@ Chart.register(ChartDataLabels);
     MatCheckbox,
     MatHint,
     MatTableModule,
-    BaseChartDirective
+    BaseChartDirective,
+    MatIconModule,
+    MatPaginatorModule
   ],
   templateUrl: './fmd.component.html',
   styleUrl: './fmd.component.sass'
 })
-export class FmdComponent implements OnInit {
+export class FmdComponent implements OnInit, AfterViewInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
   cd = inject(ChangeDetectorRef)
@@ -85,6 +89,8 @@ export class FmdComponent implements OnInit {
 
   breadcrumb: any = [];
 
+  dataSource = new MatTableDataSource<IATSTraeger>(this.atstraeger);
+  sichtbareSpaltenATS: string[] = ['stbnr', 'vorname', 'nachname', 'actions'];
   sichtbareSpaltenUntersuchung: string[] = ['stbnr', 'vorname', 'nachname', 'letzte_untersuchung', 'naechste_untersuchung'];
   sichtbareSpaltenLeistungstest: string[] = ['stbnr', 'vorname', 'nachname', 'leistungstest', 'leistungstest_art'];
   sichtbareSpaltenTauglichkeit: string[] = ['stbnr', 'vorname', 'nachname', 'tauglichkeit'];
@@ -112,13 +118,13 @@ export class FmdComponent implements OnInit {
   };
 
   chartTauglichkeit: ChartData<'doughnut', number[], string | string[]> = {
-    labels: ['tauglich', 'kein Arzt', 'kein Leistungstest'],
-    datasets: [{ data: [0,0,0], backgroundColor: ['#32a852', '#bf6763', '#fcba56'] }]
+    labels: ['tauglich', 'kein Leistungstest', 'kein Arzt'],
+    datasets: [{ data: [0,0,0], backgroundColor: ['#32a852', '#fcba56', '#bf6763'] }]
   };
 
   chartUntersuchung: ChartData<'doughnut', number[], string | string[]> = {
-    labels: ['Hauptberuflich', 'kein Arzt', 'gültig'],
-    datasets: [{ data: [0,0,0], backgroundColor: ['#999794', '#bf6763', '#32a852'] }]
+    labels: ['kein Arzt', 'gültig'],
+    datasets: [{ data: [0,0], backgroundColor: ['#bf6763', '#32a852'] }]
   };
 
   formAuswahl = new FormGroup({
@@ -153,6 +159,11 @@ export class FmdComponent implements OnInit {
   @ViewChild('chartAlterCanvas') chartAlterView?: BaseChartDirective;
   @ViewChild('chartTauglichkeitCanvas') chartTauglichkeitView?: BaseChartDirective;
   @ViewChild('chartUntersuchungCanvas') chartUntersuchungView?: BaseChartDirective;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
 
   ngOnInit(): void {
     sessionStorage.setItem("PageNumber", "2");
@@ -184,6 +195,7 @@ export class FmdComponent implements OnInit {
 
           this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
           this.atstraeger = this.globalDataService.arraySortByKey(this.atstraeger, 'stbnr');
+          this.dataSource.data = this.atstraeger;
           this.updateTauglichkeitFürAlle();
           this.updateChartData();
         } catch (e: any) {
@@ -205,12 +217,11 @@ export class FmdComponent implements OnInit {
     this.setzeSelectZurueck();
   }
 
-  auswahlBearbeiten(): void {
-    const id = this.formAuswahl.controls['atstraeger'].value;
-    if (id === 0) {
+  auswahlBearbeiten(element: any): void {
+    if (element.id === 0) {
       return;
     }
-    const abfrageUrl = `${this.modul}/${id}`;
+    const abfrageUrl = `${this.modul}/${element.id}`;
 
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
@@ -309,6 +320,7 @@ export class FmdComponent implements OnInit {
             
             this.atstraeger.push(newTraeger);
             this.atstraeger = this.globalDataService.arraySortByKey(this.atstraeger, 'stbnr');
+            this.dataSource.data = this.atstraeger;
             this.updateChartData();
 
             this.formModul.reset({
@@ -345,6 +357,8 @@ export class FmdComponent implements OnInit {
             this.atstraeger = this.atstraeger
               .map(m => m.id === updated.id ? updated : m)
               .sort((a, b) => a.stbnr - b.stbnr);
+            
+              this.dataSource.data = this.atstraeger;
               
             this.formModul.reset({
               id: 0,
@@ -372,7 +386,18 @@ export class FmdComponent implements OnInit {
 
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "ATS Träger nicht gespeichert!");
-    this.router.navigate(['/fmd']);
+    this.formModul.reset({
+      id: 0,
+      mitglied_id: '',
+      hausarzt: '',
+      letzte_untersuchung: '',
+      leistungstest: '',
+      leistungstest_art: '',
+      notizen: '',
+      fdisk_aenderung: ''
+    });
+    this.formModul.disable();
+    this.setzeSelectZurueck();
   }
 
   datenLoeschen(): void {
@@ -386,6 +411,7 @@ export class FmdComponent implements OnInit {
       next: (erg: any) => {
         try {
           this.atstraeger = this.atstraeger.filter((m: any) => m.id !== id);
+          this.dataSource.data = this.atstraeger;
           this.updateChartData();
 
           this.formModul.reset({
@@ -470,7 +496,7 @@ export class FmdComponent implements OnInit {
         !isNaN(testYear) &&
         Boolean(item.leistungstest) &&
         lastYear > 0 &&
-        testYear === currentYear &&
+        this.isOlderThanOneYear(item.leistungstest) == false &&
         !isNaN(nextYear) &&
         nextYear > currentYear
       ) {
@@ -479,6 +505,29 @@ export class FmdComponent implements OnInit {
         item.tauglichkeit = 'nein';
       }
     });
+  }
+
+  isOlderThanOneYear(dateStr?: string | Date | null): boolean {
+    if (!dateStr) return false;
+
+    if (typeof dateStr === 'string') {
+      const parsedDate = new Date(dateStr);
+  
+      if (isNaN(parsedDate.getTime())) {
+        return true;
+      }
+  
+      dateStr = parsedDate;
+    }
+  
+    if (dateStr instanceof Date) {
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(new Date().getFullYear() - 1);
+  
+      return dateStr < oneYearAgo;
+    }
+  
+    return false;
   }
 
   getYearFromDate(dateStr?: string | Date | null): number {
@@ -524,17 +573,17 @@ export class FmdComponent implements OnInit {
   updateTauglichkeitChart(): void {
     const zaehler = [0, 0, 0];
     const currentYear = new Date().getFullYear();
-    // ['tauglich', 'kein Arzt', 'kein Leistungstest']
 
     this.atstraeger.forEach(traeger => {
-      const nextStudy = this.getYearFromDate(traeger.naechste_untersuchung);
-      const lastTest = this.getYearFromDate(traeger.leistungstest);
       if (traeger.tauglichkeit === 'tauglich') zaehler[0]++;
-      else if (nextStudy <= currentYear) zaehler[1]++;
       else if (
-        lastTest < currentYear ||
-        traeger.leistungstest != 'nein'
+        Number(traeger.naechste_untersuchung) <= currentYear || 
+        traeger.naechste_untersuchung === null
       ) zaehler[2]++;
+      else if (
+        this.isOlderThanOneYear(traeger.leistungstest) === true ||
+        traeger.leistungstest === 'nein'
+      ) zaehler[1]++;
     });
 
     this.chartTauglichkeit.datasets[0].data = zaehler;
@@ -542,15 +591,13 @@ export class FmdComponent implements OnInit {
   }
 
   updateUntersuchungChart(): void {
-    const zaehler = [0, 0, 0];
+    const zaehler = [0, 0];
     const currentYear = new Date().getFullYear();
-    // ['Hauptberuflich', 'kein Arzt', 'gültig']
 
     this.atstraeger.forEach(traeger => {
-      const nextStudy = this.getYearFromDate(traeger.naechste_untersuchung);
-      if (traeger.hauptberuflich === true) zaehler[0]++;
-      else if (nextStudy <= currentYear) zaehler[1]++;
-      else if (nextStudy > currentYear) zaehler[2]++;
+      const nextStudy = Number(traeger.naechste_untersuchung);
+      if (nextStudy <= currentYear || traeger.naechste_untersuchung === null) zaehler[0]++;
+      else if (nextStudy > currentYear) zaehler[1]++;
     });
 
     this.chartUntersuchung.datasets[0].data = zaehler;
