@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, ValidatorFn, AbstractControl } from '@angular/forms';
 import { IMitglied } from 'src/app/_interface/mitglied';
@@ -12,6 +12,8 @@ import { MatButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-mitglied',
@@ -30,20 +32,26 @@ import { Router } from '@angular/router';
       MatInput, 
       MatError, 
       MatCheckbox,
-      MatHint
+      MatHint,
+      MatTableModule,
+      MatPaginatorModule
   ],
   templateUrl: './mitglied.component.html',
   styleUrl: './mitglied.component.sass'
 })
-export class MitgliedComponent implements OnInit {
+export class MitgliedComponent implements OnInit, AfterViewInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
+  
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   title = "Mitglieder Verwaltung";
   modul = "mitglieder";
 
   mitglieder: IMitglied[] = [];
   breadcrumb: any = [];
+  dataSource = new MatTableDataSource<any>(this.mitglieder);
 
   formAuswahl = new FormGroup({
     mitglied: new FormControl(0)
@@ -66,6 +74,12 @@ export class MitgliedComponent implements OnInit {
     ]),
     hauptberuflich: new FormControl(false)
   });
+
+  sichtbareSpaltenMitglieder: string[] = ['stbnr', 'vorname', 'nachname'];
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
 
   ngOnInit(): void {
     sessionStorage.setItem("PageNumber", "2");

@@ -156,6 +156,36 @@
             Daten löschen
           </button>
         </form>
+        <table mat-table [dataSource]="dataSource" [hidden]="!formModul.disabled">
+          <ng-container matColumnDef="stbnr">
+            <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+            <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
+          </ng-container>
+          <ng-container matColumnDef="vorname">
+            <th mat-header-cell *matHeaderCellDef>Vorname</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.vorname }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="nachname">
+            <th mat-header-cell *matHeaderCellDef>Nachname</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.nachname }}
+            </td>
+          </ng-container>
+          <tr
+            mat-header-row
+            *matHeaderRowDef="sichtbareSpaltenMitglieder"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: sichtbareSpaltenMitglieder"
+          ></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[10, 50, 100]"
+                  showFirstLastButtons
+                  aria-label="Select page of periodic elements">
+        </mat-paginator>
       </mat-card-content>
     </mat-card>
   </div>
