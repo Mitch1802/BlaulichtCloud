@@ -44,14 +44,14 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
   router = inject(Router);
   
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   title = "Mitglieder Verwaltung";
   modul = "mitglieder";
 
   mitglieder: IMitglied[] = [];
   breadcrumb: any = [];
-  dataSource = new MatTableDataSource<any>(this.mitglieder);
+  dataSource = new MatTableDataSource<IMitglied>(this.mitglieder);
 
   formAuswahl = new FormGroup({
     mitglied: new FormControl(0)
@@ -90,8 +90,8 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.mitglieder = erg.data.main;
-          this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
+          this.mitglieder = this.globalDataService.arraySortByKey(erg.data.main, 'stbnr');
+          this.dataSource.data = this.mitglieder;
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -171,6 +171,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       next: (erg: any) => {
         try {
           this.mitglieder = this.mitglieder.filter(m => m.id !== id);
+          this.dataSource.data = this.mitglieder;
   
           this.formModul.reset({
             id: 0,
@@ -215,6 +216,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
           try {
             this.mitglieder.push(erg.data);
             this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
+            this.dataSource.data = this.mitglieder;
   
             this.formModul.reset({
               id: 0,
@@ -242,6 +244,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
             this.mitglieder = this.mitglieder.map(m =>
               m.id === erg.data.id ? erg.data : m
             );
+            this.dataSource.data = this.mitglieder;
   
             this.formModul.reset({
               id: 0,
@@ -264,5 +267,4 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       });
     }
   }
-  
 }
