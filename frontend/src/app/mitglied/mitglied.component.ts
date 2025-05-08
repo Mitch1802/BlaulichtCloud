@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
+import * as Papa from 'papaparse';
 
 @Component({
   selector: 'app-mitglied',
@@ -102,6 +103,43 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
         this.globalDataService.errorAnzeigen(error);
       }
     });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) {
+      return;
+    }
+    const file = input.files[0];
+
+    Papa.parse<IMitglied>(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results: any) => {
+        const parsed: IMitglied[] = results.data;
+
+        // Filtere nur neue Einträge (z.B. anhand der ID)
+        const toImport = parsed.filter(item =>
+          !this.mitglieder.some(existing => existing.id === item.id)
+        );
+
+        if (toImport.length > 0) {
+          this.sendToBackend(toImport);
+        } else {
+          console.log('Keine neuen Mitglieder zum Importieren.');
+        }
+      },
+      error: (err: any) => console.error('CSV Parsing Error:', err)
+    });
+  }
+
+  private sendToBackend(entries: IMitglied[]): void {
+    let test = '';
+    // this.http.post('/api/mitglieder/import', entries)
+    //   .subscribe({
+    //     next: () => console.log('Import erfolgreich'),
+    //     error: (err) => console.error('Fehler beim Import:', err)
+    //   });
   }
 
   private validDateDDMMYYYY(): ValidatorFn {

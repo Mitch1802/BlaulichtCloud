@@ -8,15 +8,30 @@
       </mat-card-header>
       <mat-card-content>
         <button
-        mat-raised-button
-        color="accent"
-        class="me-2 mb-3"
-        [hidden]="!formModul.disabled"
-        (click)="neueDetails()"
-        type="button"
-      >
-        Hinzufügen
-      </button>
+          mat-raised-button
+          color="accent"
+          class="me-2 mb-3"
+          [hidden]="!formModul.disabled"
+          (click)="neueDetails()"
+          type="button"
+        >
+          Hinzufügen
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          class="me-2 mb-3"
+          [hidden]="!formModul.disabled"
+          type="button"
+        >
+          FDISK Export hochladen
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept=".csv"
+            hidden
+          />
+        </button>
         <form
           [formGroup]="formModul"
           (ngSubmit)="datenSpeichern()"
@@ -81,37 +96,39 @@
                   maxlength="4"
                   minlength="4"
                 />
-                @if (
-                  formModul.controls['svnr'].hasError('minlength') ||
-                  formModul.controls['svnr'].hasError('maxlength')
-                ) {
-                  <mat-error>4 Ziffern erforderlich!</mat-error>
-                }
-              
-                @if (formModul.controls['svnr'].hasError('pattern')) {
-                  <mat-error>Nur Ziffern erlaubt!</mat-error>
+                @if ( formModul.controls['svnr'].hasError('minlength') ||
+                formModul.controls['svnr'].hasError('maxlength') ) {
+                <mat-error>4 Ziffern erforderlich!</mat-error>
+                } @if (formModul.controls['svnr'].hasError('pattern')) {
+                <mat-error>Nur Ziffern erlaubt!</mat-error>
                 }
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-4 mb-3">
               <mat-form-field hintLabel="* Pflichtfeld">
                 <mat-label>Geburtsdatum</mat-label>
-                <input matInput type="text" formControlName="geburtsdatum" placeholder="TT.MM.YYYY"/>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="geburtsdatum"
+                  placeholder="TT.MM.YYYY"
+                />
                 @if (formModul.controls['geburtsdatum'].hasError('required')) {
-                  <mat-error>Geburtsdatum ist erforderlich!</mat-error>
-                }
-              
-                @if (formModul.controls['geburtsdatum'].hasError('pattern')) {
-                  <mat-error>Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error>
-                }
-              
-                @if (formModul.controls['geburtsdatum'].hasError('dateInvalid')) {
-                  <mat-error>Kein existierendes Datum!</mat-error>
+                <mat-error>Geburtsdatum ist erforderlich!</mat-error>
+                } @if (formModul.controls['geburtsdatum'].hasError('pattern')) {
+                <mat-error
+                  >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
+                >
+                } @if
+                (formModul.controls['geburtsdatum'].hasError('dateInvalid')) {
+                <mat-error>Kein existierendes Datum!</mat-error>
                 }
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-6 mb-3">
-              <mat-checkbox formControlName="hauptberuflich">Hauptberuflich</mat-checkbox>
+              <mat-checkbox formControlName="hauptberuflich"
+                >Hauptberuflich</mat-checkbox
+              >
             </div>
           </section>
 
@@ -125,7 +142,11 @@
             Daten löschen
           </button>
         </form>
-        <table mat-table [dataSource]="dataSource" [hidden]="!formModul.disabled">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          [hidden]="!formModul.disabled"
+        >
           <ng-container matColumnDef="stbnr">
             <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
             <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
@@ -143,25 +164,28 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Aktionen </th>
+            <th mat-header-cell *matHeaderCellDef>Aktionen</th>
             <td mat-cell *matCellDef="let element">
-              <button mat-icon-button color="primary" (click)="auswahlBearbeiten(element)">
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="auswahlBearbeiten(element)"
+              >
                 <mat-icon>edit</mat-icon>
               </button>
             </td>
           </ng-container>
-          <tr
-            mat-header-row
-            *matHeaderRowDef="sichtbareSpaltenMitglieder"
-          ></tr>
+          <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenMitglieder"></tr>
           <tr
             mat-row
             *matRowDef="let row; columns: sichtbareSpaltenMitglieder"
           ></tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[10, 50, 100]"
-                  showFirstLastButtons
-                  aria-label="Auswahl Anzahl der sichtbaren Elemente">
+        <mat-paginator
+          [pageSizeOptions]="[10, 50, 100]"
+          showFirstLastButtons
+          aria-label="Auswahl Anzahl der sichtbaren Elemente"
+        >
         </mat-paginator>
       </mat-card-content>
     </mat-card>
