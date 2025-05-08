@@ -7,8 +7,7 @@ import { Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
@@ -39,8 +38,6 @@ Chart.register(ChartDataLabels);
         MatButton,
         MatInput,
         MatError,
-        MatCheckbox,
-        MatHint,
         MatTableModule,
         BaseChartDirective,
         MatIconModule,
@@ -49,6 +46,7 @@ Chart.register(ChartDataLabels);
     templateUrl: './fmd.component.html',
     styleUrl: './fmd.component.sass'
 })
+
 export class FmdComponent implements OnInit, AfterViewInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);

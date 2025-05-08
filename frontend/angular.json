@@ -40,6 +40,13 @@
               "src/theme.sass",
               "src/styles.sass"
             ],
+            "optimization": {
+                "scripts": true,
+                "styles":  {
+                "minify": true, 
+                "inlineCritical": true
+              }
+            },
             "scripts": [],
             "allowedCommonJsDependencies": [
               "pdfjs-dist/es5/build/pdf",

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "strict": true,
@@ -18,9 +19,7 @@
     "resolveJsonModule": true,
     "lib": [
       "es2022",
-      "dom",
-      "dom.iterable",
-      "esnext"
+      "dom"
     ]
   },
   "angularCompilerOptions": {
