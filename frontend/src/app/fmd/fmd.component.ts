@@ -24,31 +24,30 @@ import { MatIconModule } from '@angular/material/icon';
 Chart.register(ChartDataLabels);
 
 @Component({
-  selector: 'app-fmd',
-  standalone: true,
-  imports: [
-    CommonModule,
-    HeaderComponent,
-    MatCardModule,
-    MatTabsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    MatButton,
-    MatInput,
-    MatError,
-    MatCheckbox,
-    MatHint,
-    MatTableModule,
-    BaseChartDirective,
-    MatIconModule,
-    MatPaginatorModule
-  ],
-  templateUrl: './fmd.component.html',
-  styleUrl: './fmd.component.sass'
+    selector: 'app-fmd',
+    imports: [
+        CommonModule,
+        HeaderComponent,
+        MatCardModule,
+        MatTabsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatButton,
+        MatInput,
+        MatError,
+        MatCheckbox,
+        MatHint,
+        MatTableModule,
+        BaseChartDirective,
+        MatIconModule,
+        MatPaginatorModule
+    ],
+    templateUrl: './fmd.component.html',
+    styleUrl: './fmd.component.sass'
 })
 export class FmdComponent implements OnInit, AfterViewInit {
   globalDataService = inject(GlobalDataService);

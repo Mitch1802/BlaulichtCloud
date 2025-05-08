@@ -23,23 +23,22 @@ import { MatInput } from '@angular/material/input';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-modul-konfiguration',
-  standalone: true,
-  imports: [
-    HeaderComponent,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    MatButton,
-    MatInput,
-    MatError
-  ],
-  templateUrl: './modul-konfiguration.component.html',
-  styleUrls: ['./modul-konfiguration.component.sass']
+    selector: 'app-modul-konfiguration',
+    imports: [
+        HeaderComponent,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatButton,
+        MatInput,
+        MatError
+    ],
+    templateUrl: './modul-konfiguration.component.html',
+    styleUrls: ['./modul-konfiguration.component.sass']
 })
 export class ModulKonfigurationComponent implements OnInit {
   globalDataService = inject(GlobalDataService);

@@ -18,29 +18,28 @@ import { MatIconModule } from '@angular/material/icon';
 import * as Papa from 'papaparse';
 
 @Component({
-  selector: 'app-mitglied',
-  standalone: true,
-  imports: [
-      CommonModule, 
-      HeaderComponent, 
-      MatCardModule, 
-      FormsModule, 
-      ReactiveFormsModule, 
-      MatFormField, 
-      MatLabel, 
-      MatSelect, 
-      MatOption, 
-      MatButton, 
-      MatInput, 
-      MatError, 
-      MatCheckbox,
-      MatHint,
-      MatTableModule,
-      MatPaginatorModule,
-      MatIconModule
-  ],
-  templateUrl: './mitglied.component.html',
-  styleUrl: './mitglied.component.sass'
+    selector: 'app-mitglied',
+    imports: [
+        CommonModule,
+        HeaderComponent,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatButton,
+        MatInput,
+        MatError,
+        MatCheckbox,
+        MatHint,
+        MatTableModule,
+        MatPaginatorModule,
+        MatIconModule
+    ],
+    templateUrl: './mitglied.component.html',
+    styleUrl: './mitglied.component.sass'
 })
 export class MitgliedComponent implements OnInit, AfterViewInit {
   globalDataService = inject(GlobalDataService);

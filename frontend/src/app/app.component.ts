@@ -4,18 +4,17 @@ import { RouterOutlet } from '@angular/router';
 
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  standalone: true,
-  imports: [
-    SpinnerComponent,
-    RouterOutlet
-  ],
-  styleUrls: [
-    './app.component.sass',
-    '../assets/css/icon.css',
-    '../assets/css/bootstrap-grid.css'
-  ]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    imports: [
+        SpinnerComponent,
+        RouterOutlet
+    ],
+    styleUrls: [
+        './app.component.sass',
+        '../assets/css/icon.css',
+        '../assets/css/bootstrap-grid.css'
+    ]
 })
 export class AppComponent {
   constructor() {}

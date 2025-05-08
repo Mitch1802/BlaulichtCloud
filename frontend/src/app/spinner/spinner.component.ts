@@ -7,7 +7,6 @@ import { LoaderService } from '../_service/loader.service';
     templateUrl: './spinner.component.html',
     styleUrls: ['./spinner.component.sass'],
     encapsulation: ViewEncapsulation.ShadowDom,
-    standalone: true,
     imports: []
 })
 export class SpinnerComponent {

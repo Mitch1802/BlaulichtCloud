@@ -18,11 +18,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "index": "src/index.html",
-            "outputPath": "dist",
-            "main": "src/main.ts",
+            "outputPath": {
+              "base": "dist"
+            },
             "polyfills": [
               "src/polyfills.ts"
             ],
@@ -48,9 +49,9 @@
               "pdfjs-dist/legacy/web/pdf_viewer",
               "crypto-js"
             ],
-            "buildOptimizer": true,
             "serviceWorker": false,
-            "baseHref": "/"
+            "baseHref": "/",
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {

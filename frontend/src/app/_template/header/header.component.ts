@@ -10,14 +10,13 @@ import { MatIconModule } from '@angular/material/icon';
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.sass'],
-    standalone: true,
     imports: [
-    MatToolbar,
-    RouterLink,
-    MatIconButton,
-    MatIconModule,
-    MatButton
-],
+        MatToolbar,
+        RouterLink,
+        MatIconButton,
+        MatIconModule,
+        MatButton
+    ]
 })
 export class HeaderComponent implements OnInit {
   globalDataService = inject(GlobalDataService);

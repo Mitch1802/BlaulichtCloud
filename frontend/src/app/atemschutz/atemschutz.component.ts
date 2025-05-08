@@ -5,11 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-atemschutz',
-  standalone: true,
-  imports: [ HeaderComponent, MatCardModule ],
-  templateUrl: './atemschutz.component.html',
-  styleUrl: './atemschutz.component.sass'
+    selector: 'app-atemschutz',
+    imports: [HeaderComponent, MatCardModule],
+    templateUrl: './atemschutz.component.html',
+    styleUrl: './atemschutz.component.sass'
 })
 export class AtemschutzComponent implements OnInit {
   globalDataService = inject(GlobalDataService);

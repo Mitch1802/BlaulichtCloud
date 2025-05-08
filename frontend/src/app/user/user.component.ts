@@ -17,21 +17,20 @@ import { Router } from '@angular/router';
     selector: 'app-user',
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.sass'],
-    standalone: true,
-    imports: [ 
-      CommonModule, 
-      HeaderComponent, 
-      MatCardModule, 
-      FormsModule, 
-      ReactiveFormsModule, 
-      MatFormField, 
-      MatLabel, 
-      MatSelect, 
-      MatOption, 
-      MatButton, 
-      MatInput, 
-      MatError, 
-      MatCheckbox
+    imports: [
+        CommonModule,
+        HeaderComponent,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatSelect,
+        MatOption,
+        MatButton,
+        MatInput,
+        MatError,
+        MatCheckbox
     ]
 })
 export class UserComponent implements OnInit {

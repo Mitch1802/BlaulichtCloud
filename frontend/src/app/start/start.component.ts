@@ -10,14 +10,13 @@ import { MatIconModule } from '@angular/material/icon';
     selector: 'app-start',
     templateUrl: './start.component.html',
     styleUrls: ['./start.component.sass'],
-    standalone: true,
     imports: [
-      CommonModule,
-      HeaderComponent,
-      MatCardModule,
-      RouterLink,
-      MatIconModule
-    ],
+        CommonModule,
+        HeaderComponent,
+        MatCardModule,
+        RouterLink,
+        MatIconModule
+    ]
 })
 export class StartComponent implements OnInit {
   private globalDataService = inject(GlobalDataService);

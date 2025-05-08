@@ -18,7 +18,6 @@ import { MatChipsModule } from '@angular/material/chips';
     selector: 'app-konfiguration',
     templateUrl: './konfiguration.component.html',
     styleUrls: ['./konfiguration.component.sass'],
-    standalone: true,
     imports: [CommonModule, HeaderComponent, MatCardModule, FormsModule, ReactiveFormsModule, MatButton, MatFormField, MatLabel, MatInput, MatError, MatList, MatListItem, MatIconModule, MatChipsModule]
 })
 export class KonfigurationComponent implements OnInit {

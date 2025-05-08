@@ -5,11 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-verwaltung',
-  standalone: true,
-  imports: [ HeaderComponent, MatCardModule ],
-  templateUrl: './verwaltung.component.html',
-  styleUrl: './verwaltung.component.sass'
+    selector: 'app-verwaltung',
+    imports: [HeaderComponent, MatCardModule],
+    templateUrl: './verwaltung.component.html',
+    styleUrl: './verwaltung.component.sass'
 })
 export class VerwaltungComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
