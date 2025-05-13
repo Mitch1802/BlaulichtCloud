@@ -192,6 +192,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
             };
           });
 
+          this.mitglieder = this.mitglieder.filter((m: any) => m.hauptberuflich == false);
+
           this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
           this.atstraeger = this.globalDataService.arraySortByKey(this.atstraeger, 'stbnr');
           this.dataSource.data = this.atstraeger;
