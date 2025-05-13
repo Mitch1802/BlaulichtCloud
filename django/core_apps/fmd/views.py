@@ -4,7 +4,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from .models import FMD
-from .renderers import FMDJSONRenderer, FMDsJSONRenderer
+from .renderers import FMDJSONRenderer
 from .serializers import FMDSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 from core_apps.mitglieder.models import Mitglied
@@ -17,7 +17,7 @@ class FMDListCreateView(generics.ListCreateAPIView):
     queryset = FMD.objects.all()
     serializer_class = FMDSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","FMD")]
-    renderer_classes = [FMDsJSONRenderer]
+    renderer_classes = [FMDJSONRenderer]
 
     def list(self, request):
         mod_queryset = self.filter_queryset(self.get_queryset())

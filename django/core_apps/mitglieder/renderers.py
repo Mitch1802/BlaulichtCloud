@@ -23,7 +23,3 @@ class ModulJSONRenderer(JSONRenderer):
 
 class MitgliedJSONRenderer(ModulJSONRenderer):
     modul_name = "Mitglied"
-
-
-class MitgliederJSONRenderer(ModulJSONRenderer):
-    modul_name = "Mitglieder"

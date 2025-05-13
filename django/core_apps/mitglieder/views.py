@@ -3,7 +3,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from .models import Mitglied
-from .renderers import MitgliedJSONRenderer, MitgliederJSONRenderer
+from .renderers import MitgliedJSONRenderer
 from .serializers import MitgliedSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 
@@ -12,7 +12,7 @@ class MitgliedListCreateView(generics.ListCreateAPIView):
     queryset = Mitglied.objects.order_by('stbnr')
     serializer_class = MitgliedSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","MITGLIED")]
-    renderer_classes = [MitgliederJSONRenderer]
+    renderer_classes = [MitgliedJSONRenderer]
 
     def list(self, request):
         mod_queryset = self.filter_queryset(self.get_queryset())

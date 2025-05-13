@@ -4,7 +4,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from .models import Konfiguration
-from .renderers import KonfigurationenJSONRenderer, KonfigurationJSONRenderer
+from .renderers import KonfigurationJSONRenderer
 from .serializers import KonfigurationSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 from core_apps.backup.views import backup_path
@@ -16,7 +16,7 @@ class KonfigurationListCreateView(generics.ListCreateAPIView):
     queryset = Konfiguration.objects.all()
     serializer_class = KonfigurationSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
-    renderer_classes = [KonfigurationenJSONRenderer]
+    renderer_classes = [KonfigurationJSONRenderer]
 
     def list(self, request):
         mod_queryset = self.filter_queryset(self.get_queryset())

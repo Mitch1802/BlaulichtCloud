@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from dj_rest_auth.views import LogoutView
 
 from .models import User, Role
-from .renderers import UsersJSONRenderer, UserJSONRenderer
+from .renderers import UserJSONRenderer
 from .serializers import UserSerializer, ChangePasswordSerializer, RoleSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 
@@ -25,7 +25,7 @@ class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
-    renderer_classes = [UsersJSONRenderer]
+    renderer_classes = [UserJSONRenderer]
 
     def list(self, request):
         mod_queryset = self.filter_queryset(self.get_queryset())

@@ -3,35 +3,24 @@ import json
 from rest_framework.renderers import JSONRenderer
 
 
-class FMDJSONRenderer(JSONRenderer):
+class ModulJSONRenderer(JSONRenderer):
     charset = "utf-8"
+    modul_name = "Unbenannt"
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        if renderer_context is None:
-            status_code = 200
-        else:
-            status_code = renderer_context["response"].status_code
+        status_code = renderer_context["response"].status_code if renderer_context else 200
 
-        if data is not None:
-            errors = data.get("errors", None)
-        else:
-            errors = None
+        # Fehlerbehandlung nur für dicts
+        if isinstance(data, dict) and data.get("errors", None):
+            return super().render(data, accepted_media_type, renderer_context)
 
-        if errors is not None:
-            return super(FMDJSONRenderer, self).render(data)
-
-        return json.dumps({"status_code": status_code, "modul":"FMD", "data": data})
+        return json.dumps({
+            "status_code": status_code,
+            "modul": self.modul_name,
+            "data": data
+        })
 
 
-class FMDsJSONRenderer(JSONRenderer):
-    charset = "utf-8"
+class FMDJSONRenderer(ModulJSONRenderer):
+    modul_name = "FMD"
 
-    def render(self, data, accepted_media_type=None, renderer_context=None):
-        status_code = renderer_context["response"].status_code
-
-        errors = data.get("errors", None)
-
-        if errors is not None:
-            return super(FMDsJSONRenderer, self).render(data)
-
-        return json.dumps({"status_code": status_code, "modul":"FMD", "data": data})

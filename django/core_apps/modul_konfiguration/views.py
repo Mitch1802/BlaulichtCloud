@@ -3,7 +3,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from .models import ModulKonfiguration
-from .renderers import ModulKonfigurationenJSONRenderer, ModulKonfigurationJSONRenderer
+from .renderers import ModulKonfigurationJSONRenderer
 from .serializers import ModulKonfigurationSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 from core_apps.users.models import Role
@@ -15,7 +15,7 @@ class ModulKonfigurationListCreateView(generics.ListCreateAPIView):
     serializer_class = ModulKonfigurationSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
     lookup_field = "id"
-    renderer_classes = [ModulKonfigurationenJSONRenderer]
+    renderer_classes = [ModulKonfigurationJSONRenderer]
 
     def list(self, request):
         mod_queryset = self.filter_queryset(self.get_queryset())
