@@ -21,9 +21,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "index": "src/index.html",
-            "outputPath": {
-              "base": "dist"
-            },
+            "outputPath": "dist/blaulichtcloud",
             "polyfills": [
               "src/polyfills.ts"
             ],
@@ -54,7 +52,8 @@
               "pdfmake/build/pdfmake",
               "pdfjs-dist/legacy/build/pdf",
               "pdfjs-dist/legacy/web/pdf_viewer",
-              "crypto-js"
+              "crypto-js",
+              "papaparse"
             ],
             "serviceWorker": false,
             "baseHref": "/",
