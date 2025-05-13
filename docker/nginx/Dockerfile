@@ -4,4 +4,5 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 COPY ./default.conf /etc/nginx/templates/default.conf.template
 
-COPY ./frontend/dist /usr/share/nginx/html
+COPY ./frontend/dist/blaulichtcloud /usr/share/nginx/html
+
