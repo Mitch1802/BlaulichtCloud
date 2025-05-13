@@ -1,7 +1,7 @@
 export interface IMitglied {
     id: number,
     pkid: string,
-    stbnr: string,
+    stbnr: number,
     vorname: string,
     nachname: string,
     svnr: string,

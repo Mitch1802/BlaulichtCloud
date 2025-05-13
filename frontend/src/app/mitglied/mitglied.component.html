@@ -22,16 +22,17 @@
           color="accent"
           class="me-2 mb-3"
           [hidden]="!formModul.disabled"
-          type="button"
+          (click)="fileInput.click()"
         >
-          FDISK Export hochladen
-          <input
-            type="file"
-            (change)="onFileSelected($event)"
-            accept=".csv"
-            hidden
-          />
+          FDISK CSV Import
         </button>
+        <input
+          #fileInput
+          type="file"
+          (change)="onFileSelected($event)"
+          style="display: none"
+          accept=".csv"
+        />
         <form
           [formGroup]="formModul"
           (ngSubmit)="datenSpeichern()"

@@ -3,6 +3,12 @@ from rest_framework import serializers
 from .models import Mitglied
 
 
+class MitgliedListSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        mitglieder = [Mitglied(**item) for item in validated_data]
+        return Mitglied.objects.bulk_create(mitglieder)
+
+
 class MitgliedSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         instance = Mitglied.objects.create(**validated_data)
@@ -23,3 +29,4 @@ class MitgliedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mitglied
         fields = '__all__'
+        list_serializer_class = MitgliedListSerializer

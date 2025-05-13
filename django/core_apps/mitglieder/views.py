@@ -23,6 +23,7 @@ class MitgliedListCreateView(generics.ListCreateAPIView):
         })
 
 
+
 class MitgliedRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Mitglied.objects.order_by('stbnr')
     serializer_class = MitgliedSerializer
