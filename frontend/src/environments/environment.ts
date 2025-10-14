@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   version: "dev",
-  apiUrl: "https://blaulichtcloud.michael-web.at/api/v1/"
+  apiUrl: "https://blaulichtcloud.at/api/v1/"
 };
 
 /*
