@@ -341,7 +341,7 @@ export class GlobalDataService {
 
     if (pageNumber == 2) {
       list.push(this.erstelleBreadcrumbLink(page2, true));
-    } 
+    }
 
     for (let i = 0; i < list.length; i++) {
       list[i].number = i + 1;
@@ -363,6 +363,12 @@ export class GlobalDataService {
     } else if (page == 'ATM') {
       link = '/atemschutz';
       kuerzel = 'Atemschutz';
+    } else if (page == 'NEWS') {
+      link = '/news';
+      kuerzel = 'News';
+    } else if (page == 'FEST') {
+      link = '/fest';
+      kuerzel = 'Fest';
     } else if (page == 'VER') {
       link = '/verwaltung';
       kuerzel = 'Verwaltung';

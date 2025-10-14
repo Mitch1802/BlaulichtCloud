@@ -7,7 +7,8 @@ import { MitgliedComponent } from './mitglied/mitglied.component';
 import { FmdComponent } from './fmd/fmd.component';
 import { ModulKonfigurationComponent } from './modul-konfiguration/modul-konfiguration.component';
 import { AtemschutzComponent } from './atemschutz/atemschutz.component';
-import { VerwaltungComponent } from './verwaltung/verwaltung.component';
+import { NewsComponent } from './news/news.component';
+import { FestComponent } from './fest/fest.component';
 
 export const routes: Routes = [
   {
@@ -29,7 +30,10 @@ export const routes: Routes = [
     path: 'atemschutz', component: AtemschutzComponent
   },
   {
-    path: 'verwaltung', component: VerwaltungComponent
+    path: 'news', component: NewsComponent
+  },
+  {
+    path: 'fest', component: FestComponent
   },
   {
     path: 'modul_konfiguration', component: ModulKonfigurationComponent
