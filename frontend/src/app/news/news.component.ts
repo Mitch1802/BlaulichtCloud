@@ -5,12 +5,12 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-verwaltung',
+    selector: 'app-news',
     imports: [HeaderComponent, MatCardModule],
-    templateUrl: './verwaltung.component.html',
-    styleUrl: './verwaltung.component.sass'
+    templateUrl: './news.component.html',
+    styleUrl: './news.component.sass'
 })
-export class VerwaltungComponent implements OnInit {
+export class NewsComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
