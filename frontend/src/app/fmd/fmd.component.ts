@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
@@ -25,24 +25,23 @@ Chart.register(ChartDataLabels);
 @Component({
     selector: 'app-fmd',
     imports: [
-        CommonModule,
-        HeaderComponent,
-        MatCardModule,
-        MatTabsModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatSelect,
-        MatOption,
-        MatButton,
-        MatInput,
-        MatError,
-        MatTableModule,
-        BaseChartDirective,
-        MatIconModule,
-        MatPaginatorModule
-    ],
+    HeaderComponent,
+    MatCardModule,
+    MatTabsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatButton,
+    MatInput,
+    MatError,
+    MatTableModule,
+    BaseChartDirective,
+    MatIconModule,
+    MatPaginatorModule
+],
     templateUrl: './fmd.component.html',
     styleUrl: './fmd.component.sass'
 })

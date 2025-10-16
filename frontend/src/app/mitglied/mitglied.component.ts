@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, ValidatorFn, AbstractControl } from '@angular/forms';
 import { IMitglied } from 'src/app/_interface/mitglied';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
@@ -22,21 +22,20 @@ type RenameMap = {
 @Component({
     selector: 'app-mitglied',
     imports: [
-        CommonModule,
-        HeaderComponent,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatButton,
-        MatInput,
-        MatError,
-        MatCheckbox,
-        MatTableModule,
-        MatPaginatorModule,
-        MatIconModule
-    ],
+    HeaderComponent,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatButton,
+    MatInput,
+    MatError,
+    MatCheckbox,
+    MatTableModule,
+    MatPaginatorModule,
+    MatIconModule
+],
     templateUrl: './mitglied.component.html',
     styleUrl: './mitglied.component.sass'
 })

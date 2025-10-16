@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { IKonfiguration } from 'src/app/_interface/konfiguration';
@@ -18,7 +18,7 @@ import { MatChipsModule } from '@angular/material/chips';
     selector: 'app-konfiguration',
     templateUrl: './konfiguration.component.html',
     styleUrls: ['./konfiguration.component.sass'],
-    imports: [CommonModule, HeaderComponent, MatCardModule, FormsModule, ReactiveFormsModule, MatButton, MatFormField, MatLabel, MatInput, MatError, MatList, MatListItem, MatIconModule, MatChipsModule]
+    imports: [HeaderComponent, MatCardModule, FormsModule, ReactiveFormsModule, MatButton, MatFormField, MatLabel, MatInput, MatError, MatList, MatListItem, MatIconModule, MatChipsModule]
 })
 export class KonfigurationComponent implements OnInit {
   globalDataService = inject(GlobalDataService);

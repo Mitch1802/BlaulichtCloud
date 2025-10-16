@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { GlobalDataService } from '../_service/global-data.service';
 import { HeaderComponent } from '../_template/header/header.component';
 import { MatCardModule } from '@angular/material/card';
@@ -11,12 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
     templateUrl: './start.component.html',
     styleUrls: ['./start.component.sass'],
     imports: [
-        CommonModule,
-        HeaderComponent,
-        MatCardModule,
-        RouterLink,
-        MatIconModule
-    ]
+    HeaderComponent,
+    MatCardModule,
+    RouterLink,
+    MatIconModule
+]
 })
 export class StartComponent implements OnInit {
   private globalDataService = inject(GlobalDataService);

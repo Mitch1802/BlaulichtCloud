@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IBenutzer } from 'src/app/_interface/benutzer';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
@@ -18,20 +18,19 @@ import { Router } from '@angular/router';
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.sass'],
     imports: [
-        CommonModule,
-        HeaderComponent,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatSelect,
-        MatOption,
-        MatButton,
-        MatInput,
-        MatError,
-        MatCheckbox
-    ]
+    HeaderComponent,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatButton,
+    MatInput,
+    MatError,
+    MatCheckbox
+]
 })
 export class UserComponent implements OnInit {
   globalDataService = inject(GlobalDataService);

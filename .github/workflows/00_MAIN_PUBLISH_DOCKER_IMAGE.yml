@@ -52,7 +52,7 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install Python dependencies
         run: |
@@ -101,7 +101,7 @@ jobs:
       - name: Set up Node for Angular Build
         uses: actions/setup-node@v3
         with:
-          node-version: '20.17'
+          node-version: '22.20'
 
       - name: Install & Build Angular
         run: |
