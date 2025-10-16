@@ -24,17 +24,17 @@ export class NewsComponent implements OnInit {
     sessionStorage.setItem("Page2", "NEWS");
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
 
-    // this.globalDataService.get(this.modul).subscribe({
-    //   next: (erg: any) => {
-    //     try {
-
-    //     } catch (e: any) {
-    //       this.globalDataService.erstelleMessage("error", e);
-    //     }
-    //   },
-    //   error: (error: any) => {
-    //     this.globalDataService.errorAnzeigen(error);
-    //   }
-    // });
+    this.globalDataService.get(this.modul).subscribe({
+      next: (erg: any) => {
+        try {
+          console.log(erg);
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
   }
 }

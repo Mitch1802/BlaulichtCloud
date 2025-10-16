@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .models import ModulKonfiguration
 from .renderers import ModulKonfigurationJSONRenderer
 from .serializers import ModulKonfigurationSerializer
-from core_apps.common.permissions import HasAnyRolePermission
+from core_apps.common.permissions import HasAnyRolePermission, HasReadOnlyRolePermission
 from core_apps.users.models import Role
 from core_apps.users.serializers import RoleSerializer
 
@@ -13,7 +13,7 @@ from core_apps.users.serializers import RoleSerializer
 class ModulKonfigurationListCreateView(generics.ListCreateAPIView):
     queryset = ModulKonfiguration.objects.all()
     serializer_class = ModulKonfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN"), HasReadOnlyRolePermission.with_roles("FMD", "NEWS", "VERWALTUNG", "ATEMSCHUTZ")]
     lookup_field = "id"
     renderer_classes = [ModulKonfigurationJSONRenderer]
 

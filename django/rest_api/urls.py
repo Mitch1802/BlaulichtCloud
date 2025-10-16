@@ -15,4 +15,5 @@ urlpatterns = [
     path(settings.API_URL + "modul_konfiguration/", include("core_apps.modul_konfiguration.urls")),
     path(settings.API_URL + "konfiguration/", include("core_apps.konfiguration.urls")),
     path(settings.API_URL + "backup/", include("core_apps.backup.urls")),
+    path(settings.API_URL + "news/", include("core_apps.news.urls")),
 ]
