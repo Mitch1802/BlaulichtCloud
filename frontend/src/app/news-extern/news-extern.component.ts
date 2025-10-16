@@ -22,33 +22,9 @@ export class NewsExternComponent implements OnInit, OnDestroy {
   router = inject(Router);
 
   title = 'Neuigkeiten FF Schwadorf';
-  modul = 'news';
+  modul = 'news/public';
   dauer_artikel_in_sek: number = 10;
-
-
-
-  daten: NewsItem[] = [
-    {
-      bild: '',
-      title: 'Neue Webseite',
-      text: 'Wir haben ab sofort einen neue Webseite für interne News! \n\nhttps://blaulichtcloud.at/newsfeed'
-    },
-    {
-      bild: 'assets/test/bild1.jpg', 
-      title: 'Abschluss Grundlagen Führen',
-      text: 'Unser Dario Richter hat kürzlich das Modul Grundlagen Führen erfolgreich absolviert! Gratulation'
-    },
-    {
-      bild: 'assets/test/bild2.jpg',
-      title: 'Feuerlöscher Überprüfung',
-      text: 'Am kommenden Freitag, den 10.10., laden wir in Zusammenarbeit mit der Fa. Minimax zur Feuerlöscher Überprüfung ein. Kommen Sie gerne vorbei und lassen Sie Ihre Feuerlöscher überprüfen!'
-    },
-    {
-      bild: 'assets/test/bild3.jpg',
-      title: 'Save the Date, Save a Life!',
-      text: 'Am 17. Oktober steht die nächste Blutspendeaktion Schwadorf bevor – es besteht wieder die Möglichkeit, Gutes zu tun und Blut zu spenden.'
-    }
-  ];
+  daten: NewsItem[] = [];
 
   currentIndex = 0;
   currentItem: NewsItem | null = this.daten[0]; 

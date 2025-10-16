@@ -24,7 +24,7 @@ export class NewsComponent implements OnInit {
   router = inject(Router);
 
   title: string = "News Verwaltung";
-  modul: string = "news";
+  modul: string = "news/intern";
   breadcrumb: any[] = [];
 
   newsArray: INews[] = [];
