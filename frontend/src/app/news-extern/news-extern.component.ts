@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-news-extern',
-    imports: [HeaderComponent, MatCardModule],
+    imports: [MatCardModule],
     templateUrl: './news-extern.component.html',
     styleUrl: './news-extern.component.sass'
 })
