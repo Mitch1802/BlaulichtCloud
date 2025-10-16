@@ -32,7 +32,8 @@
                 "glob": "**/*",
                 "input": "public"
               },
-              "src/assets/images"
+              "src/assets/images",
+              "src/assets/test"
             ],
             "styles": [
               "src/theme.sass",

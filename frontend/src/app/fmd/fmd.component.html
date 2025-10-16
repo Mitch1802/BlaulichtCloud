@@ -12,7 +12,7 @@
             <section class="row mt-3 mb-3 mx-0">
               <div class="col-12 col-lg-4">
                 <h2>Tauglichkeit</h2>
-                @if (chartTauglichkeit.datasets[0].data?.length) {
+                @if (chartTauglichkeit.datasets[0].data.length) {
                   <canvas
                     #chartTauglichkeitCanvas
                     baseChart
@@ -25,7 +25,7 @@
               </div>
               <div class="col-12 col-lg-4">
                 <h2>Untersuchung</h2>
-                @if (chartUntersuchung.datasets[0].data?.length) {
+                @if (chartUntersuchung.datasets[0].data.length) {
                   <canvas
                     #chartUntersuchungCanvas
                     baseChart
@@ -38,7 +38,7 @@
               </div>
               <div class="col-12 col-lg-4">
                 <h2>Altersverteilung</h2>
-                @if (chartAlter.datasets[0].data?.length) {
+                @if (chartAlter.datasets[0].data.length) {
                   <canvas
                     #chartAlterCanvas
                     baseChart
