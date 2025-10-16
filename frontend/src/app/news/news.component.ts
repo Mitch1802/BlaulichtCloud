@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { INews } from 'src/app/_interface/news';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
@@ -11,10 +11,11 @@ import { MatButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
+import { HeaderComponent } from '../_template/header/header.component';
 
 @Component({
     selector: 'app-news',
-    imports: [MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInputModule, MatError, NgStyle, MatAutocompleteModule],
+    imports: [HeaderComponent,MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInputModule, MatError, NgStyle, MatAutocompleteModule],
     templateUrl: './news.component.html',
     styleUrl: './news.component.sass'
 })
@@ -24,8 +25,7 @@ export class NewsComponent implements OnInit {
 
   title: string = "News Verwaltung";
   modul: string = "news";
-
-  @Output() breadcrumbout = new EventEmitter<any[]>();
+  breadcrumb: any[] = [];
 
   newsArray: INews[] = [];
   foto: HTMLInputElement = <HTMLInputElement>document.getElementById("fotoUpload");
@@ -49,7 +49,7 @@ export class NewsComponent implements OnInit {
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '2');
     sessionStorage.setItem('Page2', 'NEWS');
-    this.breadcrumbout.emit(this.globalDataService.ladeBreadcrumb());
+    this.breadcrumb = this.globalDataService.ladeBreadcrumb();
     this.formModul.disable();
     this.foto = <HTMLInputElement>document.getElementById("fotoUpload");
 
@@ -267,5 +267,9 @@ export class NewsComponent implements OnInit {
   closeModal(): void {
     var modal: any = document.getElementById("myModal")!;
     modal.style.display = "none";
+  }
+
+  newsfeedOeffnen(): void {
+    window.open('https://blaulichtcloud.at/newsfeed', '_blank');
   }
 }

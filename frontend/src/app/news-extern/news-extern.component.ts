@@ -56,16 +56,28 @@ export class NewsExternComponent implements OnInit, OnDestroy {
   termine: any = [];
 
   ngOnInit(): void {
-    this.globalDataService.getURL('https://ff-schwadorf.at/v2025/server/kalender/index.php').subscribe({
+    this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
+          this.daten = erg.main;
           this.currentItem = this.daten[this.currentIndex];
           let dauer = this.dauer_artikel_in_sek * 1000;
           this.intervalSub = interval(dauer).subscribe(() => {
             this.currentIndex = (this.currentIndex + 1) % this.daten.length;
             this.currentItem = this.daten[this.currentIndex];
           });
-          this.termine = erg;
+          this.globalDataService.getURL('https://ff-schwadorf.at/v2025/server/kalender/index.php').subscribe({
+            next: (erg: any) => {
+              try {
+                this.termine = erg;
+              } catch (e: any) {
+                this.globalDataService.erstelleMessage("error", e);
+              }
+            },
+            error: (error: any) => {
+              this.globalDataService.errorAnzeigen(error);
+            }
+          });
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
