@@ -119,7 +119,7 @@ export class NewsComponent implements OnInit {
           this.formModul.enable();
           this.btnUploadStatus = true;
 
-          if (details.foto_url.length > 0) {
+          if (details.foto_url) {
             this.btnText = "Bild ersetzen";
             let filePfadSplit: any = details.foto_url.split("/");
             this.fileName = filePfadSplit[filePfadSplit.length - 1];
