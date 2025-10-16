@@ -31,7 +31,7 @@
               mat-raised-button
               color="primary"
               class="col-auto"
-              [disabled]="!formAuswahl.controls['fahrzeuge'].value"
+              [disabled]="!formAuswahl.controls['news'].value"
             >
               Auswahl bearbeiten
             </button>
@@ -93,8 +93,8 @@
                   formControlName="text"
                   rows="5"
                 ></textarea>
-                @if (formModul.controls['beschreibung'].hasError('required')) {
-                <mat-error> Beschreibung ist erforderlich! </mat-error>
+                @if (formModul.controls['text'].hasError('required')) {
+                <mat-error> Text ist erforderlich! </mat-error>
                 }
               </mat-form-field>
             </div>

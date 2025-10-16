@@ -11,7 +11,6 @@ import { MatButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { map, Observable, startWith } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -147,10 +146,10 @@ export class NewsComponent implements OnInit {
   }
 
   abbrechen(): void {
-    this.globalDataService.erstelleMessage("info", "Fahrzeug nicht gespeichert!");
-    this.router.navigate(['/verwaltung/fahrzeug']);
+    this.globalDataService.erstelleMessage("info", "News nicht gespeichert!");
+    this.router.navigate(['/news']);
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.navigate(['/verwaltung/fahrzeug']);
+    this.router.navigate(['/news']);
   }
 
   neueDetails(): void {
