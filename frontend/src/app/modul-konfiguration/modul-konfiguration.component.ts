@@ -47,6 +47,13 @@ export class ModulKonfigurationComponent implements OnInit {
   title = 'Modul Konfiguration';
   modul = 'modul_konfiguration';
   breadcrumb: any[] = [];
+
+  verfuegbareModulListe: any = [
+    { key: 'start', label: 'Startseite' },
+    { key: 'fmd', label: 'FMD' },
+    { key: 'atmschutz', label: 'Atemschutz' },
+    { key: 'mitglieder', label: 'Mitglieder' },
+  ];
   modulListe: any = [];
 
   formAuswahl = new FormGroup({

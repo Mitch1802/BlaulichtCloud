@@ -13,12 +13,10 @@
           <section class="row mt-3 mb-3">
             <div class="col-12 col-lg-9">
               <mat-form-field>
-                <mat-label>Fahrzeug auswählen</mat-label>
-                <mat-select formControlName="fahrzeuge">
-                  @for (opt of fahrzeugArray; track opt) {
-                    <mat-option [value]="opt.id"> {{opt.kuerzel}}
-                      {{opt.name}}
-                    </mat-option>
+                <mat-label>News auswählen</mat-label>
+                <mat-select formControlName="news">
+                  @for (opt of newsArray; track opt) {
+                    <mat-option [value]="opt.id">{{opt.title}}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>

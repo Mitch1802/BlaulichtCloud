@@ -5,17 +5,16 @@ import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-import { AsyncPipe, NgStyle } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { MatOption } from '@angular/material/core';
 import { MatButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-news',
-    imports: [MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInputModule, MatError, MatCheckbox, NgStyle, MatAutocompleteModule, AsyncPipe],
+    imports: [MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInputModule, MatError, NgStyle, MatAutocompleteModule],
     templateUrl: './news.component.html',
     styleUrl: './news.component.sass'
 })
