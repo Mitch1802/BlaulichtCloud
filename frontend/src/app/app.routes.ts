@@ -9,6 +9,7 @@ import { ModulKonfigurationComponent } from './modul-konfiguration/modul-konfigu
 import { AtemschutzComponent } from './atemschutz/atemschutz.component';
 import { NewsComponent } from './news/news.component';
 import { FestComponent } from './fest/fest.component';
+import { NewsExternComponent } from './news-extern/news-extern.component';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,9 @@ export const routes: Routes = [
   },
   {
     path: 'news', component: NewsComponent
+  },
+  {
+    path: 'newsfeed', component: NewsExternComponent
   },
   {
     path: 'fest', component: FestComponent
