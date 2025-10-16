@@ -24,7 +24,7 @@ class News(TimeStampedModel):
     title = models.CharField(verbose_name=_("Titel"), max_length=255)
     text = models.TextField(verbose_name=_("Text"))
     foto = models.ImageField(
-        verbose_name=_("Foto"), upload_to=news_filename, default="news/default.png"
+        verbose_name=_("Foto"), upload_to=news_filename, default=""
     )
 
     def __str__(self):

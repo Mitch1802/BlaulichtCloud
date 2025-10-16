@@ -10,9 +10,9 @@ from core_apps.common.permissions import HasAnyRolePermission
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_IMAGE_NAMES = {"news/default.png"}
+
 def _is_default(name: str) -> bool:
-    return not name or name in DEFAULT_IMAGE_NAMES
+    return not name or name in ""
 
 
 class NewsViewSet(ModelViewSet):
@@ -21,24 +21,22 @@ class NewsViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","NEWS")]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     lookup_field = "id"
-    pagination_class = None  # <- KEINE Pagination
-
-    # optional: Suche/Ordering behalten (schadet nicht)
+    pagination_class = None 
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["created_at", "title"]
     ordering = ["created_at", "title"]
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
-        ctx["request"] = self.request  # für absolute foto_url
+        ctx["request"] = self.request 
         return ctx
 
     def list(self, request, *args, **kwargs):
-        resp = super().list(request, *args, **kwargs)  # resp.data ist eine LISTE
+        resp = super().list(request, *args, **kwargs)
         return Response({"main": resp.data})
 
     def retrieve(self, request, *args, **kwargs):
-        resp = super().retrieve(request, *args, **kwargs)  # resp.data ist ein OBJEKT
+        resp = super().retrieve(request, *args, **kwargs)
         return Response({"news": resp.data})
 
     # --- Bildwechsel: altes Bild nur löschen, wenn wirklich ersetzt ---
