@@ -275,6 +275,12 @@ export class GlobalDataService {
     return response;
   }
 
+  getURL(url: string): Observable<any[]> {
+    const response: any = this.http.get<any[]>(url);
+
+    return response;
+  }
+
   post(modul: string, daten: any, filesVorhanden: boolean): Observable<any[]> {
     const headers = this.ladeHeaders(filesVorhanden);
     const url = this.AppUrl + modul + '/';
