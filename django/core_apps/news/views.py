@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def _is_default(name: str) -> bool:
-    return not name or name in ""
+    return not name
 
 
 class NewsViewSet(ModelViewSet):
