@@ -78,7 +78,7 @@ export class ModulKonfigurationComponent implements OnInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.modulListe = erg.data.main;
+          this.modulListe = erg.main;
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -108,7 +108,7 @@ export class ModulKonfigurationComponent implements OnInit {
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          const details: any = erg.data["modul-konfiguration"] ?? {};
+          const details: any = erg ?? {};
           this.formModul.enable();
 
           this.formModul.setValue({
@@ -131,7 +131,7 @@ export class ModulKonfigurationComponent implements OnInit {
       this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
       return;
     }
-  
+
     const objekt: any = this.formModul.value;
     objekt.konfiguration = JSON.parse(objekt.konfiguration);
     const idValue = this.formModul.controls['id'].value;
@@ -143,7 +143,7 @@ export class ModulKonfigurationComponent implements OnInit {
             this.formModul.reset();
             this.formModul.disable();
             this.setzeSelectZurueck();
-  
+
             this.globalDataService.erstelleMessage('success', 'Konfiguration gespeichert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
@@ -154,7 +154,7 @@ export class ModulKonfigurationComponent implements OnInit {
     } else {
       this.globalDataService.patch(this.modul, idValue, objekt, false).subscribe({
         next: (erg: any) => {
-          try {  
+          try {
             this.formModul.reset();
             this.formModul.disable();
             this.setzeSelectZurueck();
@@ -175,16 +175,16 @@ export class ModulKonfigurationComponent implements OnInit {
       this.globalDataService.erstelleMessage('error', 'Keine Modul Konfiguration ausgewählt zum Löschen!');
       return;
     }
-  
+
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
           this.modulListe = this.modulListe.filter((m: any) => m.id !== id);
-  
+
           this.formModul.reset();
           this.formModul.disable();
           this.setzeSelectZurueck();
-  
+
           this.globalDataService.erstelleMessage('success', 'Modul Konfiguration erfolgreich gelöscht!');
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);

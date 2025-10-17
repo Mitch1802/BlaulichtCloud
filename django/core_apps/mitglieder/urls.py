@@ -1,12 +1,10 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import MitgliedViewSet
 
-from .views import MitgliedListCreateView, MitgliedRetrieveUpdateDestroyView
+router = DefaultRouter()
+router.register(r"", MitgliedViewSet, basename='mitglied')
 
 urlpatterns = [
-    path("", MitgliedListCreateView.as_view(), name="mitglied-list-create"),
-    path(
-        "<uuid:id>/",
-        MitgliedRetrieveUpdateDestroyView.as_view(),
-        name="mitglied-retrieve-update-destroy",
-    ),
+    path("", include(router.urls)),
 ]

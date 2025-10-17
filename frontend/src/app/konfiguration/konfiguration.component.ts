@@ -62,8 +62,8 @@ export class KonfigurationComponent implements OnInit {
         try {
           this.formRolle.enable();
           this.formKonfig.enable();
-          if (erg.data.main.length > 0){
-            const details: IKonfiguration = erg.data.main[0];
+          if (erg.length > 0){
+            const details: IKonfiguration = erg[0];
             this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
@@ -111,7 +111,7 @@ export class KonfigurationComponent implements OnInit {
     });
   }
 
-  rolleLoeschen(rolle: any): void {  
+  rolleLoeschen(rolle: any): void {
     const id = rolle.id;
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {

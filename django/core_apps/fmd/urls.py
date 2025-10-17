@@ -1,12 +1,11 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import FMDViewSet
 
-from .views import FMDListCreateView, FMDRetrieveUpdateDestroyView
+
+router = DefaultRouter()
+router.register(r"", FMDViewSet, basename="fmd")
 
 urlpatterns = [
-    path("", FMDListCreateView.as_view(), name="fmd-list-create"),
-    path(
-        "<uuid:id>/",
-        FMDRetrieveUpdateDestroyView.as_view(),
-        name="fmd-retrieve-update-destroy",
-    ),
+    path("", include(router.urls)),
 ]

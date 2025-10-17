@@ -43,7 +43,7 @@ type RenameMap = {
 export class MitgliedComponent implements OnInit, AfterViewInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
-  
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -91,7 +91,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.mitglieder = this.globalDataService.arraySortByKey(erg.data.main, 'stbnr');
+          this.mitglieder = this.globalDataService.arraySortByKey(erg, 'stbnr');
           this.dataSource.data = this.mitglieder;
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
@@ -159,7 +159,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
     this.globalDataService.post(this.modul, result, false).subscribe({
         next: (erg: any) => {
           try {
-            this.mitglieder.push(erg.data);
+            this.mitglieder.push(erg);
             this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
             this.dataSource.data = this.mitglieder;
 
@@ -191,12 +191,12 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       return;
     }
     const abfrageUrl = `${this.modul}/${element.id}`;
-  
+
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          const details: IMitglied = erg.data.mitglied; 
-  
+          const details: IMitglied = erg;
+
           this.formModul.enable();
           this.formModul.setValue({
             id: details.id,
@@ -216,7 +216,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
 
   neueDetails(): void {
     this.formModul.enable();
@@ -228,13 +228,13 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       this.globalDataService.erstelleMessage('error', 'Kein Mitglied ausgewählt zum Löschen!');
       return;
     }
-  
+
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
           this.mitglieder = this.mitglieder.filter(m => m.id !== id);
           this.dataSource.data = this.mitglieder;
-  
+
           this.formModul.reset({
             id: 0,
             stbnr: 0,
@@ -245,7 +245,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
             hauptberuflich: false
           });
           this.formModul.disable();
-  
+
           this.globalDataService.erstelleMessage('success', 'Mitglied erfolgreich gelöscht!');
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
@@ -276,18 +276,18 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
       return;
     }
-  
+
     const objekt: any = this.formModul.value;
     const idValue = this.formModul.controls['id'].value;
-  
+
     if (!idValue) {
       this.globalDataService.post(this.modul, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            this.mitglieder.push(erg.data);
+            this.mitglieder.push(erg);
             this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
             this.dataSource.data = this.mitglieder;
-  
+
             this.formModul.reset({
               id: 0,
               stbnr: 0,
@@ -298,7 +298,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
               hauptberuflich: false
             });
             this.formModul.disable();
-  
+
             this.globalDataService.erstelleMessage('success', 'Mitglied erfolgreich gespeichert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
@@ -311,10 +311,10 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
         next: (erg: any) => {
           try {
             this.mitglieder = this.mitglieder.map(m =>
-              m.id === erg.data.id ? erg.data : m
+              m.id === erg.id ? erg : m
             );
             this.dataSource.data = this.mitglieder;
-  
+
             this.formModul.reset({
               id: 0,
               stbnr: 0,
@@ -325,7 +325,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
               hauptberuflich: false
             });
             this.formModul.disable();
-  
+
             this.globalDataService.erstelleMessage('success', 'Mitglied erfolgreich geändert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);

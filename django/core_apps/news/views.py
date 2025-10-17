@@ -1,7 +1,6 @@
 import logging
 from rest_framework import permissions, filters
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .models import News
@@ -14,7 +13,6 @@ logger = logging.getLogger(__name__)
 def _is_default(name: str) -> bool:
     return not name
 
-
 class NewsViewSet(ModelViewSet):
     queryset = News.objects.all().order_by("created_at")
     serializer_class = NewsSerializer
@@ -25,19 +23,6 @@ class NewsViewSet(ModelViewSet):
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["created_at", "title"]
     ordering = ["created_at", "title"]
-
-    def get_serializer_context(self):
-        ctx = super().get_serializer_context()
-        ctx["request"] = self.request 
-        return ctx
-
-    def list(self, request, *args, **kwargs):
-        resp = super().list(request, *args, **kwargs)
-        return Response({"main": resp.data})
-
-    def retrieve(self, request, *args, **kwargs):
-        resp = super().retrieve(request, *args, **kwargs)
-        return Response({"news": resp.data})
 
     # --- Bildwechsel: altes Bild nur löschen, wenn wirklich ersetzt ---
     def perform_update(self, serializer):

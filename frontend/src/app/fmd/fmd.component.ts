@@ -172,11 +172,11 @@ export class FmdComponent implements OnInit, AfterViewInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          const konfigs = erg.data.modul_konfig.find((m: any) => m.modul === 'fmd');
+          const konfigs = erg.modul_konfig.find((m: any) => m.modul === 'fmd');
           this.modul_konfig = konfigs?.konfiguration ?? [];
 
-          const mains = erg.data.main as any[];
-          this.mitglieder = erg.data.mitglieder as any[];
+          const mains = erg.main as any[];
+          this.mitglieder = erg.mitglieder as any[];
           const memberMap = new Map<number, any>(this.mitglieder.map((m: any) => [m.pkid, m]));
 
           this.atstraeger = mains.map(item => {
@@ -221,7 +221,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          const details: IATSTraeger = erg.data.fmd;
+          const details: IATSTraeger = erg;
 
           this.formModul.enable();
           this.formModul.setValue({
@@ -302,7 +302,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
       this.globalDataService.post(this.modul, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            const newTraeger: any = erg.data;
+            const newTraeger: any = erg;
             const mitg = this.mitglieder.find(m => m.pkid === newTraeger.mitglied_id);
 
             if (mitg) {
@@ -311,7 +311,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
               newTraeger.nachname = mitg.nachname;
               newTraeger.hauptberuflich = mitg.hauptberuflich;
             }
-            
+
             this.atstraeger.push(newTraeger);
             this.atstraeger = this.globalDataService.arraySortByKey(this.atstraeger, 'stbnr');
             this.dataSource.data = this.atstraeger;
@@ -339,7 +339,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
       this.globalDataService.patch(this.modul, idValue, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            const updated: any = erg.data;
+            const updated: any = erg;
             const mitg = this.mitglieder.find(m => m.pkid === updated.mitglied_id);
             if (mitg) {
               updated.stbnr     = mitg.stbnr;
@@ -350,9 +350,9 @@ export class FmdComponent implements OnInit, AfterViewInit {
             this.atstraeger = this.atstraeger
               .map(m => m.id === updated.id ? updated : m)
               .sort((a, b) => a.stbnr - b.stbnr);
-            
+
               this.dataSource.data = this.atstraeger;
-              
+
             this.formModul.reset({
               id: 0,
               mitglied_id: '',
@@ -480,7 +480,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
       const nextYear = item.naechste_untersuchung
         ? parseInt(item.naechste_untersuchung, 10)
         : NaN;
-  
+
       if (
         !isNaN(lastYear) &&
         !isNaN(testYear) &&
@@ -502,21 +502,21 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
     if (typeof dateStr === 'string') {
       const parsedDate = new Date(dateStr);
-  
+
       if (isNaN(parsedDate.getTime())) {
         return true;
       }
-  
+
       dateStr = parsedDate;
     }
-  
+
     if (dateStr instanceof Date) {
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(new Date().getFullYear() - 1);
-  
+
       return dateStr < oneYearAgo;
     }
-  
+
     return false;
   }
 
@@ -567,7 +567,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
     this.atstraeger.forEach(traeger => {
       if (traeger.tauglichkeit === 'tauglich') zaehler[0]++;
       else if (
-        Number(traeger.naechste_untersuchung) <= currentYear || 
+        Number(traeger.naechste_untersuchung) <= currentYear ||
         traeger.naechste_untersuchung === null
       ) zaehler[2]++;
       else if (

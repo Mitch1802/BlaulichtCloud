@@ -1,51 +1,27 @@
 import os
-from django.http import Http404
-from rest_framework import generics, permissions, status
+from rest_framework import permissions
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Konfiguration
-from .renderers import KonfigurationJSONRenderer
 from .serializers import KonfigurationSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 from core_apps.backup.views import backup_path
 from core_apps.users.models import Role
 from core_apps.users.serializers import RoleSerializer
+    
 
-
-class KonfigurationListCreateView(generics.ListCreateAPIView):
+class KonfigurationViewSet(ModelViewSet):
     queryset = Konfiguration.objects.all()
     serializer_class = KonfigurationSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
-    renderer_classes = [KonfigurationJSONRenderer]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    lookup_field = "id"
+    pagination_class = None 
 
-    def list(self, request):
-        mod_queryset = self.filter_queryset(self.get_queryset())
-        mod_serializer = self.get_serializer(mod_queryset, many=True)
+    def list(self, request, *args, **kwargs):
+        resp = super().list(request, *args, **kwargs)
         backups = os.listdir(backup_path)
         rollen = RoleSerializer(Role.objects.all(), many=True).data
-
-        return Response({
-            'main': mod_serializer.data,
-            'backups': backups,
-            'rollen': rollen
-        })
-
-
-class KonfigurationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Konfiguration.objects.all()
-    serializer_class = KonfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
-    lookup_field = "id"
-    renderer_classes = [KonfigurationJSONRenderer]
-
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-        except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = self.get_serializer(instance)
-
-        return Response({
-            'konfiguration': serializer.data
-        })
+        return Response({"main": resp.data, "backups": backups, "rollen": rollen})

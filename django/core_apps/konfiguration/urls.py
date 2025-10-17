@@ -1,12 +1,11 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import KonfigurationViewSet
 
-from .views import KonfigurationListCreateView, KonfigurationRetrieveUpdateDestroyView
+
+router = DefaultRouter()
+router.register(r"", KonfigurationViewSet, basename="konfiguration")
 
 urlpatterns = [
-    path("", KonfigurationListCreateView.as_view(), name="konfiguration-list-create"),
-    path(
-        "<uuid:id>/",
-        KonfigurationRetrieveUpdateDestroyView.as_view(),
-        name="konfiguration-retrieve-update-destroy",
-    ),
+    path("", include(router.urls)),
 ]

@@ -115,7 +115,7 @@ export class NewsComponent implements OnInit {
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          let details: INews = erg.news;
+          let details: INews = erg;
           this.formModul.enable();
           this.btnUploadStatus = true;
 
