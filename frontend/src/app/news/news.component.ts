@@ -147,8 +147,6 @@ export class NewsComponent implements OnInit {
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "News nicht gespeichert!");
     this.router.navigate(['/news']);
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.navigate(['/news']);
   }
 
   neueDetails(): void {

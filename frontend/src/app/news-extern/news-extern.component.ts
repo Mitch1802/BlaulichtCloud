@@ -35,7 +35,7 @@ export class NewsExternComponent implements OnInit, OnDestroy {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.daten = erg.main;
+          this.daten = erg;
           this.currentItem = this.daten[this.currentIndex];
           let dauer = this.dauer_artikel_in_sek * 1000;
           this.intervalSub = interval(dauer).subscribe(() => {
