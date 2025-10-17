@@ -62,17 +62,18 @@ export class KonfigurationComponent implements OnInit {
         try {
           this.formRolle.enable();
           this.formKonfig.enable();
-          if (erg.length > 0){
-            const details: IKonfiguration = erg[0];
+
+          if (erg.main.length > 0){
+            const details: IKonfiguration = erg.main[0];
             this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
               ort: details.ort
             })
-            this.rollen = erg.data.rollen;
+            this.rollen = erg.rollen;
             this.uploadText="";
           }
-          this.backups = this.convertBackups(erg.data.backups);
+          this.backups = this.convertBackups(erg.backups);
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -136,7 +137,7 @@ export class KonfigurationComponent implements OnInit {
       this.globalDataService.post(this.modul2, object, false).subscribe({
         next: (erg: any) => {
           try {
-            const details: IKonfiguration = erg.data;
+            const details: IKonfiguration = erg;
             this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,
@@ -155,7 +156,7 @@ export class KonfigurationComponent implements OnInit {
       this.globalDataService.patch(this.modul2, idValue, object, false).subscribe({
         next: (erg: any) => {
           try {
-            const details: IKonfiguration = erg.data;
+            const details: IKonfiguration = erg;
             this.formKonfig.setValue({
               id: details.id,
               plz: details.plz,

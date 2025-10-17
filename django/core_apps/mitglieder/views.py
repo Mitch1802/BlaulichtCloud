@@ -15,5 +15,5 @@ class MitgliedViewSet(ModelViewSet):
     lookup_field = "id"
     pagination_class = None 
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ["created_at", "title"]
-    ordering = ["created_at", "title"]
+    ordering_fields = ["stbnr", "nachname", "vorname"]
+    ordering = ["stbnr", "nachname", "vorname"]

@@ -39,7 +39,7 @@ export class StartComponent implements OnInit {
     this.globalDataService.get("modul_konfiguration").subscribe({
       next: (erg: any) => {
         try {
-          const konfigs = erg.data.main.find((m: any) => m.modul === 'start');
+          const konfigs = erg.main.find((m: any) => m.modul === 'start');
           this.start_konfig = konfigs?.konfiguration ?? [];
 
           if (this.meine_rollen) {
@@ -51,7 +51,7 @@ export class StartComponent implements OnInit {
           }
 
           if (!this.meineRollenKeys.length) {
-            const rollenArray: { id: number; key: string }[] = erg.data.rollen;
+            const rollenArray: { id: number; key: string }[] = erg.rollen;
             const meineRollenIds: number[] = this.meine_rollen
               .split(',')
               .map((s: any) => parseInt(s.trim(), 10))
