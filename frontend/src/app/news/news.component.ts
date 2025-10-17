@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../_template/header/header.component';
+import { FormatService } from '../helpers/format.service';
 
 @Component({
     selector: 'app-news',
@@ -21,13 +22,14 @@ import { HeaderComponent } from '../_template/header/header.component';
 })
 export class NewsComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
+  formatService = inject(FormatService);
   router = inject(Router);
 
   title: string = "News Verwaltung";
   modul: string = "news/intern";
   breadcrumb: any[] = [];
 
-  newsArray: INews[] = [];
+  newsArray: any[] = [];
   foto: HTMLInputElement = <HTMLInputElement>document.getElementById("fotoUpload");
   btnText: string = "Bild auswählen";
   fileName: string = "";
@@ -56,7 +58,7 @@ export class NewsComponent implements OnInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.newsArray = erg.main;
+          this.newsArray = this.convertNewsDate(erg);
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -65,6 +67,21 @@ export class NewsComponent implements OnInit {
         this.globalDataService.errorAnzeigen(error);
       }
     });
+  }
+
+  convertNewsDate(data: any): any[] {
+    for (let i = 0; i < data.length; i++) {
+      let created_at = data[i].created_at.split('T');
+      let created_at_date = created_at[0];
+      let created_at_time = created_at[1].split(':');
+      data[i].created_at = created_at_date + '_' + created_at_time[0] + ':' + created_at_time[1];
+
+      let updated_at = data[i].updated_at.split('T');
+      let updated_at_date = updated_at[0];
+      let updated_at_time = updated_at[1].split(':');
+      data[i].updated_at = updated_at_date + '_' + updated_at_time[0] + ':' + updated_at_time[1];
+    }
+    return data;
   }
 
   setzeSelectZurueck(): void {
