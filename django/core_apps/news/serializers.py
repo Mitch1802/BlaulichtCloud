@@ -59,4 +59,3 @@ class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
         fields = "__all__"
-        extra_kwargs = {"foto": {"required": False, "allow_null": True}}
