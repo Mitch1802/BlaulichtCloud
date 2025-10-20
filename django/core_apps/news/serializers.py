@@ -6,7 +6,11 @@ class NewsSerializer(serializers.ModelSerializer):
     foto_url = serializers.SerializerMethodField(read_only=True)
 
     def get_foto_url(self, obj):
-        return obj.foto.url if getattr(obj, "foto", None) else None
+        f = getattr(obj, "foto", None)
+        try:
+            return f.url if f and getattr(f, "name", "") else None
+        except Exception:
+            return None
 
     def create(self, validated_data):
         foto = validated_data.pop("foto", None)

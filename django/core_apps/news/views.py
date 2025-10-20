@@ -24,6 +24,10 @@ class NewsViewSet(ModelViewSet):
     ordering_fields = ["created_at", "title"]
     ordering = ["created_at", "title"]
 
+    def create(self, request, *args, **kwargs):
+        logger.info("FILES=%s | DATA=%s", list(request.FILES.keys()), list(request.data.keys()))
+        return super().create(request, *args, **kwargs)
+
     # --- Bildwechsel: altes Bild nur löschen, wenn wirklich ersetzt ---
     def perform_update(self, serializer):
         instance = self.get_object()
