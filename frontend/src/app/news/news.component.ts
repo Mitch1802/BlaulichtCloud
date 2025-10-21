@@ -113,7 +113,7 @@ export class NewsComponent implements OnInit {
 
   datenLoeschen(): void {
     const id = this.formModul.controls['id'].value!;
-    this.globalDataService.delete(this.modul, Number(id)).subscribe({
+    this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
           this.newsArray = this.newsArray.filter(n => n.id !== id);
