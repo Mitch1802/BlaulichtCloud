@@ -5,7 +5,7 @@ import { interval, Subscription, timer } from 'rxjs';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 
 type NewsItem = {
-  bild?: string;
+  foto_url?: string;
   title: string;
   text: string;
 };

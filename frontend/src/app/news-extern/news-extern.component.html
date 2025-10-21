@@ -8,9 +8,9 @@
       <mat-card-content>
         <div class="row justify-content-center">
           @if (currentItem) {
-            @if (currentItem.bild) {
+            @if (currentItem.foto_url) {
               <div class="col-4">
-                <img [src]="currentItem.bild" alt="{{ currentItem.title }}" />
+                <img [src]="currentItem.foto_url" alt="{{ currentItem.title }}" />
               </div>
               <div class="col-8">
                 <h1 class="mb-2">{{ currentItem.title }}</h1>

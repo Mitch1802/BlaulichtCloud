@@ -1,5 +1,5 @@
 export interface INews {
-  id: number;
+  id: string;
   title: string;
   text: string;
   foto_url?: string | null;
