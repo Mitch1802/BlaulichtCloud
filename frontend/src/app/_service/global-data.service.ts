@@ -231,21 +231,16 @@ export class GlobalDataService {
     return data_new;
   }
 
-  ladeHeaders(filesVorhanden: boolean): any {
-    const token: string = sessionStorage.getItem('Token')!;
-    let headers = {};
+  ladeHeaders(filesVorhanden: boolean): HttpHeaders {
+    const token: string | null = sessionStorage.getItem('Token');
+    let headers = new HttpHeaders();
 
-    if (token != undefined) {
-      if (filesVorhanden == true) {
-        headers = {
-          Authorization: 'Bearer ' + token
-        };
-      } else {
-        headers = {
-          'Content-Type': 'application/json; charset=utf-8',
-          Authorization: 'Bearer ' + token
-        };
-      }
+    if (token) {
+      headers = headers.set('Authorization', 'Bearer ' + token);
+    }
+
+    if (!filesVorhanden) {
+      headers = headers.set('Content-Type', 'application/json; charset=utf-8');
     }
     return headers;
   }
@@ -281,12 +276,11 @@ export class GlobalDataService {
     return response;
   }
 
-  post(modul: string, daten: any, filesVorhanden: boolean): Observable<any[]> {
-    const headers = this.ladeHeaders(filesVorhanden);
+  post(modul: string, daten: any, filesVorhanden?: boolean): Observable<any[]> {
+    const isFD = typeof FormData !== 'undefined' && daten instanceof FormData;
+    const headers = this.ladeHeaders(isFD ?? false);
     const url = this.AppUrl + modul + '/';
-    const response: any = this.http.post<any[]>(url, daten, { headers: headers });
-
-    return response;
+    return this.http.post<any[]>(url, daten, { headers });
   }
 
   postBlob(modul: string, daten: any): Observable<Blob> {
@@ -304,19 +298,11 @@ export class GlobalDataService {
     return response;
   }
 
-  patch(
-    modul: string,
-    id: number,
-    daten: any,
-    filesVorhanden: boolean
-  ): Observable<any[]> {
-    const headers = this.ladeHeaders(filesVorhanden);
-    const url = this.AppUrl + modul + '/' + id + '/';
-    const response: any = this.http.patch<any[]>(url, daten, {
-      headers: headers,
-    });
-
-    return response;
+  patch(modul: string, id: number, daten: any, filesVorhanden?: boolean): Observable<any[]> {
+    const isFD = typeof FormData !== 'undefined' && daten instanceof FormData;
+    const headers = this.ladeHeaders(isFD ?? false);
+    const url = `${this.AppUrl}${modul}/${id}/`;
+    return this.http.patch<any[]>(url, daten, { headers });
   }
 
   delete(modul: string, id: number): Observable<any[]> {
