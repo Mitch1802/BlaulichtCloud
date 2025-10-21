@@ -1,4 +1,4 @@
-import { ViewChild, ElementRef, Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { INews } from 'src/app/_interface/news';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
@@ -15,10 +15,25 @@ import { HeaderComponent } from '../_template/header/header.component';
 import { FormatService } from '../helpers/format.service';
 
 @Component({
-    selector: 'app-news',
-    imports: [HeaderComponent,MatCardModule, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatInputModule, MatError, NgStyle, MatAutocompleteModule],
-    templateUrl: './news.component.html',
-    styleUrl: './news.component.sass'
+  selector: 'app-news',
+  standalone: true,
+  imports: [
+    HeaderComponent,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatButton,
+    MatInputModule,
+    MatError,
+    NgStyle,
+    MatAutocompleteModule
+  ],
+  templateUrl: './news.component.html',
+  styleUrl: './news.component.sass'
 })
 export class NewsComponent implements OnInit {
   @ViewChild('fotoUpload', { static: false }) fotoRef!: ElementRef<HTMLInputElement>;
@@ -27,42 +42,42 @@ export class NewsComponent implements OnInit {
   formatService = inject(FormatService);
   router = inject(Router);
 
-  title: string = "News Verwaltung";
-  modul: string = "news/intern";
+  title = 'News Verwaltung';
+  modul = 'news/intern';
   breadcrumb: any[] = [];
 
-  newsArray: any[] = [];
-  foto: HTMLInputElement = <HTMLInputElement>document.getElementById("fotoUpload");
-  btnText: string = "Bild auswählen";
-  fileName: string = "";
-  filePfad: string = "";
-  fileFound: boolean = false;
-  btnUploadStatus: boolean = false;
+  newsArray: INews[] = [];
+  btnText = 'Bild auswählen';
+  fileName = '';
+  filePfad = '';
+  fileFound = false;
+  btnUploadStatus = false;
 
   formAuswahl = new FormGroup({
-    news: new FormControl(0)
+    news: new FormControl<number | 0>(0)
   });
 
   formModul = new FormGroup({
-    id: new FormControl(0),
-    title: new FormControl('', Validators.required),
-    text: new FormControl('', Validators.required),
-    foto_url: new FormControl('')
+    id: new FormControl<number | 0>(0),
+    title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    // nur für Anzeige/Modal – NICHT ans Backend senden
+    foto_url: new FormControl<string>(''),
   });
 
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '2');
     sessionStorage.setItem('Page2', 'NEWS');
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
+
     this.formModul.disable();
-    this.foto = <HTMLInputElement>document.getElementById("fotoUpload");
 
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.newsArray = this.convertNewsDate(erg);
+          this.newsArray = this.convertNewsDate(erg) as INews[];
         } catch (e: any) {
-          this.globalDataService.erstelleMessage("error", e);
+          this.globalDataService.erstelleMessage('error', e);
         }
       },
       error: (error: any) => {
@@ -71,119 +86,114 @@ export class NewsComponent implements OnInit {
     });
   }
 
+  /** Datei aus dem ViewChild-input holen */
   private getSelectedFile(): File | null {
     const el = this.fotoRef?.nativeElement;
     return el?.files && el.files.length ? el.files[0] : null;
   }
 
+  /** Server-Datum ins gewünschte Anzeigeformat bringen */
   convertNewsDate(data: any): any[] {
     for (let i = 0; i < data.length; i++) {
-      let created_at = data[i].created_at.split('T');
-      let created_at_date = created_at[0];
-      let created_at_time = created_at[1].split(':');
+      const created_at = String(data[i].created_at).split('T');
+      const created_at_date = created_at[0];
+      const created_at_time = created_at[1]?.split(':') ?? [];
       data[i].created_at = created_at_date + '_' + created_at_time[0] + ':' + created_at_time[1];
 
-      let updated_at = data[i].updated_at.split('T');
-      let updated_at_date = updated_at[0];
-      let updated_at_time = updated_at[1].split(':');
+      const updated_at = String(data[i].updated_at).split('T');
+      const updated_at_date = updated_at[0];
+      const updated_at_time = updated_at[1]?.split(':') ?? [];
       data[i].updated_at = updated_at_date + '_' + updated_at_time[0] + ':' + updated_at_time[1];
     }
     return data;
   }
 
   setzeSelectZurueck(): void {
-    this.formAuswahl.controls["news"].setValue(0, { onlySelf: true });
+    this.formAuswahl.controls['news'].setValue(0, { onlySelf: true });
   }
 
   datenLoeschen(): void {
-    let id = this.formModul.controls["id"].value!;
-
-    this.globalDataService.delete(this.modul, id).subscribe({
-      next: (erg: any) => {
+    const id = this.formModul.controls['id'].value!;
+    this.globalDataService.delete(this.modul, Number(id)).subscribe({
+      next: () => {
         try {
-          let data = this.newsArray;
-          let dataNew: any[] = [];
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].id !== id) {
-              dataNew.push(data[i]);
-            }
-          }
-          this.newsArray = dataNew;
-          this.formModul.reset({ title: '', text: '', foto_url: '' });
-          this.foto.disabled = true;
-          this.btnText = "Bild auswählen";
-          this.fileName = "";
-          this.filePfad = "";
-          this.fileFound = false;
-          this.btnUploadStatus = false;
-          this.formModul.disable();
-          this.setzeSelectZurueck();
-          this.globalDataService.erstelleMessage("success","News erfolgreich gelöscht!");
+          this.newsArray = this.newsArray.filter(n => n.id !== id);
+          this.resetFormNachAktion();
+          this.globalDataService.erstelleMessage('success', 'News erfolgreich gelöscht!');
         } catch (e: any) {
-          this.globalDataService.erstelleMessage("error", e);
+          this.globalDataService.erstelleMessage('error', e);
         }
       },
-      error: (error: any) => {
-        this.globalDataService.errorAnzeigen(error);
-      }
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
     });
   }
 
   auswahlBearbeiten(): void {
-    let id = this.formAuswahl.controls["news"].value;
-    if (id == 0) {
-      return;
-    }
-    let abfrageUrl = this.modul + "/" + id;
+    const id = this.formAuswahl.controls['news'].value;
+    if (!id) return;
 
+    const abfrageUrl = `${this.modul}/${id}`;
     this.globalDataService.get(abfrageUrl).subscribe({
-      next: (erg: any) => {
+      next: (details: INews) => {
         try {
-          let details: INews = erg;
           this.formModul.enable();
           this.btnUploadStatus = true;
 
-          if (details.foto_url) {
-            this.btnText = "Bild ersetzen";
-            let filePfadSplit: any = details.foto_url.split("/");
-            this.fileName = filePfadSplit[filePfadSplit.length - 1];
+          // UI-Status für bestehendes Bild
+          if ((details as any).foto_url) {
+            this.btnText = 'Bild ersetzen';
+            const parts = (details as any).foto_url.split('/');
+            this.fileName = parts[parts.length - 1];
             this.fileFound = true;
-            this.filePfad = details.foto_url;
+            this.filePfad = (details as any).foto_url;
+          } else {
+            this.btnText = 'Bild auswählen';
+            this.fileName = '';
+            this.fileFound = false;
+            this.filePfad = '';
           }
 
           this.formModul.setValue({
-            id: details.id,
+            id: details.id!,
             title: details.title,
             text: details.text,
             foto_url: ''
           });
           this.setzeSelectZurueck();
         } catch (e: any) {
-          this.globalDataService.erstelleMessage("error", e);
+          this.globalDataService.erstelleMessage('error', e);
         }
       },
-      error: (error: any) => {
-        this.globalDataService.errorAnzeigen(error);
-      }
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
     });
   }
 
   abbrechen(): void {
-    this.globalDataService.erstelleMessage("info", "News nicht gespeichert!");
+    this.globalDataService.erstelleMessage('info', 'News nicht gespeichert!');
     this.router.navigate(['/news']);
   }
 
   neueDetails(): void {
     this.formModul.enable();
     this.btnUploadStatus = true;
+    this.btnText = 'Bild auswählen';
+    this.fileName = '';
+    this.filePfad = '';
+    this.fileFound = false;
+    this.formModul.patchValue({ id: 0, title: '', text: '', foto_url: '' });
     this.setzeSelectZurueck();
+
+    // Datei-Auswahl im Input zurücksetzen
+    if (this.fotoRef?.nativeElement) {
+      this.fotoRef.nativeElement.value = '';
+    }
   }
 
   datenSpeichern(): void {
-    const idValue = this.formModul.controls['id'].value;
+    const idValue = this.formModul.controls['id'].value || 0;
     const title = this.formModul.controls['title'].value!;
-    const text  = this.formModul.controls['text'].value!;
-    const file  = this.getSelectedFile();
+    const text = this.formModul.controls['text'].value!;
+    const file = this.getSelectedFile();
 
     if (!idValue) {
       // CREATE
@@ -192,51 +202,32 @@ export class NewsComponent implements OnInit {
         fd.append('title', title);
         fd.append('text', text);
         fd.append('foto', file, file.name || 'upload.png');
+
         this.globalDataService.post(this.modul, fd, true).subscribe({
-          next: (erg: any) => {
+          next: (erg: INews) => {
             try {
               this.newsArray.push(erg);
-              this.formModul.reset({ title: '', text: '', foto_url: '' });
-              this.foto.disabled = true;
-              this.btnText = "Bild auswählen";
-              this.fileName = "";
-              this.filePfad = "";
-              this.fileFound = false;
-              this.formModul.disable();
-              this.btnUploadStatus = false;
-              this.setzeSelectZurueck();
-              this.globalDataService.erstelleMessage("success","News erfolgreich gespeichert!");
+              this.resetFormNachAktion();
+              this.globalDataService.erstelleMessage('success', 'News erfolgreich gespeichert!');
             } catch (e: any) {
-              this.globalDataService.erstelleMessage("error", e);
+              this.globalDataService.erstelleMessage('error', e);
             }
           },
-          error: (error: any) => {
-            this.globalDataService.errorAnzeigen(error);
-          }
+          error: (error: any) => this.globalDataService.errorAnzeigen(error)
         });
       } else {
-        // JSON – KEIN foto_url mitsenden
+        // JSON ohne Bild
         this.globalDataService.post(this.modul, { title, text }, false).subscribe({
-          next: (erg: any) => {
+          next: (erg: INews) => {
             try {
               this.newsArray.push(erg);
-              this.formModul.reset({ title: '', text: '', foto_url: '' });
-              this.foto.disabled = true;
-              this.btnText = "Bild auswählen";
-              this.fileName = "";
-              this.filePfad = "";
-              this.fileFound = false;
-              this.formModul.disable();
-              this.btnUploadStatus = false;
-              this.setzeSelectZurueck();
-              this.globalDataService.erstelleMessage("success","News erfolgreich gespeichert!");
+              this.resetFormNachAktion();
+              this.globalDataService.erstelleMessage('success', 'News erfolgreich gespeichert!');
             } catch (e: any) {
-              this.globalDataService.erstelleMessage("error", e);
+              this.globalDataService.erstelleMessage('error', e);
             }
           },
-          error: (error: any) => {
-            this.globalDataService.errorAnzeigen(error);
-          }
+          error: (error: any) => this.globalDataService.errorAnzeigen(error)
         });
       }
     } else {
@@ -246,81 +237,52 @@ export class NewsComponent implements OnInit {
         fd.append('title', title);
         fd.append('text', text);
         fd.append('foto', file, file.name || 'upload.png');
-        this.globalDataService.patch(this.modul, idValue, fd, true).subscribe({
-        next: (erg: any) => {
-          try {
-            let data = this.newsArray;
-            let dataNew: any[] = [];
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].id == erg.id) {
-                dataNew.push(erg);
-              } else {
-                dataNew.push(data[i]);
-              }
+
+        this.globalDataService.patch(this.modul, Number(idValue), fd, true).subscribe({
+          next: (erg: INews) => {
+            try {
+              this.newsArray = this.newsArray.map(n => (n.id === erg.id ? erg : n));
+              this.resetFormNachAktion();
+              this.globalDataService.erstelleMessage('success', 'News erfolgreich geändert!');
+            } catch (e: any) {
+              this.globalDataService.erstelleMessage('error', e);
             }
-            this.newsArray = dataNew;
-            this.formModul.reset({ title: '', text: '', foto_url: '' });
-            this.btnText = "Bild auswählen";
-            this.fileName = "";
-            this.filePfad = "";
-            this.fileFound = false;
-            this.formModul.disable();
-            this.btnUploadStatus = false;
-            this.setzeSelectZurueck();
-            this.globalDataService.erstelleMessage("success","News erfolgreich geändert!");
-          } catch (e: any) {
-            this.globalDataService.erstelleMessage("error", e);
-          }
-        },
-        error: (error: any) => {
-          this.globalDataService.errorAnzeigen(error);
-        }
-      });
+          },
+          error: (error: any) => this.globalDataService.errorAnzeigen(error)
+        });
       } else {
-        // nur Text/Titel
-        this.globalDataService.patch(this.modul, idValue, { title, text }, false).subscribe({
-        next: (erg: any) => {
-          try {
-            let data = this.newsArray;
-            let dataNew: any[] = [];
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].id == erg.id) {
-                dataNew.push(erg);
-              } else {
-                dataNew.push(data[i]);
-              }
+        // Nur Text/Titel ändern (JSON)
+        this.globalDataService.patch(this.modul, Number(idValue), { title, text }, false).subscribe({
+          next: (erg: INews) => {
+            try {
+              this.newsArray = this.newsArray.map(n => (n.id === erg.id ? erg : n));
+              this.resetFormNachAktion();
+              this.globalDataService.erstelleMessage('success', 'News erfolgreich geändert!');
+            } catch (e: any) {
+              this.globalDataService.erstelleMessage('error', e);
             }
-            this.newsArray = dataNew;
-            this.formModul.reset({ title: '', text: '', foto_url: '' });
-            this.btnText = "Bild auswählen";
-            this.fileName = "";
-            this.filePfad = "";
-            this.fileFound = false;
-            this.formModul.disable();
-            this.btnUploadStatus = false;
-            this.setzeSelectZurueck();
-            this.globalDataService.erstelleMessage("success","News erfolgreich geändert!");
-          } catch (e: any) {
-            this.globalDataService.erstelleMessage("error", e);
-          }
-        },
-        error: (error: any) => {
-          this.globalDataService.errorAnzeigen(error);
-        }
-      });
+          },
+          error: (error: any) => this.globalDataService.errorAnzeigen(error)
+        });
       }
     }
   }
 
   onFotoSelected(event: Event): void {
     const file = this.getSelectedFile();
-    if (!file) { this.fileFound = false; this.fileName = ''; return; }
+    if (!file) {
+      this.fileFound = false;
+      this.fileName = '';
+      return;
+    }
     const sizeKB = Math.round(file.size / 1024);
     if (sizeKB >= this.globalDataService.MaxUploadSize) {
       this.fileFound = false;
       this.fileName = '';
       const maxMB = this.globalDataService.MaxUploadSize / 1024;
-      this.globalDataService.erstelleMessage("error", `Foto darf nicht größer als ${maxMB}MB sein!`);
+      this.globalDataService.erstelleMessage('error', `Foto darf nicht größer als ${maxMB}MB sein!`);
+      // Input leeren
+      if (this.fotoRef?.nativeElement) this.fotoRef.nativeElement.value = '';
     } else {
       this.fileFound = true;
       this.fileName = file.name;
@@ -328,16 +290,32 @@ export class NewsComponent implements OnInit {
   }
 
   openModal(): void {
-    var modal: any = document.getElementById("myModal")!;
-    modal.style.display = "block";
+    const modal: any = document.getElementById('myModal');
+    if (modal) modal.style.display = 'block';
   }
 
   closeModal(): void {
-    var modal: any = document.getElementById("myModal")!;
-    modal.style.display = "none";
+    const modal: any = document.getElementById('myModal');
+    if (modal) modal.style.display = 'none';
   }
 
   newsfeedOeffnen(): void {
     window.open('https://blaulichtcloud.at/newsfeed', '_blank');
+  }
+
+  /** Nach Create/Update Formular, UI & File-Input zurücksetzen */
+  private resetFormNachAktion(): void {
+    this.formModul.reset({ id: 0, title: '', text: '', foto_url: '' });
+    this.formModul.disable();
+    this.btnUploadStatus = false;
+    this.btnText = 'Bild auswählen';
+    this.fileName = '';
+    this.filePfad = '';
+    this.fileFound = false;
+    this.setzeSelectZurueck();
+    // Datei im Input löschen
+    if (this.fotoRef?.nativeElement) {
+      this.fotoRef.nativeElement.value = '';
+    }
   }
 }

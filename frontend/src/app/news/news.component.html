@@ -110,7 +110,7 @@
                 <mat-card [ngStyle]="{'background-color':!btnUploadStatus?'#0000001F':'#607d8b', 'color':!btnUploadStatus?'#00000061':'#ffffff'}">
                   <label>{{btnText}}</label>
                 </mat-card>
-                <input type="file" id="fotoUpload" accept=".jpg,.png" formControlName="foto_url" (change)="onFotoSelected($event)" />
+                <input #fotoUpload type="file" id="fotoUpload" accept=".jpg,.jpeg,.png" (change)="onFotoSelected($event)" />
               </div>
               <div class="alert alert-secondary">
                 @if (fileFound==true) {
