@@ -16,7 +16,6 @@ import { FormatService } from '../helpers/format.service';
 
 @Component({
   selector: 'app-news',
-  standalone: true,
   imports: [
     HeaderComponent,
     MatCardModule,
