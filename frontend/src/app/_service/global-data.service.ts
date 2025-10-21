@@ -284,11 +284,8 @@ export class GlobalDataService {
   }
 
   postBlob(modul: string, daten: any): Observable<Blob> {
-    let headers = this.ladeHeaders(true);
-    headers = {
-      ...headers,
-      'Accept': '*/*'
-    };
+    let headers = this.ladeHeaders(true)
+      .set('Accept', '*/*');
     const url = this.AppUrl + modul + '/';
     const response: any = this.http.post(url, daten, {
       headers: headers,
