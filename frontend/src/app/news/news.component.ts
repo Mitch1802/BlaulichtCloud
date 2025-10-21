@@ -53,11 +53,11 @@ export class NewsComponent implements OnInit {
   btnUploadStatus = false;
 
   formAuswahl = new FormGroup({
-    news: new FormControl<number | ''>('')
+    news: new FormControl<number | 0>(0)
   });
 
   formModul = new FormGroup({
-    id: new FormControl<string | ''>(''),
+    id: new FormControl<string | 0>(0),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     // nur für Anzeige/Modal – NICHT ans Backend senden
@@ -190,7 +190,7 @@ export class NewsComponent implements OnInit {
   }
 
   datenSpeichern(): void {
-    const idValue = this.formModul.controls['id'].value || '';
+    const idValue = this.formModul.controls['id'].value || 0;
     const title = this.formModul.controls['title'].value!;
     const text = this.formModul.controls['text'].value!;
     const file = this.getSelectedFile();
