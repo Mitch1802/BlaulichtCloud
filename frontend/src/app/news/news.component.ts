@@ -53,11 +53,11 @@ export class NewsComponent implements OnInit {
   btnUploadStatus = false;
 
   formAuswahl = new FormGroup({
-    news: new FormControl<number | 0>(0)
+    news: new FormControl<number | ''>('')
   });
 
   formModul = new FormGroup({
-    id: new FormControl<string | 0>(0),
+    id: new FormControl<string | ''>(''),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     // nur für Anzeige/Modal – NICHT ans Backend senden
@@ -180,7 +180,7 @@ export class NewsComponent implements OnInit {
     this.fileName = '';
     this.filePfad = '';
     this.fileFound = false;
-    this.formModul.patchValue({ id: 0, title: '', text: '', foto_url: '' });
+    this.formModul.patchValue({ id: '', title: '', text: '', foto_url: '' });
     this.setzeSelectZurueck();
 
     // Datei-Auswahl im Input zurücksetzen
@@ -190,7 +190,7 @@ export class NewsComponent implements OnInit {
   }
 
   datenSpeichern(): void {
-    const idValue = this.formModul.controls['id'].value || 0;
+    const idValue = this.formModul.controls['id'].value || '';
     const title = this.formModul.controls['title'].value!;
     const text = this.formModul.controls['text'].value!;
     const file = this.getSelectedFile();

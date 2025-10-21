@@ -251,11 +251,11 @@ export class UserComponent implements OnInit {
 
   rolleToggle(key: string, event: any): void {
     const current = this.formModul.controls["roles"].value || [];
-  
+
     if (event.checked && !current.includes(key)) {
       this.formModul.controls["roles"].setValue([...current, key]);
     } else if (!event.checked) {
       this.formModul.controls["roles"].setValue(current.filter(r => r !== key));
     }
-  }  
+  }
 }
