@@ -53,11 +53,11 @@ export class NewsComponent implements OnInit {
   btnUploadStatus = false;
 
   formAuswahl = new FormGroup({
-    news: new FormControl<number | 0>(0)
+    news: new FormControl<number | ''>('')
   });
 
   formModul = new FormGroup({
-    id: new FormControl<number | 0>(0),
+    id: new FormControl<string | ''>(''),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     // nur für Anzeige/Modal – NICHT ans Backend senden
@@ -108,7 +108,7 @@ export class NewsComponent implements OnInit {
   }
 
   setzeSelectZurueck(): void {
-    this.formAuswahl.controls['news'].setValue(0, { onlySelf: true });
+    this.formAuswahl.controls['news'].setValue('', { onlySelf: true });
   }
 
   datenLoeschen(): void {
@@ -190,7 +190,7 @@ export class NewsComponent implements OnInit {
   }
 
   datenSpeichern(): void {
-    const idValue = this.formModul.controls['id'].value || 0;
+    const idValue = this.formModul.controls['id'].value || '';
     const title = this.formModul.controls['title'].value!;
     const text = this.formModul.controls['text'].value!;
     const file = this.getSelectedFile();
@@ -238,7 +238,7 @@ export class NewsComponent implements OnInit {
         fd.append('text', text);
         fd.append('foto', file, file.name || 'upload.png');
 
-        this.globalDataService.patch(this.modul, Number(idValue), fd, true).subscribe({
+        this.globalDataService.patch(this.modul, idValue, fd, true).subscribe({
           next: (erg: any) => {
             try {
               this.newsArray = this.newsArray.map(n => (n.id === erg.id ? erg : n));
@@ -252,7 +252,7 @@ export class NewsComponent implements OnInit {
         });
       } else {
         // Nur Text/Titel ändern (JSON)
-        this.globalDataService.patch(this.modul, Number(idValue), { title, text }, false).subscribe({
+        this.globalDataService.patch(this.modul, idValue, { title, text }, false).subscribe({
           next: (erg: any) => {
             try {
               this.newsArray = this.newsArray.map(n => (n.id === erg.id ? erg : n));
@@ -305,7 +305,7 @@ export class NewsComponent implements OnInit {
 
   /** Nach Create/Update Formular, UI & File-Input zurücksetzen */
   private resetFormNachAktion(): void {
-    this.formModul.reset({ id: 0, title: '', text: '', foto_url: '' });
+    this.formModul.reset({ id: '', title: '', text: '', foto_url: '' });
     this.formModul.disable();
     this.btnUploadStatus = false;
     this.btnText = 'Bild auswählen';
