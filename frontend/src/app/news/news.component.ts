@@ -114,7 +114,7 @@ export class NewsComponent implements OnInit {
   datenLoeschen(): void {
     const id = this.formModul.controls['id'].value!;
     this.globalDataService.delete(this.modul, Number(id)).subscribe({
-      next: () => {
+      next: (erg: any) => {
         try {
           this.newsArray = this.newsArray.filter(n => n.id !== id);
           this.resetFormNachAktion();
@@ -133,8 +133,9 @@ export class NewsComponent implements OnInit {
 
     const abfrageUrl = `${this.modul}/${id}`;
     this.globalDataService.get(abfrageUrl).subscribe({
-      next: (details: INews) => {
+      next: (erg: any) => {
         try {
+          let details: INews = erg;
           this.formModul.enable();
           this.btnUploadStatus = true;
 
@@ -203,7 +204,7 @@ export class NewsComponent implements OnInit {
         fd.append('foto', file, file.name || 'upload.png');
 
         this.globalDataService.post(this.modul, fd, true).subscribe({
-          next: (erg: INews) => {
+          next: (erg: any) => {
             try {
               this.newsArray.push(erg);
               this.resetFormNachAktion();
@@ -217,7 +218,7 @@ export class NewsComponent implements OnInit {
       } else {
         // JSON ohne Bild
         this.globalDataService.post(this.modul, { title, text }, false).subscribe({
-          next: (erg: INews) => {
+          next: (erg: any) => {
             try {
               this.newsArray.push(erg);
               this.resetFormNachAktion();
@@ -238,7 +239,7 @@ export class NewsComponent implements OnInit {
         fd.append('foto', file, file.name || 'upload.png');
 
         this.globalDataService.patch(this.modul, Number(idValue), fd, true).subscribe({
-          next: (erg: INews) => {
+          next: (erg: any) => {
             try {
               this.newsArray = this.newsArray.map(n => (n.id === erg.id ? erg : n));
               this.resetFormNachAktion();
@@ -252,7 +253,7 @@ export class NewsComponent implements OnInit {
       } else {
         // Nur Text/Titel ändern (JSON)
         this.globalDataService.patch(this.modul, Number(idValue), { title, text }, false).subscribe({
-          next: (erg: INews) => {
+          next: (erg: any) => {
             try {
               this.newsArray = this.newsArray.map(n => (n.id === erg.id ? erg : n));
               this.resetFormNachAktion();
