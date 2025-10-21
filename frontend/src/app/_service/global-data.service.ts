@@ -295,14 +295,14 @@ export class GlobalDataService {
     return response;
   }
 
-  patch(modul: string, id: number, daten: any, filesVorhanden?: boolean): Observable<any[]> {
+  patch(modul: string, id: string, daten: any, filesVorhanden?: boolean): Observable<any[]> {
     const isFD = typeof FormData !== 'undefined' && daten instanceof FormData;
     const headers = this.ladeHeaders(isFD ?? false);
     const url = `${this.AppUrl}${modul}/${id}/`;
     return this.http.patch<any[]>(url, daten, { headers });
   }
 
-  delete(modul: string, id: number): Observable<any[]> {
+  delete(modul: string, id: string): Observable<any[]> {
     const headers = this.ladeHeaders(false);
     const url = this.AppUrl + modul + '/' + id + '/';
     const response: any = this.http.delete<any[]>(url, { headers: headers });
