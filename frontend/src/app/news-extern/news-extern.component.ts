@@ -26,7 +26,7 @@ export class NewsExternComponent implements OnInit, OnDestroy {
 
   // Anzeige-Einstellungen
   dauer_artikel_in_sek = 10;      // Rotationsdauer
-  refresh_in_min = 1;             // wie oft Daten neu laden
+  refresh_in_min = 60;             // wie oft Daten neu laden
 
   daten: NewsItem[] = [];
   currentIndex = 0;
