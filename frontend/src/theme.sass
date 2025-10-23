@@ -1,4 +1,4 @@
-@use '@angular/material' as mat
+/* @use '@angular/material' as mat
 @use 'sass:map'
 
 $primary-palette:  mat.$blue-palette
@@ -18,4 +18,28 @@ $app-primary: map.get($primary-palette, 900)
 $app-success: map.get(mat.$green-palette, 800)
 $app-error:   map.get($tertiary-palette, 800)
 
+$app-background: #f3f2f2 */
+
+
+@use '@angular/material' as mat
+
+@include mat.core()
+
+/* $variable: mat.m2-define-palette(mat.$m2-name-palette, default, lighter, darker, text)*/
+$blaulichtcloud-primary: mat.m2-define-palette(mat.$m2-blue-palette, 900)
+$blaulichtcloud-accent: mat.m2-define-palette(mat.$m2-green-palette, 800)
+$blaulichtcloud-warn: mat.m2-define-palette(mat.$m2-red-palette, 800)
+$blaulichtcloud-theme: mat.m2-define-light-theme((color: (primary: $blaulichtcloud-primary, accent: $blaulichtcloud-accent, warn: $blaulichtcloud-warn,)))
+
+@include mat.all-component-themes($blaulichtcloud-theme)
+
+
+
+/* Variablen */
+$app-primary: mat.get-theme-color($blaulichtcloud-theme, primary, default)
+/* $app-secondary: #dee1e2 */
+$app-warning: #e4c01e85
+$app-error: mat.get-theme-color($blaulichtcloud-theme, warn, default)
+$app-success: mat.get-theme-color($blaulichtcloud-theme, accent, default)
 $app-background: #f3f2f2
+
