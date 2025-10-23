@@ -1,22 +1,20 @@
 @use '@angular/material' as mat
 
-@include mat.core()
+$app-primary:  mat.get-color-from-palette(mat.$blue-palette, 900);
+$app-success:  mat.get-color-from-palette(mat.$green-palette, 800);
+$app-error:    mat.get-color-from-palette(mat.$red-palette, 800);
 
-/* $variable: mat.m2-define-palette(mat.$m2-name-palette, default, lighter, darker, text)*/
-$blaulichtcloud-primary: mat.m2-define-palette(mat.$m2-blue-palette, 900)
-$blaulichtcloud-accent: mat.m2-define-palette(mat.$m2-green-palette, 800)
-$blaulichtcloud-warn: mat.m2-define-palette(mat.$m2-red-palette, 800)
-$blaulichtcloud-theme: mat.m2-define-light-theme((color: (primary: $blaulichtcloud-primary, accent: $blaulichtcloud-accent, warn: $blaulichtcloud-warn,)))
+$theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $app-primary,
+    accent: $app-success,
+    warn: $app-error,
+  )
+))
 
-@include mat.all-component-themes($blaulichtcloud-theme)
+/* Globale Themes anwenden */
+@include mat.all-component-themes($theme)
 
 
-
-/* Variablen */
-$app-primary: mat.get-theme-color($blaulichtcloud-theme, primary, default)
-/* $app-secondary: #dee1e2 */
-$app-warning: #e4c01e85
-$app-error: mat.get-theme-color($blaulichtcloud-theme, warn, default)
-$app-success: mat.get-theme-color($blaulichtcloud-theme, accent, default)
 $app-background: #f3f2f2
-
