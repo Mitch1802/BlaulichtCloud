@@ -1,22 +1,21 @@
 @use '@angular/material' as mat
-$primary-palette:   mat.$blue-palette
-$secondary-palette: mat.$green-palette
-$tertiary-palette:  mat.$red-palette
+@use 'sass:map'
 
+$primary-palette:  mat.$blue-palette
+$tertiary-palette: mat.$red-palette
 
 $theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary:   $primary-palette,
-    secondary: $secondary-palette,
-    tertiary:  $tertiary-palette,
+    primary:  $primary-palette,
+    tertiary: $tertiary-palette,
   )
 ))
 
 @include mat.all-component-themes($theme)
 
-$app-primary:  map-get($primary-palette, 900)
-$app-success:  map-get($secondary-palette, 800)
-$app-error:    map-get($tertiary-palette, 800)
+$app-primary: map.get($primary-palette, 900)
+$app-success: map.get(mat.$green-palette, 800)
+$app-error:   map.get($tertiary-palette, 800)
 
 $app-background: #f3f2f2
