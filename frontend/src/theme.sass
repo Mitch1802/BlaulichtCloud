@@ -1,20 +1,22 @@
 @use '@angular/material' as mat
+$primary-palette:   mat.$blue-palette
+$secondary-palette: mat.$green-palette
+$tertiary-palette:  mat.$red-palette
 
-$app-primary:  mat.get-color-from-palette(mat.$blue-palette, 900);
-$app-success:  mat.get-color-from-palette(mat.$green-palette, 800);
-$app-error:    mat.get-color-from-palette(mat.$red-palette, 800);
 
 $theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: $app-primary,
-    accent: $app-success,
-    warn: $app-error,
+    primary:   $primary-palette,
+    secondary: $secondary-palette,
+    tertiary:  $tertiary-palette,
   )
 ))
 
-/* Globale Themes anwenden */
 @include mat.all-component-themes($theme)
 
+$app-primary:  map-get($primary-palette, 900)
+$app-success:  map-get($secondary-palette, 800)
+$app-error:    map-get($tertiary-palette, 800)
 
 $app-background: #f3f2f2
