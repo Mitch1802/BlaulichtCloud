@@ -7,46 +7,57 @@
         <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-tab-group>
+        @if (hasTable(activeTabIndex)) {
+        <mat-form-field
+          appearance="outline"
+          class="mb-2"
+          style="max-width: 320px;"
+        >
+          <mat-label>Filter</mat-label>
+          <input matInput (keyup)="applyFilter(($event.target as HTMLInputElement).value)" placeholder="Suchen..." />
+        </mat-form-field>
+        }
+
+        <mat-tab-group (selectedIndexChange)="onTabChange($event)">
           <mat-tab label="Übersicht">
             <section class="row mt-3 mb-3 mx-0">
               <div class="col-12 col-lg-4">
                 <h2>Tauglichkeit</h2>
                 @if (chartTauglichkeit.datasets[0].data.length) {
-                  <canvas
-                    #chartTauglichkeitCanvas
-                    baseChart
-                    [data]="chartTauglichkeit"
-                    [type]="pieChartType"
-                    [options]="pieChartOptions"
-                    >
-                  </canvas>
+                <canvas
+                  #chartTauglichkeitCanvas
+                  baseChart
+                  [data]="chartTauglichkeit"
+                  [type]="pieChartType"
+                  [options]="pieChartOptions"
+                >
+                </canvas>
                 }
               </div>
               <div class="col-12 col-lg-4">
                 <h2>Untersuchung</h2>
                 @if (chartUntersuchung.datasets[0].data.length) {
-                  <canvas
-                    #chartUntersuchungCanvas
-                    baseChart
-                    [data]="chartUntersuchung"
-                    [type]="pieChartType"
-                    [options]="pieChartOptions"
-                    >
-                  </canvas>
+                <canvas
+                  #chartUntersuchungCanvas
+                  baseChart
+                  [data]="chartUntersuchung"
+                  [type]="pieChartType"
+                  [options]="pieChartOptions"
+                >
+                </canvas>
                 }
               </div>
               <div class="col-12 col-lg-4">
                 <h2>Altersverteilung</h2>
                 @if (chartAlter.datasets[0].data.length) {
-                  <canvas
-                    #chartAlterCanvas
-                    baseChart
-                    [data]="chartAlter"
-                    [type]="pieChartType"
-                    [options]="pieChartOptions"
-                    >
-                  </canvas>
+                <canvas
+                  #chartAlterCanvas
+                  baseChart
+                  [data]="chartAlter"
+                  [type]="pieChartType"
+                  [options]="pieChartOptions"
+                >
+                </canvas>
                 }
               </div>
             </section>
@@ -59,312 +70,334 @@
               [hidden]="!formModul.disabled"
               (click)="neueDetails()"
               type="button"
-              >
+            >
               Hinzufügen
             </button>
             <form
               [formGroup]="formModul"
               (ngSubmit)="datenSpeichern()"
               [hidden]="formModul.disabled"
-              >
+            >
               <input
                 hidden
                 type="text"
                 class="form-control"
                 formControlName="id"
-                />
-                <button
-                  mat-raised-button
-                  color="accent"
-                  class="me-3 mt-3 mb-3"
-                  [hidden]="!formModul.valid"
-                  type="submit"
-                  >
-                  Daten speichern
-                </button>
-                <button
-                  mat-raised-button
-                  class="mt-3 mb-3"
-                  color="primary"
-                  [hidden]="formModul.disabled"
-                  type="button"
-                  (click)="abbrechen()"
-                  >
-                  Abbrechen
-                </button>
-                <section class="row mt-2 mx-0">
-                  <div class="col-12 col-lg-12 mb-3">
-                    <mat-form-field>
-                      <mat-label>Mitglied auswählen</mat-label>
-                      <mat-select formControlName="mitglied_id">
-                        @for (opt of dropdownMitglieder; track opt) {
-                          <mat-option [value]="opt.pkid">
-                            {{ opt.stbnr }} - {{ opt.vorname }}
-                            {{ opt.nachname }}</mat-option
-                            >
-                          }
-                        </mat-select>
-                      </mat-form-field>
-                    </div>
-                    <div class="col-12 col-lg-8 mb-3">
-                      <mat-form-field>
-                        <mat-label>Hausarzt</mat-label>
-                        <input matInput type="text" formControlName="hausarzt" />
-                      </mat-form-field>
-                    </div>
-                    <div class="col-12 col-lg-4 mb-3">
-                      <mat-form-field>
-                        <mat-label>Letzte Untersuchung</mat-label>
-                        <input
-                          matInput
-                          type="text"
-                          formControlName="letzte_untersuchung"
-                          placeholder="TT.MM.YYYY"
-                          />
-                          @if
-                            (formModul.controls['fdisk_aenderung'].hasError('pattern'))
-                            {
-                            <mat-error
-                              >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
-                              >
-                              } @if
-                              (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
-                              {
-                              <mat-error>Kein existierendes Datum!</mat-error>
-                            }
-                          </mat-form-field>
-                        </div>
-                        <div class="col-12 col-lg-4 mb-3">
-                          <mat-form-field>
-                            <mat-label>Leistungstest</mat-label>
-                            <input
-                              matInput
-                              type="text"
-                              formControlName="leistungstest"
-                              />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-12 col-lg-4 mb-3">
-                            <mat-form-field>
-                              <mat-label>Leistungstest Art</mat-label>
-                              <mat-select formControlName="leistungstest_art">
-                                @for (opt of leistungstestarten; track opt) {
-                                  <mat-option [value]="opt"> {{ opt }}</mat-option>
-                                }
-                              </mat-select>
-                            </mat-form-field>
-                          </div>
-                          <div class="col-12 col-lg-4 mb-3">
-                            <mat-form-field>
-                              <mat-label>FDISK Update</mat-label>
-                              <input
-                                matInput
-                                type="text"
-                                formControlName="fdisk_aenderung"
-                                placeholder="TT.MM.YYYY"
-                                />
-                                @if
-                                  (formModul.controls['fdisk_aenderung'].hasError('pattern'))
-                                  {
-                                  <mat-error
-                                    >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
-                                    >
-                                    } @if
-                                    (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
-                                    {
-                                    <mat-error>Kein existierendes Datum!</mat-error>
-                                  }
-                                </mat-form-field>
-                              </div>
-                              <div class="col-12 col-lg-12 mb-3">
-                                <mat-form-field>
-                                  <mat-label>Notizen</mat-label>
-                                  <input matInput type="text" formControlName="notizen" />
-                                </mat-form-field>
-                              </div>
-                            </section>
-
-                            <button
-                              mat-raised-button
-                              color="warn"
-                              [hidden]="!formModul.controls['id'].value"
-                              type="button"
-                              (click)="datenLoeschen()"
-                              >
-                              Daten löschen
-                            </button>
-                          </form>
-                          <table mat-table [dataSource]="dataSource" [hidden]="!formModul.disabled">
-                            <ng-container matColumnDef="stbnr">
-                              <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
-                              <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="vorname">
-                              <th mat-header-cell *matHeaderCellDef>Vorname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.vorname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="nachname">
-                              <th mat-header-cell *matHeaderCellDef>Nachname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.nachname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="actions">
-                              <th mat-header-cell *matHeaderCellDef> Aktionen </th>
-                              <td mat-cell *matCellDef="let element">
-                                <button mat-icon-button color="primary" (click)="auswahlBearbeiten(element)">
-                                  <mat-icon>edit</mat-icon>
-                                </button>
-                              </td>
-                            </ng-container>
-                            <tr
-                              mat-header-row
-                              *matHeaderRowDef="sichtbareSpaltenATS"
-                            ></tr>
-                            <tr
-                              mat-row
-                              *matRowDef="let row; columns: sichtbareSpaltenATS"
-                            ></tr>
-                          </table>
-                          <mat-paginator [pageSizeOptions]="pageOptions"
-                            showFirstLastButtons
-                            aria-label="Auswahl Anzahl der sichtbaren Elemente">
-                          </mat-paginator>
-                        </mat-tab>
-                        <mat-tab label="Untersuchungen">
-                          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                            <ng-container matColumnDef="stbnr">
-                              <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
-                              <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="vorname">
-                              <th mat-header-cell *matHeaderCellDef>Vorname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.vorname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="nachname">
-                              <th mat-header-cell *matHeaderCellDef>Nachname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.nachname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="letzte_untersuchung">
-                              <th mat-header-cell *matHeaderCellDef>Letzte Untersuchung</th>
-                              <td mat-cell
-                                *matCellDef="let element"
-                                [class.red-cell]="element.letzte_untersuchung === null"
-                                >
-                                {{ element.letzte_untersuchung }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="naechste_untersuchung">
-                              <th mat-header-cell *matHeaderCellDef>Nächste Untersuchung</th>
-                              <td
-                                mat-cell
-                                *matCellDef="let element"
-                                [class.red-cell]="+element.naechste_untersuchung <= currentYear || element.naechste_untersuchung === null"
-                                >
-                                {{ element.naechste_untersuchung }}
-                              </td>
-                            </ng-container>
-
-                            <tr
-                              mat-header-row
-                              *matHeaderRowDef="sichtbareSpaltenUntersuchung"
-                            ></tr>
-                            <tr
-                              mat-row
-                              *matRowDef="let row; columns: sichtbareSpaltenUntersuchung"
-                            ></tr>
-                          </table>
-                        </mat-tab>
-                        <mat-tab label="Leistungstest">
-                          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                            <ng-container matColumnDef="stbnr">
-                              <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
-                              <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="vorname">
-                              <th mat-header-cell *matHeaderCellDef>Vorname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.vorname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="nachname">
-                              <th mat-header-cell *matHeaderCellDef>Nachname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.nachname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="leistungstest">
-                              <th mat-header-cell *matHeaderCellDef>Leistungstest</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.leistungstest }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="leistungstest_art">
-                              <th mat-header-cell *matHeaderCellDef>Leistungstest Art</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.leistungstest_art }}
-                              </td>
-                            </ng-container>
-
-                            <tr
-                              mat-header-row
-                              *matHeaderRowDef="sichtbareSpaltenLeistungstest"
-                            ></tr>
-                            <tr
-                              mat-row
-                              *matRowDef="let row; columns: sichtbareSpaltenLeistungstest; let element"
-                              [class.red-cell]="isOlderThanOneYear(element.leistungstest) === true"
-                              [class.green-cell]="isOlderThanOneYear(element.leistungstest) === false"
-                            ></tr>
-                          </table>
-                        </mat-tab>
-                        <mat-tab label="Tauglichkeit">
-                          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                            <ng-container matColumnDef="stbnr">
-                              <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
-                              <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="vorname">
-                              <th mat-header-cell *matHeaderCellDef>Vorname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.vorname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="nachname">
-                              <th mat-header-cell *matHeaderCellDef>Nachname</th>
-                              <td mat-cell *matCellDef="let element">
-                                {{ element.nachname }}
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="tauglichkeit">
-                              <th mat-header-cell *matHeaderCellDef>Tauglichkeit</th>
-                              <td
-                                mat-cell
-                                *matCellDef="let element"
-                                [class.red-cell]="element.tauglichkeit === 'nein'"
-                                [class.green-cell]="element.tauglichkeit === 'tauglich'"
-                                >
-                                {{ element.tauglichkeit }}
-                              </td>
-                            </ng-container>
-                            <tr
-                              mat-header-row
-                              *matHeaderRowDef="sichtbareSpaltenTauglichkeit"
-                            ></tr>
-                            <tr
-                              mat-row
-                              *matRowDef="let row; columns: sichtbareSpaltenTauglichkeit"
-                            ></tr>
-                          </table>
-                        </mat-tab>
-                      </mat-tab-group>
-                    </mat-card-content>
-                  </mat-card>
+              />
+              <button
+                mat-raised-button
+                color="accent"
+                class="me-3 mt-3 mb-3"
+                [hidden]="!formModul.valid"
+                type="submit"
+              >
+                Daten speichern
+              </button>
+              <button
+                mat-raised-button
+                class="mt-3 mb-3"
+                color="primary"
+                [hidden]="formModul.disabled"
+                type="button"
+                (click)="abbrechen()"
+              >
+                Abbrechen
+              </button>
+              <section class="row mt-2 mx-0">
+                <div class="col-12 col-lg-12 mb-3">
+                  <mat-form-field>
+                    <mat-label>Mitglied auswählen</mat-label>
+                    <mat-select formControlName="mitglied_id">
+                      @for (opt of dropdownMitglieder; track opt) {
+                      <mat-option [value]="opt.pkid">
+                        {{ opt.stbnr }} - {{ opt.vorname }}
+                        {{ opt.nachname }}</mat-option
+                      >
+                      }
+                    </mat-select>
+                  </mat-form-field>
                 </div>
-              </div>
+                <div class="col-12 col-lg-8 mb-3">
+                  <mat-form-field>
+                    <mat-label>Hausarzt</mat-label>
+                    <input matInput type="text" formControlName="hausarzt" />
+                  </mat-form-field>
+                </div>
+                <div class="col-12 col-lg-4 mb-3">
+                  <mat-form-field>
+                    <mat-label>Letzte Untersuchung</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      formControlName="letzte_untersuchung"
+                      placeholder="TT.MM.YYYY"
+                    />
+                    @if
+                    (formModul.controls['letzte_untersuchung'].hasError('pattern'))
+                    {
+                    <mat-error
+                      >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
+                    >
+                    } @if
+                    (formModul.controls['letzte_untersuchung'].hasError('dateInvalid'))
+                    {
+                    <mat-error>Kein existierendes Datum!</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-12 col-lg-4 mb-3">
+                  <mat-form-field>
+                    <mat-label>Leistungstest</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      formControlName="leistungstest"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="col-12 col-lg-4 mb-3">
+                  <mat-form-field>
+                    <mat-label>Leistungstest Art</mat-label>
+                    <mat-select formControlName="leistungstest_art">
+                      @for (opt of leistungstestarten; track opt) {
+                      <mat-option [value]="opt"> {{ opt }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-12 col-lg-4 mb-3">
+                  <mat-form-field>
+                    <mat-label>FDISK Update</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      formControlName="fdisk_aenderung"
+                      placeholder="TT.MM.YYYY"
+                    />
+                    @if
+                    (formModul.controls['fdisk_aenderung'].hasError('pattern'))
+                    {
+                    <mat-error
+                      >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
+                    >
+                    } @if
+                    (formModul.controls['fdisk_aenderung'].hasError('dateInvalid'))
+                    {
+                    <mat-error>Kein existierendes Datum!</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-12 col-lg-12 mb-3">
+                  <mat-form-field>
+                    <mat-label>Notizen</mat-label>
+                    <input matInput type="text" formControlName="notizen" />
+                  </mat-form-field>
+                </div>
+              </section>
+
+              <button
+                mat-raised-button
+                color="warn"
+                [hidden]="!formModul.controls['id'].value"
+                type="button"
+                (click)="datenLoeschen()"
+              >
+                Daten löschen
+              </button>
+            </form>
+            <table
+              mat-table
+              [dataSource]="dataSource"
+              [hidden]="!formModul.disabled"
+            >
+              <ng-container matColumnDef="stbnr">
+                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
+              </ng-container>
+              <ng-container matColumnDef="vorname">
+                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.vorname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="nachname">
+                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.nachname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+                <td mat-cell *matCellDef="let element">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="auswahlBearbeiten(element)"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenATS"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: sichtbareSpaltenATS"
+              ></tr>
+            </table>
+          </mat-tab>
+          <mat-tab label="Untersuchungen">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="stbnr">
+                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
+              </ng-container>
+              <ng-container matColumnDef="vorname">
+                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.vorname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="nachname">
+                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.nachname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="letzte_untersuchung">
+                <th mat-header-cell *matHeaderCellDef>Letzte Untersuchung</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [class.red-cell]="element.letzte_untersuchung === null"
+                >
+                  {{ element.letzte_untersuchung }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="naechste_untersuchung">
+                <th mat-header-cell *matHeaderCellDef>Nächste Untersuchung</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+
+                >
+                  {{ element.naechste_untersuchung }}
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="sichtbareSpaltenUntersuchung"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: sichtbareSpaltenUntersuchung"
+                [class.red-cell]="
+                    +row.naechste_untersuchung <= currentYear ||
+                    row.naechste_untersuchung === null
+                  "
+              ></tr>
+            </table>
+          </mat-tab>
+          <mat-tab label="Leistungstest">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="stbnr">
+                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
+              </ng-container>
+              <ng-container matColumnDef="vorname">
+                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.vorname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="nachname">
+                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.nachname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="leistungstest">
+                <th mat-header-cell *matHeaderCellDef>Leistungstest</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.leistungstest }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="leistungstest_art">
+                <th mat-header-cell *matHeaderCellDef>Leistungstest Art</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.leistungstest_art }}
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="sichtbareSpaltenLeistungstest"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="
+                  let row;
+                  columns: sichtbareSpaltenLeistungstest
+                "
+                [class.red-cell]="
+                  isOlderThanOneYear(row.leistungstest) === true
+                "
+                [class.green-cell]="
+                  isOlderThanOneYear(row.leistungstest) === false
+                "
+              ></tr>
+            </table>
+          </mat-tab>
+          <mat-tab label="Tauglichkeit">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="stbnr">
+                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
+              </ng-container>
+              <ng-container matColumnDef="vorname">
+                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.vorname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="nachname">
+                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.nachname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="tauglichkeit">
+                <th mat-header-cell *matHeaderCellDef>Tauglichkeit</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                >
+                  {{ element.tauglichkeit }}
+                </td>
+              </ng-container>
+              <tr
+                mat-header-row
+                *matHeaderRowDef="sichtbareSpaltenTauglichkeit"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: sichtbareSpaltenTauglichkeit"
+                  [class.red-cell]="row.tauglichkeit === 'nein'"
+                  [class.green-cell]="row.tauglichkeit === 'tauglich'"
+              ></tr>
+            </table>
+          </mat-tab>
+        </mat-tab-group>
+
+        @if (hasTable(activeTabIndex)) {
+        <mat-paginator
+          [pageSizeOptions]="pageOptions"
+          showFirstLastButtons
+          aria-label="Auswahl Anzahl der sichtbaren Elemente"
+        >
+        </mat-paginator>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -57,6 +57,9 @@ export class FmdComponent implements OnInit, AfterViewInit {
   mitglieder: IMitglied[] = [];
   atstraeger: IATSTraeger[] = [];
   currentYear = new Date().getFullYear();
+  activeTabIndex = 0;
+
+  private readonly tabsMitTabelle = new Set<number>([1, 2, 3, 4]);
 
   get freieMitglieder(): IMitglied[] {
     return this.mitglieder.filter(m =>
@@ -92,6 +95,14 @@ export class FmdComponent implements OnInit, AfterViewInit {
   sichtbareSpaltenUntersuchung: string[] = ['stbnr', 'vorname', 'nachname', 'letzte_untersuchung', 'naechste_untersuchung'];
   sichtbareSpaltenLeistungstest: string[] = ['stbnr', 'vorname', 'nachname', 'leistungstest', 'leistungstest_art'];
   sichtbareSpaltenTauglichkeit: string[] = ['stbnr', 'vorname', 'nachname', 'tauglichkeit'];
+
+  columnsByTab: string[][] = [
+    [], // Übersicht
+    this.sichtbareSpaltenATS,
+    this.sichtbareSpaltenUntersuchung,
+    this.sichtbareSpaltenLeistungstest,
+    this.sichtbareSpaltenTauglichkeit
+  ];
 
   public pieChartType: 'doughnut' = 'doughnut';
   public pieChartOptions: ChartOptions<'doughnut'> = {
@@ -157,10 +168,17 @@ export class FmdComponent implements OnInit, AfterViewInit {
   @ViewChild('chartAlterCanvas') chartAlterView?: BaseChartDirective;
   @ViewChild('chartTauglichkeitCanvas') chartTauglichkeitView?: BaseChartDirective;
   @ViewChild('chartUntersuchungCanvas') chartUntersuchungView?: BaseChartDirective;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    if (this.hasTable(this.activeTabIndex) && this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+    this.updateFilterPredicateFor(this.activeTabIndex);
+  }
+
+  hasTable(index: number): boolean {
+    return this.tabsMitTabelle.has(index);
   }
 
   ngOnInit(): void {
@@ -206,6 +224,11 @@ export class FmdComponent implements OnInit, AfterViewInit {
         this.globalDataService.errorAnzeigen(error);
       }
     });
+  }
+
+  applyFilter(value: string): void {
+    this.dataSource.filter = (value || '').trim().toLowerCase();
+    this.paginator?.firstPage();
   }
 
   neueDetails(): void {
@@ -471,7 +494,6 @@ export class FmdComponent implements OnInit, AfterViewInit {
     return age;
   }
 
-
   updateTauglichkeitFürAlle(): void {
     const currentYear = new Date().getFullYear();
     this.atstraeger.forEach(item => {
@@ -592,5 +614,41 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
     this.chartUntersuchung.datasets[0].data = zaehler;
     this.triggerChartUpdate(this.chartUntersuchungView);
+  }
+
+  private updateFilterPredicateFor(tabIndex: number) {
+    const cols = this.columnsByTab[tabIndex] ?? [];
+    if (!cols.length) {
+      // Übersicht: alles durchlassen (oder leer)
+      this.dataSource.filterPredicate = () => true;
+      return;
+    }
+    this.dataSource.filterPredicate = (row: any, filter: string) => {
+      const haystack = cols.map(c => String(row?.[c] ?? '').toLowerCase()).join(' ');
+      return haystack.includes(filter);
+    };
+  }
+
+  onTabChange(index: number): void {
+    this.activeTabIndex = index;
+
+    if (this.hasTable(index)) {
+      // Paginator erscheint per *ngIf erst nach dem Change — also kurz warten:
+      this.cd.detectChanges();
+      queueMicrotask(() => {
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+          // Optional: Seite zurücksetzen
+          this.paginator.firstPage();
+        }
+      });
+      // (Optional) Filter auf aktuelle Tab-Spalten ausrichten
+      this.updateFilterPredicateFor(index);
+      // Filter neu anwenden, damit Predicate sofort greift
+      this.dataSource.filter = this.dataSource.filter;
+    } else {
+      // Tab ohne Tabelle → Paginator abkoppeln (optional, schadet aber nicht)
+      this.dataSource.paginator = undefined as any;
+    }
   }
 }
