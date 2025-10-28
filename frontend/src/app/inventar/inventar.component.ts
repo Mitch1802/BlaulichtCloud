@@ -5,23 +5,23 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-fest',
+    selector: 'app-inventar',
     imports: [HeaderComponent, MatCardModule],
-    templateUrl: './fest.component.html',
-    styleUrl: './fest.component.sass'
+    templateUrl: './inventar.component.html',
+    styleUrl: './inventar.component.sass'
 })
-export class FestComponent implements OnInit {
+export class InventarComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
-  title = "Fest Artikel";
-  modul = "fest";
+  title = "Inventar";
+  modul = "inventar";
 
   breadcrumb: any = [];
 
   ngOnInit(): void {
     sessionStorage.setItem("PageNumber", "2");
-    sessionStorage.setItem("Page2", "FEST");
+    sessionStorage.setItem("Page2", "INV");
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
 
     // this.globalDataService.get(this.modul).subscribe({

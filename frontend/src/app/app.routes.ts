@@ -8,7 +8,7 @@ import { FmdComponent } from './fmd/fmd.component';
 import { ModulKonfigurationComponent } from './modul-konfiguration/modul-konfiguration.component';
 import { AtemschutzComponent } from './atemschutz/atemschutz.component';
 import { NewsComponent } from './news/news.component';
-import { FestComponent } from './fest/fest.component';
+import { InventarComponent } from './inventar/inventar.component';
 import { NewsExternComponent } from './news-extern/news-extern.component';
 
 export const routes: Routes = [
@@ -37,7 +37,7 @@ export const routes: Routes = [
     path: 'newsfeed', component: NewsExternComponent
   },
   {
-    path: 'fest', component: FestComponent
+    path: 'inventar', component: InventarComponent
   },
   {
     path: 'modul_konfiguration', component: ModulKonfigurationComponent

@@ -355,9 +355,9 @@ export class GlobalDataService {
     } else if (page == 'NEWS') {
       link = '/news';
       kuerzel = 'News';
-    } else if (page == 'FEST') {
-      link = '/fest';
-      kuerzel = 'Fest';
+    } else if (page == 'INV') {
+      link = '/inventar';
+      kuerzel = 'Inventar';
     } else if (page == 'VER') {
       link = '/verwaltung';
       kuerzel = 'Verwaltung';
