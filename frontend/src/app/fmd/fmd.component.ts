@@ -165,9 +165,9 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   modul_konfig: any = {};
 
-  @ViewChild('chartAlterCanvas') chartAlterView?: BaseChartDirective;
-  @ViewChild('chartTauglichkeitCanvas') chartTauglichkeitView?: BaseChartDirective;
-  @ViewChild('chartUntersuchungCanvas') chartUntersuchungView?: BaseChartDirective;
+  @ViewChild('chartAlter') chartAlterView?: BaseChartDirective;
+  @ViewChild('chartTauglichkeit') chartTauglichkeitView?: BaseChartDirective;
+  @ViewChild('chartUntersuchung') chartUntersuchungView?: BaseChartDirective;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   ngAfterViewInit() {
@@ -175,6 +175,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
     }
     this.updateFilterPredicateFor(this.activeTabIndex);
+    this.updateChartData();
   }
 
   hasTable(index: number): boolean {
@@ -564,7 +565,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   private triggerChartUpdate(chart?: BaseChartDirective) {
     this.cd.detectChanges();
-    queueMicrotask(() => chart?.chart?.update());
+    queueMicrotask(() => chart?.update());
   }
 
   updateAlterChart(): void {

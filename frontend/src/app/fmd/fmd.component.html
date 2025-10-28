@@ -25,12 +25,11 @@
                 <h2>Tauglichkeit</h2>
                 @if (chartTauglichkeit.datasets[0].data.length) {
                 <canvas
-                  #chartTauglichkeitCanvas
                   baseChart
+                  #chartTauglichkeit="baseChart"
                   [data]="chartTauglichkeit"
                   [type]="pieChartType"
-                  [options]="pieChartOptions"
-                >
+                  [options]="pieChartOptions">
                 </canvas>
                 }
               </div>
@@ -38,12 +37,11 @@
                 <h2>Untersuchung</h2>
                 @if (chartUntersuchung.datasets[0].data.length) {
                 <canvas
-                  #chartUntersuchungCanvas
                   baseChart
+                  #chartUntersuchung="baseChart"
                   [data]="chartUntersuchung"
                   [type]="pieChartType"
-                  [options]="pieChartOptions"
-                >
+                  [options]="pieChartOptions">
                 </canvas>
                 }
               </div>
@@ -51,12 +49,11 @@
                 <h2>Altersverteilung</h2>
                 @if (chartAlter.datasets[0].data.length) {
                 <canvas
-                  #chartAlterCanvas
                   baseChart
+                  #chartAlter="baseChart"
                   [data]="chartAlter"
                   [type]="pieChartType"
-                  [options]="pieChartOptions"
-                >
+                  [options]="pieChartOptions">
                 </canvas>
                 }
               </div>
