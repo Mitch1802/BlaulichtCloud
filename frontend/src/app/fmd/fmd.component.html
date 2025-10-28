@@ -14,7 +14,7 @@
           style="max-width: 320px;"
         >
           <mat-label>Filter</mat-label>
-          <input matInput (keyup)="applyFilter(($event.target as HTMLInputElement).value)" placeholder="Suchen..." />
+          <input matInput #filterInput (input)="applyFilter(filterInput.value)" placeholder="Suchen..." />
         </mat-form-field>
         }
 
