@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, inject, QueryList, ViewChildren } from '@angular/core';
 import { IMitglied } from 'src/app/_interface/mitglied';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { HeaderComponent } from '../_template/header/header.component';
@@ -165,9 +165,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   modul_konfig: any = {};
 
-  @ViewChild('chartAlter') chartAlterView?: BaseChartDirective;
-  @ViewChild('chartTauglichkeit') chartTauglichkeitView?: BaseChartDirective;
-  @ViewChild('chartUntersuchung') chartUntersuchungView?: BaseChartDirective;
+  @ViewChildren(BaseChartDirective) charts?: QueryList<BaseChartDirective>;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   ngAfterViewInit() {
@@ -175,7 +173,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
     }
     this.updateFilterPredicateFor(this.activeTabIndex);
-    this.updateChartData();
+
+    this.triggerAllChartsUpdate();
   }
 
   hasTable(index: number): boolean {
@@ -563,9 +562,9 @@ export class FmdComponent implements OnInit, AfterViewInit {
     this.updateUntersuchungChart();
   }
 
-  private triggerChartUpdate(chart?: BaseChartDirective) {
+  private triggerAllChartsUpdate() {
     this.cd.detectChanges();
-    queueMicrotask(() => chart?.update());
+    queueMicrotask(() => this.charts?.forEach(c => c.update()));
   }
 
   updateAlterChart(): void {
@@ -580,7 +579,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
     });
 
     this.chartAlter.datasets[0].data = zaehler;
-    this.triggerChartUpdate(this.chartAlterView);
+    this.triggerAllChartsUpdate();
   }
 
   updateTauglichkeitChart(): void {
@@ -600,7 +599,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
     });
 
     this.chartTauglichkeit.datasets[0].data = zaehler;
-    this.triggerChartUpdate(this.chartTauglichkeitView);
+    this.triggerAllChartsUpdate();
   }
 
   updateUntersuchungChart(): void {
@@ -614,7 +613,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
     });
 
     this.chartUntersuchung.datasets[0].data = zaehler;
-    this.triggerChartUpdate(this.chartUntersuchungView);
+    this.triggerAllChartsUpdate();
   }
 
   private updateFilterPredicateFor(tabIndex: number) {

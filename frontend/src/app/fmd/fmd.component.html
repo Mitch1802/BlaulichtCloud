@@ -26,7 +26,6 @@
                 @if (chartTauglichkeit.datasets[0].data.length) {
                 <canvas
                   baseChart
-                  #chartTauglichkeit="baseChart"
                   [data]="chartTauglichkeit"
                   [type]="pieChartType"
                   [options]="pieChartOptions">
@@ -38,7 +37,6 @@
                 @if (chartUntersuchung.datasets[0].data.length) {
                 <canvas
                   baseChart
-                  #chartUntersuchung="baseChart"
                   [data]="chartUntersuchung"
                   [type]="pieChartType"
                   [options]="pieChartOptions">
@@ -50,7 +48,6 @@
                 @if (chartAlter.datasets[0].data.length) {
                 <canvas
                   baseChart
-                  #chartAlter="baseChart"
                   [data]="chartAlter"
                   [type]="pieChartType"
                   [options]="pieChartOptions">
