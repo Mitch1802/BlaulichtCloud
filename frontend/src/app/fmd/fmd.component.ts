@@ -160,9 +160,10 @@ export class FmdComponent implements OnInit, AfterViewInit {
   });
 
   leistungstestarten: any = [
+    "unbekannt",
     "Finnentest",
     "Fahrrad",
-    "Cooper"
+    "Cooper (Laufen)"
   ]
 
   modul_konfig: any = {};
