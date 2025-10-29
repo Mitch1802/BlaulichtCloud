@@ -3,8 +3,8 @@ from rest_framework import permissions, filters
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.viewsets import ModelViewSet
 
-from .models import News
-from .serializers import NewsSerializer
+from .models import Inventar
+from .serializers import InventarSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 
 logger = logging.getLogger(__name__)
@@ -14,8 +14,8 @@ def _is_default(name: str) -> bool:
     return not name
 
 class InventarViewSet(ModelViewSet):
-    queryset = News.objects.all().order_by("bezeichnung")
-    serializer_class = NewsSerializer
+    queryset = Inventar.objects.all().order_by("bezeichnung")
+    serializer_class = InventarSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","INVENTAR")]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     lookup_field = "id"
