@@ -219,7 +219,7 @@ export class InventarComponent implements OnInit {
       if (file) {
         const fd = new FormData();
         fd.append('bezeichnung', bezeichnung);
-        fd.append('anzahl', anzahl);
+        fd.append('anzahl', anzahl.toString());
         fd.append('lagerort', lagerort);
         fd.append('notiz', notiz);
         fd.append('foto', file, file.name || 'upload.png');
@@ -256,7 +256,7 @@ export class InventarComponent implements OnInit {
       if (file) {
         const fd = new FormData();
         fd.append('bezeichnung', bezeichnung);
-        fd.append('anzahl', anzahl);
+        fd.append('anzahl', anzahl.toString());
         fd.append('lagerort', lagerort);
         fd.append('notiz', notiz);
         fd.append('foto', file, file.name || 'upload.png');
