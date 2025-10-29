@@ -23,3 +23,7 @@ class MediaNewsGetFileView(BaseMediaGetFileView):
     """Abruf von News-Mediendateien."""
     permission_classes = [permissions.AllowAny]
     subdirectory = "news"
+
+class MediaInventarGetFileView(BaseMediaGetFileView):
+    """Abruf von Inventar-Mediendateien."""
+    subdirectory = "inventar"
