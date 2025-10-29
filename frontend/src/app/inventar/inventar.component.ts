@@ -72,7 +72,7 @@ export class InventarComponent implements OnInit {
   formModul = new FormGroup({
     id: new FormControl<string | ''>(''),
     bezeichnung: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    anzahl: new FormControl<string>(0),
+    anzahl: new FormControl<number>(0),
     lagerort: new FormControl<string>(''),
     notiz: new FormControl<string>(''),
     // nur für Anzeige/Modal – NICHT ans Backend senden
