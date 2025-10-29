@@ -19,7 +19,7 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 
 Chart.register(ChartDataLabels);
 
@@ -41,7 +41,6 @@ Chart.register(ChartDataLabels);
     MatTableModule,
     BaseChartDirective,
     MatIconModule,
-    MatSortModule,
     MatPaginatorModule
 ],
     templateUrl: './fmd.component.html',
@@ -62,6 +61,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
   activeTabIndex = 0;
 
   private readonly tabsMitTabelle = new Set<number>([1, 2, 3, 4]);
+  private readonly sortIndexByTab: Record<number, number> = { 1: 0, 2: 1, 3: 2, 4: 3 };
 
   get freieMitglieder(): IMitglied[] {
     return this.mitglieder.filter(m =>
@@ -170,15 +170,14 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   @ViewChildren(BaseChartDirective) charts?: QueryList<BaseChartDirective>;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChildren(MatSort) sorts?: QueryList<MatSort>;
 
   ngAfterViewInit() {
     if (this.hasTable(this.activeTabIndex) && this.paginator) {
       this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort
     }
+    this.setActiveSortForTab(this.activeTabIndex);
     this.updateFilterPredicateFor(this.activeTabIndex);
-
     this.triggerAllChartsUpdate();
   }
 
@@ -572,6 +571,12 @@ export class FmdComponent implements OnInit, AfterViewInit {
     queueMicrotask(() => this.charts?.forEach(c => c.update()));
   }
 
+  private setActiveSortForTab(tabIndex: number): void {
+    const sortIdx = this.sortIndexByTab[tabIndex];
+    const activeSort = sortIdx !== undefined ? this.sorts?.get(sortIdx) : undefined;
+    this.dataSource.sort = (activeSort as MatSort | undefined) ?? (undefined as any);
+  }
+
   updateAlterChart(): void {
     const zaehler = [0, 0, 0, 0];
 
@@ -637,23 +642,20 @@ export class FmdComponent implements OnInit, AfterViewInit {
   onTabChange(index: number): void {
     this.activeTabIndex = index;
 
-    if (this.hasTable(index)) {
-      // Paginator erscheint per *ngIf erst nach dem Change — also kurz warten:
-      this.cd.detectChanges();
-      queueMicrotask(() => {
+    this.cd.detectChanges();
+    queueMicrotask(() => {
+      if (this.hasTable(index)) {
         if (this.paginator) {
           this.dataSource.paginator = this.paginator;
-          // Optional: Seite zurücksetzen
           this.paginator.firstPage();
         }
-      });
-      // (Optional) Filter auf aktuelle Tab-Spalten ausrichten
-      this.updateFilterPredicateFor(index);
-      // Filter neu anwenden, damit Predicate sofort greift
-      this.dataSource.filter = this.dataSource.filter;
-    } else {
-      // Tab ohne Tabelle → Paginator abkoppeln (optional, schadet aber nicht)
-      this.dataSource.paginator = undefined as any;
-    }
+        this.setActiveSortForTab(index);
+        this.updateFilterPredicateFor(index);
+        this.dataSource.filter = this.dataSource.filter;
+      } else {
+        this.dataSource.paginator = undefined as any;
+        this.dataSource.sort = undefined as any;
+      }
+    });
   }
 }

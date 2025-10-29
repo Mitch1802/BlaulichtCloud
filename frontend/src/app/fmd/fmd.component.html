@@ -305,20 +305,20 @@
                   {{ element.vorname }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="nachname" mat-sort-header>
-                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+              <ng-container matColumnDef="nachname">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nachname</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.nachname }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="leistungstest" mat-sort-header>
-                <th mat-header-cell *matHeaderCellDef>Leistungstest</th>
+              <ng-container matColumnDef="leistungstest">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Leistungstest</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.leistungstest }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="leistungstest_art" mat-sort-header>
-                <th mat-header-cell *matHeaderCellDef>Leistungstest Art</th>
+              <ng-container matColumnDef="leistungstest_art">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Leistungstest Art</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.leistungstest_art }}
                 </td>
@@ -361,8 +361,8 @@
                   {{ element.nachname }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="tauglichkeit" mat-sort-header>
-                <th mat-header-cell *matHeaderCellDef>Tauglichkeit</th>
+              <ng-container matColumnDef="tauglichkeit">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tauglichkeit</th>
                 <td
                   mat-cell
                   *matCellDef="let element"
