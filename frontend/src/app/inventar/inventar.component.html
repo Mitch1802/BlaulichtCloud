@@ -4,11 +4,136 @@
   <div class="col-12 col-md-10 col-lg-8 p-0 m-0">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>{{ title }}</mat-card-title>
+        <mat-card-title>{{title}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-
+        <button
+            mat-raised-button
+            class="mb-3"
+            color="primary"
+            type="button"
+            (click)="newsfeedOeffnen()"
+          >Newsfeed anzeigen</button>
+        <form
+          [formGroup]="formAuswahl"
+          (ngSubmit)="auswahlBearbeiten()"
+          [hidden]="!formModul.disabled"
+        >
+          <section class="row mt-3 mb-3">
+            <div class="col-12 col-lg-9">
+              <mat-form-field>
+                <mat-label>News auswählen</mat-label>
+                <mat-select formControlName="news">
+                  @for (opt of newsArray; track opt) {
+                    <mat-option [value]="opt.id">{{opt.created_at}} - {{opt.title}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div
+            class="col-12 col-lg-3 m-0 row align-items-center auswahl-button"
+          >
+            <button
+              type="submit"
+              mat-raised-button
+              color="primary"
+              class="col-auto"
+              [disabled]="!formAuswahl.controls['news'].value"
+            >
+              Auswahl bearbeiten
+            </button>
+          </div>
+          </section>
+        </form>
+        <button
+          mat-raised-button
+          color="accent"
+          class="me-2 mb-3"
+          [hidden]="!formModul.disabled"
+          (click)="neueDetails()"
+          type="button"
+        >
+          Hinzufügen
+        </button>
+        <form
+          [formGroup]="formModul"
+          (ngSubmit)="datenSpeichern()"
+          [hidden]="formModul.disabled"
+        >
+          <input hidden type="text" class="form-control" formControlName="id" />
+          <button
+            mat-raised-button
+            color="accent"
+            class="me-3 mb-3"
+            [hidden]="!formModul.valid"
+            type="submit"
+          >
+            Daten speichern
+          </button>
+          <button
+            mat-raised-button
+            class="mb-3"
+            color="primary"
+            [hidden]="formModul.disabled"
+            type="button"
+            (click)="abbrechen()"
+          >
+            Abbrechen
+          </button>
+          <section class="row mt-2">
+            <div class="col-12 col-lg-6 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Titel</mat-label>
+                <input matInput type="text" formControlName="title">
+                @if (formModul.controls['title'].hasError('required')) {
+                  <mat-error>
+                    Titel ist erforderlich!
+                  </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Text</mat-label>
+                <textarea
+                  matInput
+                  formControlName="text"
+                  rows="5"
+                ></textarea>
+                @if (formModul.controls['text'].hasError('required')) {
+                <mat-error> Text ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <div class="upload-btn-wrapper">
+                <mat-card [ngStyle]="{'background-color':!btnUploadStatus?'#0000001F':'#607d8b', 'color':!btnUploadStatus?'#00000061':'#ffffff'}">
+                  <label>{{btnText}}</label>
+                </mat-card>
+                <input #fotoUpload type="file" id="fotoUpload" accept=".jpg,.jpeg,.png" (change)="onFotoSelected($event)" />
+              </div>
+              <div class="alert alert-secondary">
+                @if (fileFound==true) {
+                  <div>
+                    {{fileName}}
+                  </div>
+                  <button mat-raised-button color="primary" type="button" [hidden]="!formModul.controls['id'].value" (click)="openModal()">Bild öffnen</button>
+                }
+              </div>
+            </div>
+          </section>
+          <button mat-raised-button color="warn" [hidden]="!formModul.controls['id'].value"
+          type="button" (click)="datenLoeschen()">Daten löschen</button>
+        </form>
       </mat-card-content>
     </mat-card>
   </div>
+</div>
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <span class="close" (click)="closeModal()">&times;</span>
+  <img class="modal-content" id="img01" [src]="filePfad">
+  <div id="caption">{{fileName}}</div>
 </div>
