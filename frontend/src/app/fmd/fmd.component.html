@@ -203,9 +203,10 @@
               mat-table
               [dataSource]="dataSource"
               [hidden]="!formModul.disabled"
+              matSort
             >
               <ng-container matColumnDef="stbnr">
-                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Stbnr.</th>
                 <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
               </ng-container>
               <ng-container matColumnDef="vorname">
@@ -215,7 +216,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="nachname">
-                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nachname</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.nachname }}
                 </td>
@@ -240,25 +241,25 @@
             </table>
           </mat-tab>
           <mat-tab label="Untersuchungen">
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
               <ng-container matColumnDef="stbnr">
-                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Stbnr.</th>
                 <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
               </ng-container>
               <ng-container matColumnDef="vorname">
-                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Vorname</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.vorname }}
                 </td>
               </ng-container>
               <ng-container matColumnDef="nachname">
-                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nachname</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.nachname }}
                 </td>
               </ng-container>
               <ng-container matColumnDef="letzte_untersuchung">
-                <th mat-header-cell *matHeaderCellDef>Letzte Untersuchung</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Letzte Untersuchung</th>
                 <td
                   mat-cell
                   *matCellDef="let element"
@@ -268,7 +269,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="naechste_untersuchung">
-                <th mat-header-cell *matHeaderCellDef>Nächste Untersuchung</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nächste Untersuchung</th>
                 <td
                   mat-cell
                   *matCellDef="let element"
@@ -293,9 +294,9 @@
             </table>
           </mat-tab>
           <mat-tab label="Leistungstest">
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
               <ng-container matColumnDef="stbnr">
-                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Stbnr.</th>
                 <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
               </ng-container>
               <ng-container matColumnDef="vorname">
@@ -304,19 +305,19 @@
                   {{ element.vorname }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="nachname">
+              <ng-container matColumnDef="nachname" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef>Nachname</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.nachname }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="leistungstest">
+              <ng-container matColumnDef="leistungstest" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef>Leistungstest</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.leistungstest }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="leistungstest_art">
+              <ng-container matColumnDef="leistungstest_art" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef>Leistungstest Art</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.leistungstest_art }}
@@ -343,24 +344,24 @@
             </table>
           </mat-tab>
           <mat-tab label="Tauglichkeit">
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
               <ng-container matColumnDef="stbnr">
-                <th mat-header-cell *matHeaderCellDef>Stbnr.</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Stbnr.</th>
                 <td mat-cell *matCellDef="let element">{{ element.stbnr }}</td>
               </ng-container>
               <ng-container matColumnDef="vorname">
-                <th mat-header-cell *matHeaderCellDef>Vorname</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Vorname</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.vorname }}
                 </td>
               </ng-container>
               <ng-container matColumnDef="nachname">
-                <th mat-header-cell *matHeaderCellDef>Nachname</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nachname</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.nachname }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="tauglichkeit">
+              <ng-container matColumnDef="tauglichkeit" mat-sort-header>
                 <th mat-header-cell *matHeaderCellDef>Tauglichkeit</th>
                 <td
                   mat-cell

@@ -19,6 +19,7 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
 Chart.register(ChartDataLabels);
 
@@ -40,6 +41,7 @@ Chart.register(ChartDataLabels);
     MatTableModule,
     BaseChartDirective,
     MatIconModule,
+    MatSortModule,
     MatPaginatorModule
 ],
     templateUrl: './fmd.component.html',
@@ -167,10 +169,12 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   @ViewChildren(BaseChartDirective) charts?: QueryList<BaseChartDirective>;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     if (this.hasTable(this.activeTabIndex) && this.paginator) {
       this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort
     }
     this.updateFilterPredicateFor(this.activeTabIndex);
 
