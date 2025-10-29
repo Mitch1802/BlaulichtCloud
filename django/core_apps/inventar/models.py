@@ -50,8 +50,8 @@ def inventar_filename(instance, filename):
 
 class Inventar(TimeStampedModel):  
     bezeichnung = models.CharField(verbose_name=_("Bezeichnung"), max_length=255)
-    anzahl = models.IntegerField(verbose_name=_("anzahl"), max_length=255, blank=True, null=True)
-    lagerort = models.CharField(verbose_name=_("Lagerort"), blank=True, null=True)
+    anzahl = models.IntegerField(verbose_name=_("Anzahl"), blank=True, null=True)
+    lagerort = models.CharField(verbose_name=_("Lagerort"), max_length=255, blank=True, null=True)
     notiz =  models.TextField(verbose_name=_("Notiz"), blank=True)
     foto = models.ImageField(_("Foto"), upload_to=inventar_filename, blank=True, null=True)
 
