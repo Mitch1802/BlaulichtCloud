@@ -19,7 +19,7 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
 Chart.register(ChartDataLabels);
 
@@ -41,6 +41,7 @@ Chart.register(ChartDataLabels);
     MatTableModule,
     BaseChartDirective,
     MatIconModule,
+    MatSortModule,
     MatPaginatorModule
 ],
     templateUrl: './fmd.component.html',
