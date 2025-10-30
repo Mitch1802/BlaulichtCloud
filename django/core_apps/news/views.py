@@ -2,6 +2,7 @@ import logging
 from rest_framework import permissions, filters
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import News
 from .serializers import NewsSerializer
@@ -60,6 +61,7 @@ class PublicNewsViewSet(ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
     lookup_field = "id"
     pagination_class = None
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filterset_fields = ['typ']
     ordering_fields = ["created_at", "title"]
     ordering = ["created_at", "title"]

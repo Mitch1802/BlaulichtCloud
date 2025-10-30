@@ -60,6 +60,7 @@ export class NewsComponent implements OnInit {
     id: new FormControl<string | ''>(''),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    typ: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     // nur für Anzeige/Modal – NICHT ans Backend senden
     foto_url: new FormControl<string>(''),
   });
@@ -157,6 +158,7 @@ export class NewsComponent implements OnInit {
             id: details.id!,
             title: details.title,
             text: details.text,
+            typ: details.typ,
             foto_url: ''
           });
           this.setzeSelectZurueck();
@@ -180,7 +182,7 @@ export class NewsComponent implements OnInit {
     this.fileName = '';
     this.filePfad = '';
     this.fileFound = false;
-    this.formModul.patchValue({ id: '', title: '', text: '', foto_url: '' });
+    this.formModul.patchValue({ id: '', title: '', text: '', typ: '', foto_url: '' });
     this.setzeSelectZurueck();
 
     // Datei-Auswahl im Input zurücksetzen
@@ -193,6 +195,7 @@ export class NewsComponent implements OnInit {
     const idValue = this.formModul.controls['id'].value || '';
     const title = this.formModul.controls['title'].value!;
     const text = this.formModul.controls['text'].value!;
+    const typ = this.formModul.controls['typ'].value!;
     const file = this.getSelectedFile();
 
     if (!idValue) {
@@ -201,6 +204,7 @@ export class NewsComponent implements OnInit {
         const fd = new FormData();
         fd.append('title', title);
         fd.append('text', text);
+        fd.append('typ', typ);
         fd.append('foto', file, file.name || 'upload.png');
 
         this.globalDataService.post(this.modul, fd, true).subscribe({
@@ -217,7 +221,7 @@ export class NewsComponent implements OnInit {
         });
       } else {
         // JSON ohne Bild
-        this.globalDataService.post(this.modul, { title, text }, false).subscribe({
+        this.globalDataService.post(this.modul, { title, text, typ }, false).subscribe({
           next: (erg: any) => {
             try {
               this.newsArray.push(erg);
@@ -236,6 +240,7 @@ export class NewsComponent implements OnInit {
         const fd = new FormData();
         fd.append('title', title);
         fd.append('text', text);
+        fd.append('typ', typ);
         fd.append('foto', file, file.name || 'upload.png');
 
         this.globalDataService.patch(this.modul, idValue, fd, true).subscribe({
@@ -252,7 +257,7 @@ export class NewsComponent implements OnInit {
         });
       } else {
         // Nur Text/Titel ändern (JSON)
-        this.globalDataService.patch(this.modul, idValue, { title, text }, false).subscribe({
+        this.globalDataService.patch(this.modul, idValue, { title, text, typ }, false).subscribe({
           next: (erg: any) => {
             try {
               this.newsArray = this.newsArray.map(n => (n.id === erg.id ? erg : n));
@@ -305,7 +310,7 @@ export class NewsComponent implements OnInit {
 
   /** Nach Create/Update Formular, UI & File-Input zurücksetzen */
   private resetFormNachAktion(): void {
-    this.formModul.reset({ id: '', title: '', text: '', foto_url: '' });
+    this.formModul.reset({ id: '', title: '', text: '', typ: '', foto_url: '' });
     this.formModul.disable();
     this.btnUploadStatus = false;
     this.btnText = 'Bild auswählen';

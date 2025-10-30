@@ -51,6 +51,7 @@ def news_filename(instance, filename):
 class News(TimeStampedModel):  
     title = models.CharField(verbose_name=_("Titel"), max_length=255)
     text = models.TextField(verbose_name=_("Text"))
+    typ = models.CharField(verbose_name=_("Typ"), max_length=255)
     foto = models.ImageField(_("Foto"), upload_to=news_filename, blank=True, null=True)
 
     def __str__(self):
