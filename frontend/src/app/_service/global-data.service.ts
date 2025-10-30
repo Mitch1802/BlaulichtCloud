@@ -311,25 +311,33 @@ export class GlobalDataService {
   }
 
   ladeBreadcrumb(): any[] {
-    const list: any = [];
-    const pageNumber: number = parseInt(
+    let list: any = [];
+    let pageNumber: number = parseInt(
       sessionStorage.getItem('PageNumber')!
     );
 
-    const page1: string = sessionStorage.getItem('Page1')!;
-    const page2: string = sessionStorage.getItem('Page2')!;
+    let page1: string = sessionStorage.getItem('Page1')!;
+    let page2: string = sessionStorage.getItem('Page2')!;
+    let page3: string = sessionStorage.getItem('Page3')!;
 
 
     if (pageNumber == 1) {
       list.push(this.erstelleBreadcrumbLink(page1, true));
       sessionStorage.setItem('Page2', '');
-
-    } else {
+      sessionStorage.setItem('Page3', '');
+    } else if (pageNumber >= 1) {
       list.push(this.erstelleBreadcrumbLink(page1, false));
     }
 
     if (pageNumber == 2) {
       list.push(this.erstelleBreadcrumbLink(page2, true));
+      sessionStorage.setItem('Page3', '');
+    }  else if (pageNumber >= 2) {
+      list.push(this.erstelleBreadcrumbLink(page2, false));
+    }
+
+    if (pageNumber == 3) {
+      list.push(this.erstelleBreadcrumbLink(page3, true));
     }
 
     for (let i = 0; i < list.length; i++) {
@@ -352,6 +360,15 @@ export class GlobalDataService {
     } else if (page == 'ATM') {
       link = '/atemschutz';
       kuerzel = 'Atemschutz';
+    } else if (page == 'ATM_M') {
+      link = '/atemschutz/masken';
+      kuerzel = 'Masken';
+    } else if (page == 'ATM_G') {
+      link = '/atemschutz/geraete';
+      kuerzel = 'Geräte';
+    } else if (page == 'ATM_MG') {
+      link = '/atemschutz/messgeraete';
+      kuerzel = 'Messgeräte';
     } else if (page == 'NEWS') {
       link = '/news';
       kuerzel = 'News';

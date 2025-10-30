@@ -13,7 +13,7 @@ from core_apps.users.serializers import RoleSerializer
 class ModulKonfigurationViewSet(ModelViewSet):
     queryset = ModulKonfiguration.objects.all().order_by("created_at")
     serializer_class = ModulKonfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated, any_of(HasAnyRolePermission.with_roles("ADMIN"), HasReadOnlyRolePermission.with_roles("FMD", "NEWS", "VERWALTUNG", "ATEMSCHUTZ"))]
+    permission_classes = [permissions.IsAuthenticated, any_of(HasAnyRolePermission.with_roles("ADMIN"), HasReadOnlyRolePermission.with_roles("MITGLIED"))]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     lookup_field = "id"
     pagination_class = None 

@@ -1,27 +1,25 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { GlobalDataService } from 'src/app/_service/global-data.service';
-import { HeaderComponent } from '../_template/header/header.component';
+import { HeaderComponent } from '../header/header.component';
 import { MatCardModule } from '@angular/material/card';
-import { Router, RouterLink } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-atemschutz',
-    imports: [HeaderComponent, MatCardModule, MatIconModule, RouterLink],
-    templateUrl: './atemschutz.component.html',
-    styleUrl: './atemschutz.component.sass'
+    selector: 'app-atemschutz-messgeraete',
+    imports: [HeaderComponent, MatCardModule],
+    templateUrl: './atemschutz-messgeraete.component.html',
+    styleUrl: './atemschutz-messgeraete.component.sass'
 })
-export class AtemschutzComponent implements OnInit {
+export class AtemschutzMessgeraeteComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
 
-  title = "Atemschutz";
-  modul = "atemschutz";
+  title = "Messgeräte";
+  modul = "atemschutz/messgeraete";
 
   breadcrumb: any = [];
 
   ngOnInit(): void {
-    sessionStorage.setItem("PageNumber", "2");
-    sessionStorage.setItem("Page2", "ATM");
+    sessionStorage.setItem("PageNumber", "3");
+    sessionStorage.setItem("Page3", "ATM_MG");
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
 
     // this.globalDataService.get(this.modul).subscribe({
