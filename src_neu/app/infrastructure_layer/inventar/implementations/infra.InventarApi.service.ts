@@ -1,9 +1,9 @@
-import { Observable } from 'rxjs';
-import { environment } from './../../../../../frontend/src/environments/environment'; // TODO PFAD ÄNDERN
+import { Observable, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { InventarApiFacade } from '../abstractions/infra.InventarApi.facade';
 import { InventarDto } from '../models/inventar.dto';
+import { environment } from '../../../../environments/environment';
 
 
 @Injectable({
@@ -15,7 +15,7 @@ export class InfraInventarApiService extends InventarApiFacade {
     override fetchGetAllInventar(): Observable<InventarDto[] | undefined> {
         return this.http
             .get(
-                `${environment.apiUrl}${environment.inventar}`
+                `${environment.apiUrl}${environment.inventarUrl}`
             )
             .pipe(
                 map(response => {
@@ -27,7 +27,7 @@ export class InfraInventarApiService extends InventarApiFacade {
     override fetchGetOneInventar(inventarId: string): Observable<InventarDto[] | undefined> {
         return this.http
             .get(
-                `${environment.apiUrl}${environment.inventar}${inventarId}`
+                `${environment.apiUrl}${environment.inventarUrl}${inventarId}`
             )
             .pipe(
                 map(response => {
