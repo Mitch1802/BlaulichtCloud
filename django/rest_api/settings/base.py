@@ -45,7 +45,7 @@ LOCAL_APPS = [
     "core_apps.fmd",
     "core_apps.news",
     "core_apps.inventar",
-    "coer_apps.atemschutz_masken",
+    "core_apps.atemschutz_masken",
     "core_apps.atemschutz_geraete",
     "core_apps.messgeraete"
 ]
