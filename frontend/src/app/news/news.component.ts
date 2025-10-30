@@ -182,7 +182,7 @@ export class NewsComponent implements OnInit {
     this.fileName = '';
     this.filePfad = '';
     this.fileFound = false;
-    this.formModul.patchValue({ id: '', title: '', text: '', typ: '', foto_url: '' });
+    this.formModul.patchValue({ id: '', title: '', text: '', typ: 'intern', foto_url: '' });
     this.setzeSelectZurueck();
 
     // Datei-Auswahl im Input zurücksetzen
