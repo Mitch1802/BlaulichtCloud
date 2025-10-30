@@ -23,3 +23,7 @@ https://semver.org/
 
 ## Superuser
 is_superuser==true dann nicht löschbar
+
+
+## Homepage News
+https://blaulichtcloud.at/api/v3/news/public/?typ=extern
