@@ -4,40 +4,9 @@
   <div class="col-12 col-md-10 col-lg-8 p-0 m-0">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>{{title}}</mat-card-title>
+        <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form
-          [formGroup]="formAuswahl"
-          (ngSubmit)="auswahlBearbeiten()"
-          [hidden]="!formModul.disabled"
-        >
-          <section class="row mt-3 mb-3">
-            <div class="col-12 col-lg-9">
-              <mat-form-field>
-                <mat-label>Inventar auswählen</mat-label>
-                <mat-select formControlName="inventar">
-                  @for (opt of inventarArray; track opt) {
-                    <mat-option [value]="opt.id">{{opt.bezeichnung}}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div
-            class="col-12 col-lg-3 m-0 row align-items-center auswahl-button"
-          >
-            <button
-              type="submit"
-              mat-raised-button
-              color="primary"
-              class="col-auto"
-              [disabled]="!formAuswahl.controls['inventar'].value"
-            >
-              Auswahl bearbeiten
-            </button>
-          </div>
-          </section>
-        </form>
         <button
           mat-raised-button
           color="accent"
@@ -77,65 +46,119 @@
             <div class="col-12 col-lg-6 mb-3">
               <mat-form-field hintLabel="* Pflichtfeld">
                 <mat-label>Bezeichnung</mat-label>
-                <input matInput type="text" formControlName="bezeichnung">
+                <input matInput type="text" formControlName="bezeichnung" />
                 @if (formModul.controls['bezeichnung'].hasError('required')) {
-                  <mat-error>
-                    bezeichnung ist erforderlich!
-                  </mat-error>
+                <mat-error> bezeichnung ist erforderlich! </mat-error>
                 }
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Anzahl</mat-label>
-                <input matInput type="number" formControlName="anzahl">
+                <input matInput type="number" formControlName="anzahl" />
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Lagerort</mat-label>
-                <input matInput type="text" formControlName="lagerort">
+                <input matInput type="text" formControlName="lagerort" />
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-form-field>
                 <mat-label>Notiz</mat-label>
-                <textarea
-                  matInput
-                  formControlName="notiz"
-                  rows="5"
-                ></textarea>
+                <textarea matInput formControlName="notiz" rows="5"></textarea>
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-6 mb-3">
               <div class="upload-btn-wrapper">
-                <mat-card [ngStyle]="{'background-color':!btnUploadStatus?'#0000001F':'#607d8b', 'color':!btnUploadStatus?'#00000061':'#ffffff'}">
-                  <label>{{btnText}}</label>
+                <mat-card
+                  [ngStyle]="{
+                    'background-color': !btnUploadStatus
+                      ? '#0000001F'
+                      : '#607d8b',
+                    color: !btnUploadStatus ? '#00000061' : '#ffffff'
+                  }"
+                >
+                  <label>{{ btnText }}</label>
                 </mat-card>
-                <input #fotoUpload type="file" id="fotoUpload" accept=".jpg,.jpeg,.png" (change)="onFotoSelected($event)" />
+                <input
+                  #fotoUpload
+                  type="file"
+                  id="fotoUpload"
+                  accept=".jpg,.jpeg,.png"
+                  (change)="onFotoSelected($event)"
+                />
               </div>
               <div class="alert alert-secondary">
                 @if (fileFound==true) {
-                  <div>
-                    {{fileName}}
-                  </div>
-                  <button mat-raised-button color="primary" type="button" [hidden]="!formModul.controls['id'].value" (click)="openModal()">Bild öffnen</button>
+                <div>
+                  {{ fileName }}
+                </div>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="button"
+                  [hidden]="!formModul.controls['id'].value"
+                  (click)="openModal()"
+                >
+                  Bild öffnen
+                </button>
                 }
               </div>
             </div>
           </section>
-          <button mat-raised-button color="warn" [hidden]="!formModul.controls['id'].value"
-          type="button" (click)="datenLoeschen()">Daten löschen</button>
+          <button
+            mat-raised-button
+            color="warn"
+            [hidden]="!formModul.controls['id'].value"
+            type="button"
+            (click)="datenLoeschen()"
+          >
+            Daten löschen
+          </button>
         </form>
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          [hidden]="!formModul.disabled"
+          matSort
+        >
+          <ng-container matColumnDef="bezeichnung">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Bezeichnung</th>
+            <td mat-cell *matCellDef="let element">{{ element.bezeichnung }}</td>
+          </ng-container>
+          <ng-container matColumnDef="anzahl">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Anzahl</th>
+            <td mat-cell *matCellDef="let element">{{ element.anzahl }}</td>
+          </ng-container>
+          <ng-container matColumnDef="lagerort">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Lagerort</th>
+            <td mat-cell *matCellDef="let element">{{ element.lagerort }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="auswahlBearbeiten(element)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="sichtbareSpalten"></tr>
+          <tr mat-row *matRowDef="let row; columns: sichtbareSpalten"></tr>
+        </table>
       </mat-card-content>
     </mat-card>
   </div>
 </div>
 
-
 <!-- The Modal -->
 <div id="myModal" class="modal">
   <span class="close" (click)="closeModal()">&times;</span>
-  <img class="modal-content" id="img01" [src]="filePfad">
-  <div id="caption">{{fileName}}</div>
+  <img class="modal-content" id="img01" [src]="filePfad" />
+  <div id="caption">{{ fileName }}</div>
 </div>

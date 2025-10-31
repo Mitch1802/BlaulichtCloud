@@ -126,7 +126,6 @@ export class AtemschutzMaskenComponent implements OnInit {
         next: (erg: any) => {
           try {
             const newMask: IAtemschutzMasken = erg;
-
             this.masken.push(newMask);
             this.masken = this.globalDataService.arraySortByKey(this.masken, 'inv_nr');
             this.dataSource.data = this.masken;

@@ -16,15 +16,17 @@ import {
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
 import { NgStyle } from '@angular/common';
-import { MatOption } from '@angular/material/core';
 import { MatButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../_template/header/header.component';
 import { FormatService } from '../helpers/format.service';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatIcon } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-inventar',
@@ -35,13 +37,15 @@ import { FormatService } from '../helpers/format.service';
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
-    MatSelect,
-    MatOption,
     MatButton,
     MatInputModule,
     MatError,
     NgStyle,
     MatAutocompleteModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatIcon
   ],
   templateUrl: './inventar.component.html',
   styleUrl: './inventar.component.sass',
@@ -56,18 +60,16 @@ export class InventarComponent implements OnInit {
   title = 'Inventar';
   modul = 'inventar';
 
-  breadcrumb: any = [];
-
   inventarArray: IInventar[] = [];
+  breadcrumb: any = [];
+  dataSource = new MatTableDataSource<IInventar>(this.inventarArray);
+  sichtbareSpalten: string[] = ['bezeichnung', 'anzahl', 'lagerort', 'actions'];
+
   btnText = 'Bild auswählen';
   fileName = '';
   filePfad = '';
   fileFound = false;
   btnUploadStatus = false;
-
-  formAuswahl = new FormGroup({
-    inventar: new FormControl<number | ''>('')
-  });
 
   formModul = new FormGroup({
     id: new FormControl<string | ''>(''),
@@ -90,6 +92,7 @@ export class InventarComponent implements OnInit {
       next: (erg: any) => {
         try {
           this.inventarArray = this.convertNewsDate(erg) as IInventar[];
+          this.dataSource.data = this.inventarArray;
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
         }
@@ -122,16 +125,13 @@ export class InventarComponent implements OnInit {
     return data;
   }
 
-  setzeSelectZurueck(): void {
-    this.formAuswahl.controls['inventar'].setValue('', { onlySelf: true });
-  }
-
   datenLoeschen(): void {
     const id = this.formModul.controls['id'].value!;
     this.globalDataService.delete(this.modul, id).subscribe({
       next: (erg: any) => {
         try {
           this.inventarArray = this.inventarArray.filter(n => n.id !== id);
+          this.dataSource.data = this.inventarArray;
           this.resetFormNachAktion();
           this.globalDataService.erstelleMessage('success', 'Inventar erfolgreich gelöscht!');
         } catch (e: any) {
@@ -142,11 +142,11 @@ export class InventarComponent implements OnInit {
     });
   }
 
-  auswahlBearbeiten(): void {
-    const id = this.formAuswahl.controls['inventar'].value;
-    if (!id) return;
-
-    const abfrageUrl = `${this.modul}/${id}`;
+  auswahlBearbeiten(element: any): void {
+    if (element.id === 0) {
+      return;
+    }
+    const abfrageUrl = `${this.modul}/${element.id}`;
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
@@ -176,7 +176,6 @@ export class InventarComponent implements OnInit {
             notiz: details.notiz,
             foto_url: ''
           });
-          this.setzeSelectZurueck();
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
         }
@@ -198,7 +197,6 @@ export class InventarComponent implements OnInit {
     this.filePfad = '';
     this.fileFound = false;
     this.formModul.patchValue({ id: '', bezeichnung: '', anzahl: 0, lagerort: '', notiz: '', foto_url: '' });
-    this.setzeSelectZurueck();
 
     // Datei-Auswahl im Input zurücksetzen
     if (this.fotoRef?.nativeElement) {
@@ -227,7 +225,10 @@ export class InventarComponent implements OnInit {
         this.globalDataService.post(this.modul, fd, true).subscribe({
           next: (erg: any) => {
             try {
-              this.inventarArray.push(erg);
+              const newMask: IInventar = erg;
+              this.inventarArray.push(newMask);
+              this.inventarArray = this.globalDataService.arraySortByKey(this.inventarArray, 'bezeichnung');
+              this.dataSource.data = this.inventarArray;
               this.resetFormNachAktion();
               this.globalDataService.erstelleMessage('success', 'Inventar erfolgreich gespeichert!');
             } catch (e: any) {
@@ -241,7 +242,10 @@ export class InventarComponent implements OnInit {
         this.globalDataService.post(this.modul, { bezeichnung, anzahl, lagerort, notiz }, false).subscribe({
           next: (erg: any) => {
             try {
-              this.inventarArray.push(erg);
+              const newMask: IInventar = erg;
+              this.inventarArray.push(newMask);
+              this.inventarArray = this.globalDataService.arraySortByKey(this.inventarArray, 'bezeichnung');
+              this.dataSource.data = this.inventarArray;
               this.resetFormNachAktion();
               this.globalDataService.erstelleMessage('success', 'Inventar erfolgreich gespeichert!');
             } catch (e: any) {
@@ -264,7 +268,12 @@ export class InventarComponent implements OnInit {
         this.globalDataService.patch(this.modul, idValue, fd, true).subscribe({
           next: (erg: any) => {
             try {
-              this.inventarArray = this.inventarArray.map(n => (n.id === erg.id ? erg : n));
+              const updated: any = erg;
+              this.inventarArray = this.inventarArray
+                .map(m => m.id === updated.id ? updated : m)
+                .sort((a, b) => a.bezeichnung - b.bezeichnung);
+
+              this.dataSource.data = this.inventarArray;
               this.resetFormNachAktion();
               this.globalDataService.erstelleMessage('success', 'Inventar erfolgreich geändert!');
             } catch (e: any) {
@@ -278,7 +287,12 @@ export class InventarComponent implements OnInit {
         this.globalDataService.patch(this.modul, idValue, { bezeichnung, anzahl, lagerort, notiz }, false).subscribe({
           next: (erg: any) => {
             try {
-              this.inventarArray = this.inventarArray.map(n => (n.id === erg.id ? erg : n));
+              const updated: any = erg;
+              this.inventarArray = this.inventarArray
+                .map(m => m.id === updated.id ? updated : m)
+                .sort((a, b) => a.bezeichnung - b.bezeichnung);
+
+              this.dataSource.data = this.inventarArray;
               this.resetFormNachAktion();
               this.globalDataService.erstelleMessage('success', 'Inventar erfolgreich geändert!');
             } catch (e: any) {
@@ -331,7 +345,6 @@ export class InventarComponent implements OnInit {
     this.fileName = '';
     this.filePfad = '';
     this.fileFound = false;
-    this.setzeSelectZurueck();
     // Datei im Input löschen
     if (this.fotoRef?.nativeElement) {
       this.fotoRef.nativeElement.value = '';
