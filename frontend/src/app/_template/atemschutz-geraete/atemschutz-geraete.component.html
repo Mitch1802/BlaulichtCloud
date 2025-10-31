@@ -7,7 +7,175 @@
         <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <button
+          mat-raised-button
+          color="accent"
+          class="me-2 mb-3"
+          [hidden]="!formModul.disabled"
+          (click)="neueDetails()"
+          type="button"
+        >
+          Hinzufügen
+        </button>
+        <form
+          [formGroup]="formModul"
+          (ngSubmit)="datenSpeichern()"
+          [hidden]="formModul.disabled"
+        >
+          <input hidden type="text" class="form-control" formControlName="id" />
+          <button
+            mat-raised-button
+            color="accent"
+            class="me-3 mt-3 mb-3"
+            [hidden]="!formModul.valid"
+            type="submit"
+          >
+            Daten speichern
+          </button>
+          <button
+            mat-raised-button
+            class="mt-3 mb-3"
+            color="primary"
+            [hidden]="formModul.disabled"
+            type="button"
+            (click)="abbrechen()"
+          >
+            Abbrechen
+          </button>
+          <section class="row mt-2 mx-0">
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Inventar Nummer</mat-label>
+                <input matInput type="text" formControlName="inv_nr" />
+                @if (formModul.controls['inv_nr'].hasError('required')) {
+                  <mat-error>
+                    Inventar Nummer ist erforderlich!
+                  </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-8 mb-3">
+              <mat-form-field>
+                <mat-label>Bezeichnung</mat-label>
+                <input matInput type="text" formControlName="bezeichnung" />
+                @if (formModul.controls['bezeichnung'].hasError('required')) {
+                  <mat-error>
+                    Bezeichnung ist erforderlich!
+                  </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Art</mat-label>
+                <input matInput type="text" formControlName="art" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Typ</mat-label>
+                <input matInput type="text" formControlName="typ" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Druckminderer</mat-label>
+                <input matInput type="text" formControlName="druckminderer" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Lungenautomat</mat-label>
+                <input matInput type="text" formControlName="lungenautomat" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Rahmen Nr.</mat-label>
+                <input matInput type="text" formControlName="rahmen_nr" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Eigentümer</mat-label>
+                <input matInput type="text" formControlName="eigentuemer" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Barcode</mat-label>
+                <input matInput type="text" formControlName="barcode" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Standort</mat-label>
+                <input matInput type="text" formControlName="standort" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Baujahr</mat-label>
+                <input matInput type="text" formControlName="baujahr" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Datum Indienststellung</mat-label>
+                <input matInput type="text" formControlName="datum_im_dienst" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field>
+                <mat-label>Nächste GÜ</mat-label>
+                <input matInput type="text" formControlName="naechste_gue" />
+              </mat-form-field>
+            </div>
+          </section>
 
+          <button
+            mat-raised-button
+            color="warn"
+            [hidden]="!formModul.controls['id'].value"
+            type="button"
+            (click)="datenLoeschen()"
+          >
+            Daten löschen
+          </button>
+        </form>
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          [hidden]="!formModul.disabled"
+          matSort
+        >
+          <ng-container matColumnDef="inv_nr">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Inv Nr.</th>
+            <td mat-cell *matCellDef="let element">{{ element.inv_nr }}</td>
+          </ng-container>
+          <ng-container matColumnDef="bezeichnung">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Bezeichnung</th>
+            <td mat-cell *matCellDef="let element">{{ element.bezeichnung }}</td>
+          </ng-container>
+          <ng-container matColumnDef="typ">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Typ</th>
+            <td mat-cell *matCellDef="let element">{{ element.typ }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="auswahlBearbeiten(element)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="sichtbareSpalten"></tr>
+          <tr mat-row *matRowDef="let row; columns: sichtbareSpalten"></tr>
+        </table>
       </mat-card-content>
     </mat-card>
   </div>
