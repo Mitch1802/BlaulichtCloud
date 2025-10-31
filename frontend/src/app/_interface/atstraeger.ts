@@ -2,6 +2,7 @@ export interface IATSTraeger {
     id: number,
     mitglied_id: string,
     arzt: string,
+    arzttyp: string,
     letzte_untersuchung: string,
     leistungstest: string,
     leistungstest_art: string,

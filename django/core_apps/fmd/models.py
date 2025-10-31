@@ -7,7 +7,8 @@ from core_apps.mitglieder.models import Mitglied
 
 class FMD(TimeStampedModel):
     mitglied_id =  models.ForeignKey(Mitglied, on_delete=models.CASCADE)
-    hausarzt =  models.CharField(verbose_name=_("Hausarzt"), max_length=255, blank=True)
+    arzt =  models.CharField(verbose_name=_("Arzt"), max_length=255, blank=True)
+    arzt_typ =  models.CharField(verbose_name=_("Arzttyp"), max_length=255, blank=True)
     letzte_untersuchung =  models.DateField(verbose_name=_("Letzte Untersuchung"), max_length=10, blank=True, null=True)
     leistungstest =  models.CharField(verbose_name=_("Leistungstest"), max_length=255, blank=True)
     leistungstest_art =  models.CharField(verbose_name=_("Leistungstest Art"), max_length=255, blank=True)
@@ -17,4 +18,4 @@ class FMD(TimeStampedModel):
     fdisk_aenderung =  models.DateField(verbose_name=_("FDISK Änderung"), max_length=10, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.ort}"
+        return f"{Mitglied.__str__}"

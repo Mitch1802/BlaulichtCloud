@@ -24,8 +24,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 Chart.register(ChartDataLabels);
 
 @Component({
-    selector: 'app-fmd',
-    imports: [
+  selector: 'app-fmd',
+  imports: [
     HeaderComponent,
     MatCardModule,
     MatTabsModule,
@@ -43,9 +43,9 @@ Chart.register(ChartDataLabels);
     MatIconModule,
     MatSortModule,
     MatPaginatorModule
-],
-    templateUrl: './fmd.component.html',
-    styleUrl: './fmd.component.sass'
+  ],
+  templateUrl: './fmd.component.html',
+  styleUrl: './fmd.component.sass'
 })
 
 export class FmdComponent implements OnInit, AfterViewInit {
@@ -91,7 +91,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   breadcrumb: any = [];
 
-  pageOptions: any[] = [5,10,50,100]
+  pageOptions: any[] = [5, 10, 50, 100]
 
   dataSource = new MatTableDataSource<IATSTraeger>(this.atstraeger);
   sichtbareSpaltenATS: string[] = ['stbnr', 'vorname', 'nachname', 'actions'];
@@ -126,27 +126,24 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   chartAlter: ChartData<'doughnut', number[], string | string[]> = {
     labels: ['16-18', '19-39', '40-54', '55-65'],
-    datasets: [{ data: [0,0,0,0], backgroundColor: ['#69c7a8', '#c973c4', '#d6b36d', '#cfc95d'] }]
+    datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#69c7a8', '#c973c4', '#d6b36d', '#cfc95d'] }]
   };
 
   chartTauglichkeit: ChartData<'doughnut', number[], string | string[]> = {
     labels: ['tauglich', 'kein Leistungstest', 'kein Arzt'],
-    datasets: [{ data: [0,0,0], backgroundColor: ['#32a852', '#fcba56', '#bf6763'] }]
+    datasets: [{ data: [0, 0, 0], backgroundColor: ['#32a852', '#fcba56', '#bf6763'] }]
   };
 
   chartUntersuchung: ChartData<'doughnut', number[], string | string[]> = {
     labels: ['kein Arzt', 'gültig'],
-    datasets: [{ data: [0,0], backgroundColor: ['#bf6763', '#32a852'] }]
+    datasets: [{ data: [0, 0], backgroundColor: ['#bf6763', '#32a852'] }]
   };
-
-  formAuswahl = new FormGroup({
-    atstraeger: new FormControl(0)
-  });
 
   formModul = new FormGroup({
     id: new FormControl(0),
     mitglied_id: new FormControl(''),
-    hausarzt: new FormControl(''),
+    arzt: new FormControl(''),
+    arzttyp: new FormControl(''),
     letzte_untersuchung: new FormControl('', [
       Validators.pattern(/^([0-3]\d)\.([0-1]\d)\.(\d{4})$/),
       this.validDateDDMMYYYY()
@@ -159,6 +156,12 @@ export class FmdComponent implements OnInit, AfterViewInit {
       this.validDateDDMMYYYY()
     ]),
   });
+
+  arzttypen: any = [
+    "Praktischer Arzt",
+    "FW Arzt",
+    "Betriebsarzt"
+  ]
 
   leistungstestarten: any = [
     "unbekannt",
@@ -255,7 +258,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
           this.formModul.setValue({
             id: details.id,
             mitglied_id: details.mitglied_id,
-            hausarzt: details.hausarzt,
+            arzt: details.arzt,
+            arzttyp: details.arzttyp,
             letzte_untersuchung: details.letzte_untersuchung,
             leistungstest: details.leistungstest,
             leistungstest_art: details.leistungstest_art,
@@ -317,7 +321,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
     if (
       objekt.letzte_untersuchung != '' &&
-      objekt.leistungstest      != '' &&
+      objekt.leistungstest != '' &&
       objekt.naechste_untersuchung > currentYear &&
       testJahr === currentYear
     ) {
@@ -334,8 +338,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
             const mitg = this.mitglieder.find(m => m.pkid === newTraeger.mitglied_id);
 
             if (mitg) {
-              newTraeger.stbnr     = mitg.stbnr;
-              newTraeger.vorname  = mitg.vorname;
+              newTraeger.stbnr = mitg.stbnr;
+              newTraeger.vorname = mitg.vorname;
               newTraeger.nachname = mitg.nachname;
               newTraeger.hauptberuflich = mitg.hauptberuflich;
             }
@@ -348,7 +352,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
             this.formModul.reset({
               id: 0,
               mitglied_id: '',
-              hausarzt: '',
+              arzt: '',
+              arzttyp: '',
               letzte_untersuchung: '',
               leistungstest: '',
               leistungstest_art: '',
@@ -370,8 +375,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
             const updated: any = erg;
             const mitg = this.mitglieder.find(m => m.pkid === updated.mitglied_id);
             if (mitg) {
-              updated.stbnr     = mitg.stbnr;
-              updated.vorname  = mitg.vorname;
+              updated.stbnr = mitg.stbnr;
+              updated.vorname = mitg.vorname;
               updated.nachname = mitg.nachname;
               updated.hauptberuflich = mitg.hauptberuflich;
             }
@@ -379,12 +384,13 @@ export class FmdComponent implements OnInit, AfterViewInit {
               .map(m => m.id === updated.id ? updated : m)
               .sort((a, b) => a.stbnr - b.stbnr);
 
-              this.dataSource.data = this.atstraeger;
+            this.dataSource.data = this.atstraeger;
 
             this.formModul.reset({
               id: 0,
               mitglied_id: '',
-              hausarzt: '',
+              arzt: '',
+              arzttyp: '',
               letzte_untersuchung: '',
               leistungstest: '',
               leistungstest_art: '',
@@ -409,7 +415,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
     this.formModul.reset({
       id: 0,
       mitglied_id: '',
-      hausarzt: '',
+      arzt: '',
+      arzttyp: '',
       letzte_untersuchung: '',
       leistungstest: '',
       leistungstest_art: '',
@@ -436,7 +443,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
           this.formModul.reset({
             id: 0,
             mitglied_id: '',
-            hausarzt: '',
+            arzt: '',
+            arzttyp: '',
             letzte_untersuchung: '',
             leistungstest: '',
             leistungstest_art: '',
@@ -552,9 +560,9 @@ export class FmdComponent implements OnInit, AfterViewInit {
     let str = '';
 
     if (dateStr instanceof Date) {
-        str = `${dateStr.getDate()}.${dateStr.getMonth() + 1}.${dateStr.getFullYear()}`;
+      str = `${dateStr.getDate()}.${dateStr.getMonth() + 1}.${dateStr.getFullYear()}`;
     } else {
-        str = String(dateStr);
+      str = String(dateStr);
     }
 
     const parts = str.split('.');
