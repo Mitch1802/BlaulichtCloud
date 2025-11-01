@@ -12,7 +12,8 @@ import { RouterOutlet } from '@angular/router';
     ],
     styleUrls: [
         './app.component.sass',
-        '../assets/css/icon.css',
+        '../assets/css/material-design-icons.css',
+        '../assets/css/material-design-icons-outlined.css',
         '../assets/css/bootstrap-grid.css'
     ]
 })
