@@ -1,4 +1,5 @@
 export interface IAtemschutzMasken {
+  pkid: string;
   id: string;
   inv_nr: string;
   bezeichnung: string;

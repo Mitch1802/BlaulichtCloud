@@ -33,7 +33,7 @@ class AtemschutzMaskeProtokoll(TimeStampedModel):
     wartung_maengel = models.CharField(verbose_name=_("Wartung Mängel"), max_length=255, blank=True, null=True)
     ausser_dienst = models.BooleanField(default=True)
     name_pruefer = models.CharField(verbose_name=_("Prüfername"), max_length=255)
-    austausch =  models.JSONField(verbose_name=_("Austausch"), blank=True)
+    austausch =  models.JSONField(verbose_name=_("Austausch"), blank=True, null=True)
 
     def __str__(self):
         return f"{self.datum}"

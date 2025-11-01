@@ -245,7 +245,7 @@ export class GlobalDataService {
     return headers;
   }
 
-  get(modul: string, param?: any): Observable<any[]> {
+  get(modul: string, param?: any, afterSlash?: boolean): Observable<any[]> {
     const headers = this.ladeHeaders(false);
     let url = this.AppUrl + modul;
     let paramUrl = '';
@@ -262,6 +262,9 @@ export class GlobalDataService {
     if (paramUrl == '') {
       url += '/';
     } else {
+      if (afterSlash == true) {
+        url += '/';
+      }
       url += paramUrl;
     }
 
