@@ -148,7 +148,7 @@
                   }
                 </mat-select>
                 @if (formPruefung.controls['maske_id'].hasError('required')) {
-                <mat-error> Masken ist erforderlich! </mat-error>
+                <mat-error> Maske ist erforderlich! </mat-error>
                 }
               </mat-form-field>
             </div>
@@ -259,7 +259,6 @@
         <table
           mat-table
           [dataSource]="dataSource"
-          [hidden]="!formModul.disabled || !formPruefung.disabled"
           matSort
         >
           <ng-container matColumnDef="inv_nr">

@@ -7,21 +7,40 @@
         <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        @if (formModul.disabled && formPruefung.disabled && !showPruefungTable)
+        {
         <button
           mat-raised-button
           color="accent"
           class="me-2 mb-3"
-          [hidden]="!formModul.disabled"
           (click)="neueDetails()"
           type="button"
         >
           Hinzufügen
         </button>
-        <form
-          [formGroup]="formModul"
-          (ngSubmit)="datenSpeichern()"
-          [hidden]="formModul.disabled"
+        <button
+          mat-raised-button
+          color="accent"
+          class="me-2 mb-3"
+          (click)="neuePruefung()"
+          type="button"
         >
+          Protokoll Eintrag
+        </button>
+        } @if (showPruefungTable) {
+        <button
+          mat-raised-button
+          color="primary"
+          class="me-2 mb-3"
+          (click)="showMasken()"
+          type="button"
+        >
+          Zurück
+        </button>
+        }
+        <!-- MASKE FORM -->
+        @if (!formModul.disabled) {
+        <form [formGroup]="formModul" (ngSubmit)="datenSpeichern()">
           <input hidden type="text" class="form-control" formControlName="id" />
           <button
             mat-raised-button
@@ -48,20 +67,7 @@
                 <mat-label>Inventar Nummer</mat-label>
                 <input matInput type="text" formControlName="inv_nr" />
                 @if (formModul.controls['inv_nr'].hasError('required')) {
-                  <mat-error>
-                    Inventar Nummer ist erforderlich!
-                  </mat-error>
-                }
-              </mat-form-field>
-            </div>
-            <div class="col-12 col-lg-8 mb-3">
-              <mat-form-field>
-                <mat-label>Bezeichnung</mat-label>
-                <input matInput type="text" formControlName="bezeichnung" />
-                @if (formModul.controls['bezeichnung'].hasError('required')) {
-                  <mat-error>
-                    Bezeichnung ist erforderlich!
-                  </mat-error>
+                <mat-error> Inventar Nummer ist erforderlich! </mat-error>
                 }
               </mat-form-field>
             </div>
@@ -143,39 +149,218 @@
             Daten löschen
           </button>
         </form>
+        }
+        <!-- MASKE FORM ENDE -->
+        <!-- PRÜFUNG FORM -->
+        @if (!formPruefung.disabled) {
+        <form [formGroup]="formPruefung" (ngSubmit)="datenSpeichernProtokoll()">
+          <input hidden type="text" class="form-control" formControlName="id" />
+          <button
+            mat-raised-button
+            color="accent"
+            class="me-3 mb-3"
+            [hidden]="!formPruefung.valid"
+            type="submit"
+          >
+            Daten speichern
+          </button>
+          <button
+            mat-raised-button
+            class="mb-3"
+            color="primary"
+            [hidden]="formPruefung.disabled"
+            type="button"
+            (click)="pruefungAbbrechen()"
+          >
+            Abbrechen
+          </button>
+          <section class="row mt-2 mx-0">
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Gerät</mat-label>
+                <mat-select formControlName="geraet_id">
+                  @for (opt of geraete; track opt) {
+                  <mat-option [value]="opt.pkid"> {{ opt.inv_nr }} </mat-option>
+                  }
+                </mat-select>
+                @if (formPruefung.controls['geraet_id'].hasError('required')) {
+                <mat-error> Gerät ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Datum</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="datum"
+                  placeholder="TT.MM.YYYY"
+                />
+                @if (formPruefung.controls['datum'].hasError('pattern')) {
+                <mat-error
+                  >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
+                >
+                } @if (formPruefung.controls['datum'].hasError('dateInvalid')) {
+                <mat-error>Kein existierendes Datum!</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-8 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Tätigkeit</mat-label>
+                <input matInput type="text" formControlName="taetigkeit" />
+                @if (formPruefung.controls['taetigkeit'].hasError('required')) {
+                <mat-error> Tätigkeit ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <mat-form-field>
+                <mat-label>Verwendung Typ</mat-label>
+                <mat-select formControlName="verwendung_typ">
+                  <mat-option value="Ü">Übung</mat-option>
+                  <mat-option value="E">Einsatz</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <mat-form-field>
+                <mat-label>Verwendung Minuten</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="verwendung_min"
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="wartung_maengel"
+                >Wartung Mängel</mat-checkbox
+              >
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Name Prüfer</mat-label>
+                <input matInput type="text" formControlName="name_pruefer" />
+              </mat-form-field>
+            </div>
+          </section>
+
+          <button
+            mat-raised-button
+            color="warn"
+            [hidden]="!formPruefung.controls['id'].value"
+            type="button"
+            (click)="datenProtokollLoeschen()"
+          >
+            Daten löschen
+          </button>
+        </form>
+        }
+        <!-- PRÜFUNG FORM ENDE -->
+        <!-- TABELLE MASKEN -->
+        @if (formModul.disabled && formPruefung.disabled && !showPruefungTable)
+        {
         <table
           mat-table
           [dataSource]="dataSource"
-          [hidden]="!formModul.disabled"
           matSort
         >
           <ng-container matColumnDef="inv_nr">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Inv Nr.</th>
             <td mat-cell *matCellDef="let element">{{ element.inv_nr }}</td>
           </ng-container>
-          <ng-container matColumnDef="bezeichnung">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Bezeichnung</th>
-            <td mat-cell *matCellDef="let element">{{ element.bezeichnung }}</td>
-          </ng-container>
           <ng-container matColumnDef="typ">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Typ</th>
-            <td mat-cell *matCellDef="let element">{{ element.typ }}</td>
+            <td mat-cell *matCellDef="let element">
+              {{ element.typ }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="art">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Art</th>
+            <td mat-cell *matCellDef="let element">{{ element.art }}</td>
           </ng-container>
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Aktionen</th>
             <td mat-cell *matCellDef="let element">
               <button
-                mat-icon-button
+                mat-raised-button
+                class="px-0"
                 color="primary"
                 (click)="auswahlBearbeiten(element)"
               >
-                <mat-icon>edit</mat-icon>
+                <mat-icon class="m-0">edit</mat-icon>
+              </button>
+              <button
+                mat-raised-button
+                class="ms-2"
+                color="primary"
+                (click)="neuePruefungVonMaske(element)"
+              >
+                <mat-icon class="m-0">checklist</mat-icon>
+              </button>
+              <button
+                mat-raised-button
+                class="ms-2"
+                color="primary"
+                (click)="showPruefungen(element)"
+              >
+                <mat-icon class="m-0">assignment</mat-icon>
               </button>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="sichtbareSpalten"></tr>
           <tr mat-row *matRowDef="let row; columns: sichtbareSpalten"></tr>
         </table>
+        }
+        <!-- TABELLE MASKEN ENDE -->
+        <!-- TABELLE MASKEN PRÜFUNGEN -->
+        @if (formModul.disabled && formPruefung.disabled && showPruefungTable) {
+        <table
+          mat-table
+          [dataSource]="dataSourcePruefungen"
+          matSort
+        >
+          <ng-container matColumnDef="datum">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Datum</th>
+            <td mat-cell *matCellDef="let element">{{ element.datum }}</td>
+          </ng-container>
+          <ng-container matColumnDef="taetigkeit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tätigkeit</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.taetigkeit }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="name_pruefer">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Name Prüfer
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.name_pruefer }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-raised-button
+                class="px-0"
+                color="primary"
+                (click)="auswahlBearbeitenProtokoll(element)"
+              >
+                <mat-icon class="m-0">edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenPruefungen"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: sichtbareSpaltenPruefungen"
+          ></tr>
+        </table>
+        }
+        <!-- TABELLE MASKEN PRÜFUNGEN ENDE -->
       </mat-card-content>
     </mat-card>
   </div>

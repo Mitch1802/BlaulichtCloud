@@ -13,7 +13,6 @@ export interface IAtemschutzMaskenProtokoll {
   wartung_maengel: boolean;
   ausser_dienst: boolean;
   name_pruefer: string;
-  austausch: string;
   created_at: string;
   updated_at: string;
 }
