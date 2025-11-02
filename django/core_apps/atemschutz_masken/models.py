@@ -21,7 +21,7 @@ class AtemschutzMaske(TimeStampedModel):
 
 class AtemschutzMaskeProtokoll(TimeStampedModel):
     maske_id = models.ForeignKey(AtemschutzMaske, on_delete=models.CASCADE)
-    datum = models.DateField(verbose_name=_("Datum"), max_length=10, blank=True, null=True)
+    datum = models.DateField(verbose_name=_("Datum"), max_length=10)
     taetigkeit = models.CharField(verbose_name=_("Tätigkeit"), max_length=255)
     verwendung_typ = models.CharField(verbose_name=_("Verwendung Typ"), max_length=255, blank=True, null=True)
     verwendung_min = models.BigIntegerField(verbose_name=_("Verwendung Min"), blank=True, null=True)

@@ -162,68 +162,68 @@ export class AtemschutzGeraeteComponent implements OnInit {
       }
     });
   }
-  
-    showMasken(): void {
-      this.showPruefungTable = false;
-      this.title = this.title_modul;
+
+  showMasken(): void {
+    this.showPruefungTable = false;
+    this.title = this.title_modul;
+  }
+
+  showPruefungen(element: any): void {
+    if (element.id === 0) {
+      return;
     }
-  
-    showPruefungen(element: any): void {
-      if (element.id === 0) {
-        return;
-      }
-      this.title = this.title_pruefung;
-  
-      const abfrageUrl = `${this.modul}/protokoll`;
-      const param = { 'geraet_id': element.pkid };
-  
-      this.globalDataService.get(abfrageUrl, param, true).subscribe({
-        next: (erg: any) => {
-          try {
-            this.showPruefungTable = true;
-            this.pruefungen = erg;
-            this.dataSourcePruefungen.data = this.pruefungen;
-          } catch (e: any) {
-            this.globalDataService.erstelleMessage('error', e);
-          }
-        },
-        error: (error: any) => {
-          this.globalDataService.errorAnzeigen(error);
+    this.title = this.title_pruefung;
+
+    const abfrageUrl = `${this.modul}/protokoll`;
+    const param = { 'geraet_id': element.pkid };
+
+    this.globalDataService.get(abfrageUrl, param, true).subscribe({
+      next: (erg: any) => {
+        try {
+          this.showPruefungTable = true;
+          this.pruefungen = erg;
+          this.dataSourcePruefungen.data = this.pruefungen;
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
         }
-      });
-    }
-  
-    auswahlBearbeitenProtokoll(element: any): void {
-      if (element.id === 0) {
-        return;
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
       }
-      const abfrageUrl = `${this.modul}/protokoll/${element.id}`;
-  
-      this.globalDataService.get(abfrageUrl).subscribe({
-        next: (erg: any) => {
-          try {
-            this.showPruefungTable = false;
-            const details: IAtemschutzGeraeteProtokoll = erg;
-            this.formPruefung.enable();
-            this.formPruefung.setValue({
-              id: details.id,
-              geraet_id: details.geraet_id,
-              datum: details.datum,
-              taetigkeit: details.taetigkeit,
-              verwendung_typ: details.verwendung_typ,
-              verwendung_min: details.verwendung_min,
-              wartung_maengel: details.wartung_maengel,
-              name_pruefer: details.name_pruefer,
-            });
-          } catch (e: any) {
-            this.globalDataService.erstelleMessage('error', e);
-          }
-        },
-        error: (error: any) => {
-          this.globalDataService.errorAnzeigen(error);
-        }
-      });
+    });
+  }
+
+  auswahlBearbeitenProtokoll(element: any): void {
+    if (element.id === 0) {
+      return;
     }
+    const abfrageUrl = `${this.modul}/protokoll/${element.id}`;
+
+    this.globalDataService.get(abfrageUrl).subscribe({
+      next: (erg: any) => {
+        try {
+          this.showPruefungTable = false;
+          const details: IAtemschutzGeraeteProtokoll = erg;
+          this.formPruefung.enable();
+          this.formPruefung.setValue({
+            id: details.id,
+            geraet_id: details.geraet_id,
+            datum: details.datum,
+            taetigkeit: details.taetigkeit,
+            verwendung_typ: details.verwendung_typ,
+            verwendung_min: details.verwendung_min,
+            wartung_maengel: details.wartung_maengel,
+            name_pruefer: details.name_pruefer,
+          });
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
 
   datenSpeichern(): void {
     if (this.formModul.invalid) {
@@ -304,73 +304,73 @@ export class AtemschutzGeraeteComponent implements OnInit {
       });
     }
   }
-  
-    datenSpeichernProtokoll(): void {
-      if (this.formPruefung.invalid) {
-        this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
-        return;
-      }
-      const objekt: any = this.formPruefung.value;
-      const idValue = this.formPruefung.controls['id'].value;
-  
-      if (!idValue) {
-        this.globalDataService.post(`${this.modul}/protokoll`, objekt, false).subscribe({
-          next: (erg: any) => {
-            try {
-              const newPrufung: IAtemschutzGeraeteProtokoll = erg;
-              this.pruefungen.push(newPrufung);
-              this.pruefungen = this.globalDataService.arraySortByKey(this.pruefungen, 'datum');
-              this.dataSourcePruefungen.data = this.pruefungen;
-  
-              this.formPruefung.reset({
-                id: '',
-                geraet_id: 0,
-                taetigkeit: '',
-                verwendung_typ: '',
-                verwendung_min: 0,
-                wartung_maengel: false,
-                name_pruefer: '',
-              });
-              this.formPruefung.disable();
-              this.showPruefungTable = true;
-              this.globalDataService.erstelleMessage('success', 'Protokoll gespeichert!');
-            } catch (e: any) {
-              this.globalDataService.erstelleMessage('error', e);
-            }
-          },
-          error: (error: any) => this.globalDataService.errorAnzeigen(error)
-        });
-      } else {
-        this.globalDataService.patch(`${this.modul}/protokoll`, idValue, objekt, false).subscribe({
-          next: (erg: any) => {
-            try {
-              const updated: any = erg;
-              this.pruefungen = this.pruefungen
-                .map(m => m.id === updated.id ? updated : m)
-                .sort((a, b) => a.datum - b.datum);
-  
-              this.dataSourcePruefungen.data = this.pruefungen;
-  
-              this.formPruefung.reset({
-                id: '',
-                geraet_id: 0,
-                taetigkeit: '',
-                verwendung_typ: '',
-                verwendung_min: 0,
-                wartung_maengel: false,
-                name_pruefer: '',
-              });
-              this.formPruefung.disable();
-              this.showPruefungTable = true;
-              this.globalDataService.erstelleMessage('success', 'Protokoll geändert!');
-            } catch (e: any) {
-              this.globalDataService.erstelleMessage('error', e);
-            }
-          },
-          error: (error: any) => this.globalDataService.errorAnzeigen(error)
-        });
-      }
+
+  datenSpeichernProtokoll(): void {
+    if (this.formPruefung.invalid) {
+      this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
+      return;
     }
+    const objekt: any = this.formPruefung.value;
+    const idValue = this.formPruefung.controls['id'].value;
+
+    if (!idValue) {
+      this.globalDataService.post(`${this.modul}/protokoll`, objekt, false).subscribe({
+        next: (erg: any) => {
+          try {
+            const newPrufung: IAtemschutzGeraeteProtokoll = erg;
+            this.pruefungen.push(newPrufung);
+            this.pruefungen = this.globalDataService.arraySortByKey(this.pruefungen, 'datum');
+            this.dataSourcePruefungen.data = this.pruefungen;
+
+            this.formPruefung.reset({
+              id: '',
+              geraet_id: 0,
+              taetigkeit: '',
+              verwendung_typ: '',
+              verwendung_min: 0,
+              wartung_maengel: false,
+              name_pruefer: '',
+            });
+            this.formPruefung.disable();
+            this.showPruefungTable = true;
+            this.globalDataService.erstelleMessage('success', 'Protokoll gespeichert!');
+          } catch (e: any) {
+            this.globalDataService.erstelleMessage('error', e);
+          }
+        },
+        error: (error: any) => this.globalDataService.errorAnzeigen(error)
+      });
+    } else {
+      this.globalDataService.patch(`${this.modul}/protokoll`, idValue, objekt, false).subscribe({
+        next: (erg: any) => {
+          try {
+            const updated: any = erg;
+            this.pruefungen = this.pruefungen
+              .map(m => m.id === updated.id ? updated : m)
+              .sort((a, b) => a.datum - b.datum);
+
+            this.dataSourcePruefungen.data = this.pruefungen;
+
+            this.formPruefung.reset({
+              id: '',
+              geraet_id: 0,
+              taetigkeit: '',
+              verwendung_typ: '',
+              verwendung_min: 0,
+              wartung_maengel: false,
+              name_pruefer: '',
+            });
+            this.formPruefung.disable();
+            this.showPruefungTable = true;
+            this.globalDataService.erstelleMessage('success', 'Protokoll geändert!');
+          } catch (e: any) {
+            this.globalDataService.erstelleMessage('error', e);
+          }
+        },
+        error: (error: any) => this.globalDataService.errorAnzeigen(error)
+      });
+    }
+  }
 
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "Gerät nicht gespeichert!");
