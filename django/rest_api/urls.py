@@ -19,6 +19,6 @@ urlpatterns = [
     path(settings.API_URL + "inventar/", include("core_apps.inventar.urls")),
     path(settings.API_URL + "files/", include("core_apps.media.urls")),
     path(settings.API_URL + "atemschutz/", include("core_apps.atemschutz_masken.urls")),
-    path(settings.API_URL + "atemschutz/geraete/", include("core_apps.atemschutz_geraete.urls")),
+    path(settings.API_URL + "atemschutz/", include("core_apps.atemschutz_geraete.urls")),
     path(settings.API_URL + "messgeraete/", include("core_apps.messgeraete.urls")),
 ]
