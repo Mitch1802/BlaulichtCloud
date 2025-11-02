@@ -7,7 +7,8 @@
         <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        @if (formModul.disabled && formPruefung.disabled && !showPruefungTable) {
+        @if (formModul.disabled && formPruefung.disabled && !showPruefungTable)
+        {
         <button
           mat-raised-button
           color="accent"
@@ -17,8 +18,16 @@
         >
           Hinzufügen
         </button>
-        }
-        @if (showPruefungTable) {
+        <button
+          mat-raised-button
+          color="accent"
+          class="me-2 mb-3"
+          (click)="neuePruefung()"
+          type="button"
+        >
+          Protokoll Eintrag
+        </button>
+        } @if (showPruefungTable) {
         <button
           mat-raised-button
           color="primary"
@@ -31,10 +40,7 @@
         }
         <!-- MASKE FORM -->
         @if (!formModul.disabled) {
-        <form
-          [formGroup]="formModul"
-          (ngSubmit)="datenSpeichern()"
-        >
+        <form [formGroup]="formModul" (ngSubmit)="datenSpeichern()">
           <input hidden type="text" class="form-control" formControlName="id" />
           <button
             mat-raised-button
@@ -111,10 +117,7 @@
         <!-- MASKE FORM ENDE -->
         <!-- PRÜFUNG FORM -->
         @if (!formPruefung.disabled) {
-        <form
-          [formGroup]="formPruefung"
-          (ngSubmit)="datenSpeichernProtokoll()"
-        >
+        <form [formGroup]="formPruefung" (ngSubmit)="datenSpeichernProtokoll()">
           <input hidden type="text" class="form-control" formControlName="id" />
           <button
             mat-raised-button
@@ -141,7 +144,7 @@
                 <mat-label>Maske</mat-label>
                 <mat-select formControlName="maske_id">
                   @for (opt of masken; track opt) {
-                    <mat-option [value]="opt.pkid"> {{ opt.inv_nr }} </mat-option>
+                  <mat-option [value]="opt.pkid"> {{ opt.inv_nr }} </mat-option>
                   }
                 </mat-select>
                 @if (formPruefung.controls['maske_id'].hasError('required')) {
@@ -153,22 +156,18 @@
               <mat-form-field hintLabel="* Pflichtfeld">
                 <mat-label>Datum</mat-label>
                 <input
-                      matInput
-                      type="text"
-                      formControlName="datum"
-                      placeholder="TT.MM.YYYY"
-                    />
-                    @if
-                    (formPruefung.controls['datum'].hasError('pattern'))
-                    {
-                    <mat-error
-                      >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
-                    >
-                    } @if
-                    (formPruefung.controls['datum'].hasError('dateInvalid'))
-                    {
-                    <mat-error>Kein existierendes Datum!</mat-error>
-                    }
+                  matInput
+                  type="text"
+                  formControlName="datum"
+                  placeholder="TT.MM.YYYY"
+                />
+                @if (formPruefung.controls['datum'].hasError('pattern')) {
+                <mat-error
+                  >Ungültiges Format. Bitte TT.MM.YYYY eingeben.</mat-error
+                >
+                } @if (formPruefung.controls['datum'].hasError('dateInvalid')) {
+                <mat-error>Kein existierendes Datum!</mat-error>
+                }
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-8 mb-3">
@@ -192,29 +191,47 @@
             <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Verwendung Minuten</mat-label>
-                <input matInput type="number" formControlName="verwendung_min" />
+                <input
+                  matInput
+                  type="number"
+                  formControlName="verwendung_min"
+                />
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-12 mb-3">
-              <mat-checkbox formControlName="wartung_2_punkt">Wartung 2 Punkt</mat-checkbox>
+              <mat-checkbox formControlName="wartung_2_punkt"
+                >Wartung 2 Punkt</mat-checkbox
+              >
             </div>
             <div class="col-12 col-lg-12 mb-3">
-              <mat-checkbox formControlName="wartung_unterdruck">Wartung Unterdruck</mat-checkbox>
+              <mat-checkbox formControlName="wartung_unterdruck"
+                >Wartung Unterdruck</mat-checkbox
+              >
             </div>
             <div class="col-12 col-lg-12 mb-3">
-              <mat-checkbox formControlName="wartung_oeffnungsdruck">Wartung Öffnungsdruck</mat-checkbox>
+              <mat-checkbox formControlName="wartung_oeffnungsdruck"
+                >Wartung Öffnungsdruck</mat-checkbox
+              >
             </div>
             <div class="col-12 col-lg-12 mb-3">
-              <mat-checkbox formControlName="wartung_scheibe">Wartung Scheibe</mat-checkbox>
+              <mat-checkbox formControlName="wartung_scheibe"
+                >Wartung Scheibe</mat-checkbox
+              >
             </div>
             <div class="col-12 col-lg-12 mb-3">
-              <mat-checkbox formControlName="wartung_ventile">Wartung Ventile</mat-checkbox>
+              <mat-checkbox formControlName="wartung_ventile"
+                >Wartung Ventile</mat-checkbox
+              >
             </div>
             <div class="col-12 col-lg-12 mb-3">
-              <mat-checkbox formControlName="wartung_maengel">Wartung Mängel</mat-checkbox>
+              <mat-checkbox formControlName="wartung_maengel"
+                >Wartung Mängel</mat-checkbox
+              >
             </div>
             <div class="col-12 col-lg-12 mb-3">
-              <mat-checkbox formControlName="ausser_dienst">Außer Dienst</mat-checkbox>
+              <mat-checkbox formControlName="ausser_dienst"
+                >Außer Dienst</mat-checkbox
+              >
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-form-field hintLabel="* Pflichtfeld">
@@ -237,7 +254,8 @@
         }
         <!-- PRÜFUNG FORM ENDE -->
         <!-- TABELLE MASKEN -->
-        @if (formModul.disabled && formPruefung.disabled && !showPruefungTable) {
+        @if (formModul.disabled && formPruefung.disabled && !showPruefungTable)
+        {
         <table
           mat-table
           [dataSource]="dataSource"
@@ -249,9 +267,7 @@
             <td mat-cell *matCellDef="let element">{{ element.inv_nr }}</td>
           </ng-container>
           <ng-container matColumnDef="typ">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Typ
-            </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Typ</th>
             <td mat-cell *matCellDef="let element">
               {{ element.typ }}
             </td>
@@ -275,7 +291,7 @@
                 mat-raised-button
                 class="ms-2"
                 color="primary"
-                (click)="neuePruefung(element)"
+                (click)="neuePruefungVonMaske(element)"
               >
                 <mat-icon class="m-0">checklist</mat-icon>
               </button>
@@ -295,7 +311,8 @@
         }
         <!-- TABELLE MASKEN ENDE -->
         <!-- TABELLE MASKEN PRÜFUNGEN -->
-        @if ((formModul.disabled || formPruefung.disabled) && showPruefungTable) {
+        @if (formModul.disabled && formPruefung.disabled && showPruefungTable)
+        {
         <table
           mat-table
           [dataSource]="dataSourcePruefungen"
@@ -307,16 +324,18 @@
             <td mat-cell *matCellDef="let element">{{ element.datum }}</td>
           </ng-container>
           <ng-container matColumnDef="taetigkeit">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Tätigkeit
-            </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tätigkeit</th>
             <td mat-cell *matCellDef="let element">
               {{ element.taetigkeit }}
             </td>
           </ng-container>
           <ng-container matColumnDef="name_pruefer">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name Prüfer</th>
-            <td mat-cell *matCellDef="let element">{{ element.name_pruefer }}</td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Name Prüfer
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.name_pruefer }}
+            </td>
           </ng-container>
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Aktionen</th>
@@ -332,7 +351,10 @@
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="sichtbareSpaltenPruefungen"></tr>
-          <tr mat-row *matRowDef="let row; columns: sichtbareSpaltenPruefungen"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: sichtbareSpaltenPruefungen"
+          ></tr>
         </table>
         }
         <!-- TABELLE MASKEN PRÜFUNGEN ENDE -->

@@ -114,9 +114,16 @@ export class AtemschutzMaskenComponent implements OnInit {
     this.formModul.enable();
   }
 
-  neuePruefung(element: any): void {
+  neuePruefung(): void {
     this.formPruefung.enable();
     this.title = this.title_pruefung;
+  }
+
+  neuePruefungVonMaske(element: any): void {
+    this.formPruefung.enable();
+    this.title = this.title_pruefung;
+    this.formPruefung.controls['maske_id'].setValue(element.pkid);
+    this.formPruefung.controls['maske_id'].disable();
   }
 
   auswahlBearbeiten(element: any): void {
