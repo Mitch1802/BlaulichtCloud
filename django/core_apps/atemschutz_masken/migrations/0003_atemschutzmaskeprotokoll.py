@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AlterField(
-            model_name='atemschutzgeraetprotokoll',
+            model_name='atemschutzmaskeprotokoll',
             name='datum',
             field=models.DateField(verbose_name='Datum'),
             preserve_default=False,
