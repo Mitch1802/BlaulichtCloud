@@ -27,6 +27,6 @@ class AtemschutzGeraeteProtokollViewSet(ModelViewSet):
     lookup_field = "id"
     pagination_class = None 
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
-    filterset_fields = ['maske_id']
+    filterset_fields = ['geraet_id']
     ordering_fields = ["datum", "taetigkeit"]
     ordering = ["datum", "taetigkeit"]
