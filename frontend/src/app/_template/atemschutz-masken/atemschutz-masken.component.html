@@ -56,7 +56,7 @@
             Abbrechen
           </button>
           <section class="row mt-2 mx-0">
-            <div class="col-12 col-lg-8 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field hintLabel="* Pflichtfeld">
                 <mat-label>Inventar Nummer</mat-label>
                 <input matInput type="text" formControlName="inv_nr" />
@@ -65,40 +65,31 @@
                 }
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-8 mb-3">
-              <mat-form-field hintLabel="* Pflichtfeld">
-                <mat-label>Bezeichnung</mat-label>
-                <input matInput type="text" formControlName="bezeichnung" />
-                @if (formModul.controls['bezeichnung'].hasError('required')) {
-                <mat-error> Bezeichnung ist erforderlich! </mat-error>
-                }
-              </mat-form-field>
-            </div>
-            <div class="col-12 col-lg-8 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Art</mat-label>
                 <input matInput type="text" formControlName="art" />
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-8 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Typ</mat-label>
                 <input matInput type="text" formControlName="typ" />
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-8 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Eigentümer</mat-label>
                 <input matInput type="text" formControlName="eigentuemer" />
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-8 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Barcode</mat-label>
                 <input matInput type="text" formControlName="barcode" />
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-8 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Baujahr</mat-label>
                 <input matInput type="text" formControlName="baujahr" />
@@ -122,7 +113,7 @@
         @if (!formPruefung.disabled) {
         <form
           [formGroup]="formPruefung"
-          (ngSubmit)="datenSpeichernPruefung()"
+          (ngSubmit)="datenSpeichernProtokoll()"
         >
           <input hidden type="text" class="form-control" formControlName="id" />
           <button
@@ -189,7 +180,7 @@
                 }
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Verwendung Typ</mat-label>
                 <mat-select formControlName="verwendung_typ">
@@ -198,54 +189,32 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <mat-form-field>
                 <mat-label>Verwendung Minuten</mat-label>
                 <input matInput type="number" formControlName="verwendung_min" />
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
-              <mat-form-field>
-                <mat-label>Wartung 2 Punkt</mat-label>
-                <input matInput type="text" formControlName="wartung_2_punkt" />
-              </mat-form-field>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="wartung_2_punkt">Wartung 2 Punkt</mat-checkbox>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
-              <mat-form-field>
-                <mat-label>Wartung Unterdruck</mat-label>
-                <input matInput type="text" formControlName="wartung_unterdruck" />
-              </mat-form-field>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="wartung_unterdruck">Wartung Unterdruck</mat-checkbox>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
-              <mat-form-field>
-                <mat-label>Wartung Öffnungsdruck</mat-label>
-                <input matInput type="text" formControlName="wartung_oeffnungsdruck" />
-              </mat-form-field>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="wartung_oeffnungsdruck">Wartung Öffnungsdruck</mat-checkbox>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
-              <mat-form-field>
-                <mat-label>Wartung Scheibe</mat-label>
-                <input matInput type="text" formControlName="wartung_scheibe" />
-              </mat-form-field>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="wartung_scheibe">Wartung Scheibe</mat-checkbox>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
-              <mat-form-field>
-                <mat-label>Wartung Ventile</mat-label>
-                <input matInput type="text" formControlName="wartung_ventile" />
-              </mat-form-field>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="wartung_ventile">Wartung Ventile</mat-checkbox>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
-              <mat-form-field>
-                <mat-label>Wartung Mängel</mat-label>
-                <input matInput type="text" formControlName="wartung_maengel" />
-              </mat-form-field>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="wartung_maengel">Wartung Mängel</mat-checkbox>
             </div>
-            <div class="col-12 col-lg-4 mb-3">
-              <!-- <mat-form-field>
-                <mat-label>Außer Dienst</mat-label> -->
-                <!-- <input matInput type="text" formControlName="ausser_dienst" /> -->
-                <mat-checkbox formControlName="ausser_dienst">Check me!</mat-checkbox>
-              <!-- </mat-form-field> -->
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="ausser_dienst">Außer Dienst</mat-checkbox>
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-form-field hintLabel="* Pflichtfeld">
@@ -260,7 +229,7 @@
             color="warn"
             [hidden]="!formPruefung.controls['id'].value"
             type="button"
-            (click)="datenLoeschen()"
+            (click)="datenProtokollLoeschen()"
           >
             Daten löschen
           </button>
@@ -279,17 +248,17 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Inv Nr.</th>
             <td mat-cell *matCellDef="let element">{{ element.inv_nr }}</td>
           </ng-container>
-          <ng-container matColumnDef="bezeichnung">
+          <ng-container matColumnDef="typ">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Bezeichnung
+              Typ
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.bezeichnung }}
+              {{ element.typ }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="typ">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Typ</th>
-            <td mat-cell *matCellDef="let element">{{ element.typ }}</td>
+          <ng-container matColumnDef="art">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Art</th>
+            <td mat-cell *matCellDef="let element">{{ element.art }}</td>
           </ng-container>
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Aktionen</th>

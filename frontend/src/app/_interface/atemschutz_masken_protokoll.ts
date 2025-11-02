@@ -5,12 +5,12 @@ export interface IAtemschutzMaskenProtokoll {
   taetigkeit: string;
   verwendung_typ: string;
   verwendung_min: number;
-  wartung_2_punkt: string;
-  wartung_unterdruck: string;
-  wartung_oeffnungsdruck: string;
-  wartung_scheibe: string;
-  wartung_ventile: string;
-  wartung_maengel: string;
+  wartung_2_punkt: boolean;
+  wartung_unterdruck: boolean;
+  wartung_oeffnungsdruck: boolean;
+  wartung_scheibe: boolean;
+  wartung_ventile: boolean;
+  wartung_maengel: boolean;
   ausser_dienst: boolean;
   name_pruefer: string;
   austausch: string;

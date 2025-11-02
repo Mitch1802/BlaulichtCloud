@@ -54,13 +54,12 @@ export class AtemschutzMaskenComponent implements OnInit {
   breadcrumb: any = [];
   dataSource = new MatTableDataSource<IAtemschutzMasken>(this.masken);
   dataSourcePruefungen = new MatTableDataSource<IAtemschutzMaskenProtokoll>(this.pruefungen);
-  sichtbareSpalten: string[] = ['inv_nr', 'bezeichnung', 'typ', 'actions'];
+  sichtbareSpalten: string[] = ['inv_nr', 'typ', 'art', 'actions'];
   sichtbareSpaltenPruefungen: string[] = ['datum', 'taetigkeit', 'name_pruefer', 'actions'];
 
   formModul = new FormGroup({
     id: new FormControl(''),
     inv_nr: new FormControl('', Validators.required),
-    bezeichnung: new FormControl('', Validators.required),
     art: new FormControl(''),
     typ: new FormControl(''),
     eigentuemer: new FormControl(''),
@@ -79,12 +78,12 @@ export class AtemschutzMaskenComponent implements OnInit {
     taetigkeit: new FormControl('', Validators.required),
     verwendung_typ: new FormControl(''),
     verwendung_min: new FormControl(0),
-    wartung_2_punkt: new FormControl(''),
-    wartung_unterdruck: new FormControl(''),
-    wartung_oeffnungsdruck: new FormControl(''),
-    wartung_scheibe: new FormControl(''),
-    wartung_ventile: new FormControl(''),
-    wartung_maengel: new FormControl(''),
+    wartung_2_punkt: new FormControl(false),
+    wartung_unterdruck: new FormControl(false),
+    wartung_oeffnungsdruck: new FormControl(false),
+    wartung_scheibe: new FormControl(false),
+    wartung_ventile: new FormControl(false),
+    wartung_maengel: new FormControl(false),
     ausser_dienst: new FormControl(false),
     name_pruefer: new FormControl('', Validators.required),
   });
@@ -135,7 +134,6 @@ export class AtemschutzMaskenComponent implements OnInit {
           this.formModul.setValue({
             id: details.id,
             inv_nr: details.inv_nr,
-            bezeichnung: details.bezeichnung,
             art: details.art,
             typ: details.typ,
             eigentuemer: details.eigentuemer,
@@ -186,15 +184,13 @@ export class AtemschutzMaskenComponent implements OnInit {
     if (element.id === 0) {
       return;
     }
-    const abfrageUrl = `${this.modul}/${element.id}`;
+    const abfrageUrl = `${this.modul}/protokoll/${element.id}`;
 
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
           this.showPruefungTable = false;
-
           const details: IAtemschutzMaskenProtokoll = erg;
-
           this.formPruefung.enable();
           this.formPruefung.setValue({
             id: details.id,
@@ -243,7 +239,6 @@ export class AtemschutzMaskenComponent implements OnInit {
             this.formModul.reset({
               id: '',
               inv_nr: '',
-              bezeichnung: '',
               art: '',
               typ: '',
               eigentuemer: '',
@@ -272,7 +267,6 @@ export class AtemschutzMaskenComponent implements OnInit {
             this.formModul.reset({
               id: '',
               inv_nr: '',
-              bezeichnung: '',
               art: '',
               typ: '',
               eigentuemer: '',
@@ -291,12 +285,11 @@ export class AtemschutzMaskenComponent implements OnInit {
     }
   }
 
-  datenSpeichernPruefung(): void {
+  datenSpeichernProtokoll(): void {
     if (this.formPruefung.invalid) {
       this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
       return;
     }
-
     const objekt: any = this.formPruefung.value;
     const idValue = this.formPruefung.controls['id'].value;
 
@@ -315,18 +308,18 @@ export class AtemschutzMaskenComponent implements OnInit {
               taetigkeit: '',
               verwendung_typ: '',
               verwendung_min: 0,
-              wartung_2_punkt: '',
-              wartung_unterdruck: '',
-              wartung_oeffnungsdruck: '',
-              wartung_scheibe: '',
-              wartung_ventile: '',
-              wartung_maengel: '',
+              wartung_2_punkt: false,
+              wartung_unterdruck: false,
+              wartung_oeffnungsdruck: false,
+              wartung_scheibe: false,
+              wartung_ventile: false,
+              wartung_maengel: false,
               ausser_dienst: false,
               name_pruefer: '',
             });
             this.formPruefung.disable();
             this.showPruefungTable = true;
-            this.globalDataService.erstelleMessage('success', 'Prüfung gespeichert!');
+            this.globalDataService.erstelleMessage('success', 'Protokoll gespeichert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
           }
@@ -350,18 +343,18 @@ export class AtemschutzMaskenComponent implements OnInit {
               taetigkeit: '',
               verwendung_typ: '',
               verwendung_min: 0,
-              wartung_2_punkt: '',
-              wartung_unterdruck: '',
-              wartung_oeffnungsdruck: '',
-              wartung_scheibe: '',
-              wartung_ventile: '',
-              wartung_maengel: '',
+              wartung_2_punkt: false,
+              wartung_unterdruck: false,
+              wartung_oeffnungsdruck: false,
+              wartung_scheibe: false,
+              wartung_ventile: false,
+              wartung_maengel: false,
               ausser_dienst: false,
               name_pruefer: '',
             });
             this.formPruefung.disable();
             this.showPruefungTable = true;
-            this.globalDataService.erstelleMessage('success', 'Prüfung geändert!');
+            this.globalDataService.erstelleMessage('success', 'Protokoll geändert!');
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
           }
@@ -376,7 +369,6 @@ export class AtemschutzMaskenComponent implements OnInit {
     this.formModul.reset({
       id: '',
       inv_nr: '',
-      bezeichnung: '',
       art: '',
       typ: '',
       eigentuemer: '',
@@ -394,12 +386,12 @@ export class AtemschutzMaskenComponent implements OnInit {
       taetigkeit: '',
       verwendung_typ: '',
       verwendung_min: 0,
-      wartung_2_punkt: '',
-      wartung_unterdruck: '',
-      wartung_oeffnungsdruck: '',
-      wartung_scheibe: '',
-      wartung_ventile: '',
-      wartung_maengel: '',
+      wartung_2_punkt: false,
+      wartung_unterdruck: false,
+      wartung_oeffnungsdruck: false,
+      wartung_scheibe: false,
+      wartung_ventile: false,
+      wartung_maengel: false,
       ausser_dienst: false,
       name_pruefer: '',
     });
@@ -423,7 +415,6 @@ export class AtemschutzMaskenComponent implements OnInit {
           this.formModul.reset({
             id: '',
             inv_nr: '',
-            bezeichnung: '',
             art: '',
             typ: '',
             eigentuemer: '',
@@ -443,7 +434,45 @@ export class AtemschutzMaskenComponent implements OnInit {
     });
   }
 
+  datenProtokollLoeschen(): void {
+    const id = this.formPruefung.controls['id'].value!;
+    if (!id) {
+      this.globalDataService.erstelleMessage('error', 'Kein Protokoll ausgewählt zum Löschen!');
+      return;
+    }
 
+    this.globalDataService.delete(`${this.modul}/protokoll`, id).subscribe({
+      next: (erg: any) => {
+        try {
+          this.pruefungen = this.pruefungen.filter((m: any) => m.id !== id);
+          this.dataSourcePruefungen.data = this.pruefungen;
+
+          this.formPruefung.reset({
+            id: '',
+            maske_id: 0,
+            taetigkeit: '',
+            verwendung_typ: '',
+            verwendung_min: 0,
+            wartung_2_punkt: false,
+            wartung_unterdruck: false,
+            wartung_oeffnungsdruck: false,
+            wartung_scheibe: false,
+            wartung_ventile: false,
+            wartung_maengel: false,
+            ausser_dienst: false,
+            name_pruefer: '',
+          });
+          this.formPruefung.disable();
+          this.globalDataService.erstelleMessage('success', 'Protokoll erfolgreich gelöscht!');
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
 
   validDateDDMMYYYY(): ValidatorFn {
     return (control: AbstractControl) => {
