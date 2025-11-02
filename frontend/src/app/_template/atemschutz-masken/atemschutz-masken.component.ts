@@ -297,7 +297,7 @@ export class AtemschutzMaskenComponent implements OnInit {
       this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
       return;
     }
-    const objekt: any = this.formPruefung.value;
+    const objekt: any = this.formPruefung.getRawValue();
     const idValue = this.formPruefung.controls['id'].value;
 
     if (!idValue) {
