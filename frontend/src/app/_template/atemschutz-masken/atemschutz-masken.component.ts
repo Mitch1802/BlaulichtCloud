@@ -75,7 +75,7 @@ export class AtemschutzMaskenComponent implements OnInit {
       this.validDateDDMMYYYY(),
       Validators.required
     ]),
-    taetigkeit: new FormControl('', Validators.required),
+    taetigkeit: new FormControl(''),
     verwendung_typ: new FormControl(''),
     verwendung_min: new FormControl(0),
     wartung_2_punkt: new FormControl(false),

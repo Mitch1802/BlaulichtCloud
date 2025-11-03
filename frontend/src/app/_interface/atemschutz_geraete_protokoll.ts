@@ -5,7 +5,7 @@ export interface IAtemschutzGeraeteProtokoll {
   taetigkeit: string;
   verwendung_typ: string;
   verwendung_min: number;
-  wartung_maengel: boolean;
+  geraet_ok: boolean;
   name_pruefer: string;
   created_at: string;
   updated_at: string;

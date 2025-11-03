@@ -171,12 +171,9 @@
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-8 mb-3">
-              <mat-form-field hintLabel="* Pflichtfeld">
+              <mat-form-field>
                 <mat-label>Tätigkeit</mat-label>
                 <input matInput type="text" formControlName="taetigkeit" />
-                @if (formPruefung.controls['taetigkeit'].hasError('required')) {
-                <mat-error> Tätigkeit ist erforderlich! </mat-error>
-                }
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-6 mb-3">
@@ -200,32 +197,32 @@
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-checkbox formControlName="wartung_2_punkt"
-                >Wartung 2 Punkt</mat-checkbox
+                >2 Punkt OK</mat-checkbox
               >
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-checkbox formControlName="wartung_unterdruck"
-                >Wartung Unterdruck</mat-checkbox
+                >Unterdruck OK</mat-checkbox
               >
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-checkbox formControlName="wartung_oeffnungsdruck"
-                >Wartung Öffnungsdruck</mat-checkbox
+                >Öffnungsdruck OK</mat-checkbox
               >
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-checkbox formControlName="wartung_scheibe"
-                >Wartung Scheibe</mat-checkbox
+                >Scheibe OK</mat-checkbox
               >
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-checkbox formControlName="wartung_ventile"
-                >Wartung Ventile</mat-checkbox
+                >Ventile OK</mat-checkbox
               >
             </div>
             <div class="col-12 col-lg-12 mb-3">
               <mat-checkbox formControlName="wartung_maengel"
-                >Wartung Mängel</mat-checkbox
+                >Mängel OK</mat-checkbox
               >
             </div>
             <div class="col-12 col-lg-12 mb-3">

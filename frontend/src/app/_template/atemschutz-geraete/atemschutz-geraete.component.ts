@@ -81,10 +81,10 @@ export class AtemschutzGeraeteComponent implements OnInit {
       this.validDateDDMMYYYY(),
       Validators.required
     ]),
-    taetigkeit: new FormControl('', Validators.required),
+    taetigkeit: new FormControl(''),
     verwendung_typ: new FormControl(''),
     verwendung_min: new FormControl(0),
-    wartung_maengel: new FormControl(false),
+    geraet_ok: new FormControl(false),
     name_pruefer: new FormControl('', Validators.required),
   });
 
@@ -212,7 +212,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
             taetigkeit: details.taetigkeit,
             verwendung_typ: details.verwendung_typ,
             verwendung_min: details.verwendung_min,
-            wartung_maengel: details.wartung_maengel,
+            geraet_ok: details.geraet_ok,
             name_pruefer: details.name_pruefer,
           });
         } catch (e: any) {
@@ -328,7 +328,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
               taetigkeit: '',
               verwendung_typ: '',
               verwendung_min: 0,
-              wartung_maengel: false,
+              geraet_ok: false,
               name_pruefer: '',
             });
             this.formPruefung.disable();
@@ -357,7 +357,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
               taetigkeit: '',
               verwendung_typ: '',
               verwendung_min: 0,
-              wartung_maengel: false,
+              geraet_ok: false,
               name_pruefer: '',
             });
             this.formPruefung.disable();
@@ -400,7 +400,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
       taetigkeit: '',
       verwendung_typ: '',
       verwendung_min: 0,
-      wartung_maengel: false,
+      geraet_ok: false,
       name_pruefer: '',
     });
     this.formPruefung.disable();
@@ -467,7 +467,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
             taetigkeit: '',
             verwendung_typ: '',
             verwendung_min: 0,
-            wartung_maengel: false,
+            geraet_ok: false,
             name_pruefer: '',
           });
           this.formPruefung.disable();
