@@ -12,6 +12,9 @@ export interface IAtemschutzMaskenProtokoll {
   wartung_ventile: boolean;
   wartung_maengel: boolean;
   ausser_dienst: boolean;
+  tausch_sprechmembran: boolean;
+  tausch_ausatemventil: boolean;
+  tausch_sichtscheibe: boolean;
   name_pruefer: string;
   created_at: string;
   updated_at: string;
