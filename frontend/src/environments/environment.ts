@@ -5,7 +5,28 @@
 export const environment = {
   production: false,
   version: "dev",
-  apiUrl: "https://blaulichtcloud.at/api/v1/"
+  apiUrl: "https://blaulichtcloud.at/api/v1/",
+  loginUrl: "auth/login/",
+  registerUrl: "auth/registration/",
+  usersUrl: "users/",
+  userChangePasswordUrl: "users/change_password/",
+  userRolleUrl: "users/rolle/",
+  modulKonfiguartionUrl: "modul_konfiguration/",
+  newsPublicUrl: "news/public/",
+  newsUrl: "news/intern/",
+  newsfeedUrl: "https://blaulichtcloud.at/newsfeed/",
+  mitgliederUrl: "mitglieder/",
+  backupUrl: "backup/",
+  backupRestorerUrl: "backup/restore/",
+  backupFileUrl: "backup/file/",
+  backupDeleteUrl: "backup/delete/",
+  konfigurationUrl: "konfiguration/",
+  inventarUrl: "inventar/",
+  fmdUrl: "fmd/",
+  atemschutzUrl: "atemschutz/",
+  atemschutzMaskenUrl: "atemschutz/masken/",
+  atemschutzGeraeteUrl: "atemschutz/geraete/",
+  atemschutzMessgearaeteUrl: "atemschutz/messgeraete/",
 };
 
 /*
