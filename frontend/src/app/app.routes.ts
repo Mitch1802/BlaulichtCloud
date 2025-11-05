@@ -13,14 +13,21 @@ import { NewsExternComponent } from './news-extern/news-extern.component';
 import { AtemschutzMessgeraeteComponent } from './_template/atemschutz-messgeraete/atemschutz-messgeraete.component';
 import { AtemschutzGeraeteComponent } from './_template/atemschutz-geraete/atemschutz-geraete.component';
 import { AtemschutzMaskenComponent } from './_template/atemschutz-masken/atemschutz-masken.component';
+import { startOrLoginHelper } from './presentation_layer/helpers/auth/start-or-login.helper';
+import { redirectIfAuthHelper } from './presentation_layer/helpers/auth/redirect-if-auth.helper';
 
 export const routes: Routes = [
+  { path: '', canActivate: [startOrLoginHelper], children: [] },
   {
-    path: '', redirectTo: 'login', pathMatch: 'full'
+    path: 'login',
+    canActivate: [redirectIfAuthHelper],
+    loadComponent: () => import('./presentation_layer/features/login/login.component').then(m => m.LoginComponent)
   },
-  {
-    path: 'login', component: LoginComponent
-  },
+  // {
+  //   path: 'Start',
+  //   canActivate: [requireAuthHelper],
+  //   loadComponent: () => import('./presentation_layer/features/start/start.component').then(m => m.StartComponent)
+  // },
   {
     path: 'start', component: StartComponent
   },
@@ -60,7 +67,5 @@ export const routes: Routes = [
   {
     path: 'konfiguration', component: KonfigurationComponent
   },
-  {
-    path: '*', component: LoginComponent
-  }
+  { path: '**', redirectTo: '' }
 ];
