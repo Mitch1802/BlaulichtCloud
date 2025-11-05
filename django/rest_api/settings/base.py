@@ -170,7 +170,9 @@ REST_FRAMEWORK = {
 
 REST_AUTH = {
     "USE_JWT": True,
+    "SESSION_LOGIN": True,
     "JWT_AUTH_COOKIE": "app-access-token",
+    "JWT_AUTH_RETURN_EXPIRATION": True,
     "REGISTER_SERIALIZER": "core_apps.users.serializers.CustomRegisterSerializer",
     'REGISTER_PERMISSION_CLASSES': ("core_apps.common.permissions.IsAdminPermission",),
     "USER_DETAILS_SERIALIZER": "core_apps.users.serializers.UserDetailSerializer",
