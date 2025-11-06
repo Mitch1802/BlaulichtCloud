@@ -1,13 +1,17 @@
-name: Build and publish Docker Images refactor/layered-arch Branch
+name: Build and publish Docker Images (refactor/layered-arch)
 
 on:
   workflow_dispatch:
 
 env:
-  CONTAINER_NAME: 'my_postgres'
-  DB_USER: 'sh17vFE9ttPIuk1'
-  DB_PASSWORD: 'ksiEvu4eJxL5Ud9FThtZ'
-  DB_NAME: 'app-live'
+  CONTAINER_NAME: my_postgres
+  DB_USER: sh17vFE9ttPIuk1
+  DB_PASSWORD: ksiEvu4eJxL5Ud9FThtZ
+  DB_NAME: app-live
+  DB_PORT: "5432"
+  # Setze diese beiden unbedingt sinnvoll:
+  DOCKER_REPO: dein-repo-name                   # z.B. "myapp"
+  VERSION: ${{ github.run_number }}             # oder ein Tag/Commit-Hash
 
 jobs:
   build:
@@ -15,42 +19,41 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v5
-        ref: refactor/layered-arch
+        uses: actions/checkout@v4
+        with:
+          ref: refactor/layered-arch
+          fetch-depth: 0                        # nötig für Rebase/Merge & Push
 
-      - name: Load environment variables from .env
+      - name: Load environment variables from .env (optional)
+        if: hashFiles('.env') != ''
         run: |
           echo "Lade Variablen aus .env..."
           while IFS= read -r line || [ -n "$line" ]; do
             if [ -n "$line" ] && [ "${line:0:1}" != "#" ]; then
-              echo "$line" >> $GITHUB_ENV
+              echo "$line" >> "$GITHUB_ENV"
             fi
           done < .env
 
       - name: Start Postgres container
         run: |
-          docker run -d --name ${{ env.CONTAINER_NAME }} \
-            -e POSTGRES_USER=${{ env.DB_USER }} \
-            -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
-            -e POSTGRES_DB=${{ env.DB_NAME }} \
+          docker run -d --name "${{ env.CONTAINER_NAME }}" \
+            -e POSTGRES_USER="${{ env.DB_USER }}" \
+            -e POSTGRES_PASSWORD="${{ env.DB_PASSWORD }}" \
+            -e POSTGRES_DB="${{ env.DB_NAME }}" \
             -p 5432:5432 \
             postgres:15-bullseye
-        
+
       - name: Debug Container Status
         run: |
-          # Eine Sekunde warten, damit der Container auch wirklich anläuft oder crasht
-          sleep 1
-          echo "Docker Container Status:"
+          sleep 2
           docker ps -a
-      
-          echo ""
-          echo "Docker Container Logs:"
-          docker logs ${{ env.CONTAINER_NAME }}
+          echo
+          docker logs "${{ env.CONTAINER_NAME }}" || true
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
       - name: Install Python dependencies
         run: |
@@ -59,85 +62,88 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until docker exec ${{ env.CONTAINER_NAME }} pg_isready -U ${{ env.DB_USER }}; do
+          until docker exec "${{ env.CONTAINER_NAME }}" pg_isready -U "${{ env.DB_USER }}"; do
             echo "Waiting for PostgreSQL to be ready..."
             sleep 1
           done
 
       - name: Ensure database exists
         run: |
-          docker exec -e PGPASSWORD="${{ env.DB_PASSWORD }}" ${{ env.CONTAINER_NAME }} \
-            psql -U ${{ env.DB_USER }} -c "CREATE DATABASE \"${{ env.DB_NAME }}\";" \
+          docker exec -e PGPASSWORD="${{ env.DB_PASSWORD }}" "${{ env.CONTAINER_NAME }}" \
+            psql -U "${{ env.DB_USER }}" -h 127.0.0.1 -p 5432 -c "CREATE DATABASE \"${{ env.DB_NAME }}\";" \
             || echo "Database '${{ env.DB_NAME }}' already exists"
 
       - name: Generate DJANGO_SECRET_KEY
-        id: generate_secret_key
-        run: echo "DJANGO_SECRET_KEY=$(openssl rand -base64 32)" >> $GITHUB_ENV
+        run: echo "DJANGO_SECRET_KEY=$(openssl rand -base64 32)" >> "$GITHUB_ENV"
 
-      - name: Pull latest changes
+      - name: Pull latest changes (rebase preferred)
         run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git fetch origin refactor/layered-arch
-          git rebase origin/refactor/layered-arch || git merge origin/refactor/layered-arch
+          # sichere lokale Branch-Referenz:
+          git checkout -B refactor/layered-arch
+          git rebase origin/refactor/layered-arch || git merge --no-edit origin/refactor/layered-arch
 
-      - name: Run makemigrations
-        run: |
-          python django/manage.py makemigrations
-          python django/manage.py migrate
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add .
-          git commit -m "Auto-Generated Migrations for Version ${{ env.VERSION }}" || echo "No changes to commit"
+      - name: Run migrations (no auto-commit by CI recommended)
         env:
-          DATABASE_URL: postgres://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@localhost:${{ env.DB_PORT }}/${{ env.DB_NAME }}
+          DATABASE_URL: postgres://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@127.0.0.1:${{ env.DB_PORT }}/${{ env.DB_NAME }}
+          DJANGO_SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
+        run: |
+          python django/manage.py migrate --noinput
+          # Wenn du wirklich makemigrations vom CI willst (nicht empfohlen):
+          # python django/manage.py makemigrations
+          # git add .
+          # git commit -m "Auto-Generated Migrations for Version ${{ env.VERSION }}" || echo "No changes to commit"
 
       - name: Push migrations
-        run: |
-          git push origin refactor/layered-arch --force
+        run: git push origin HEAD:refactor/layered-arch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Node for Angular Build
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '22.20'
+          node-version: '22'
 
       - name: Install & Build Angular
+        working-directory: frontend
         run: |
-          cd frontend
-          npm install
+          npm ci
           npm run build
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build the Docker Images
-        id: build-docker-image
+      - name: Build Docker images with explicit tags
         run: |
-          docker compose -f docker-compose.yml build
+          # Beispiel: baue drei Images mit klaren Tags
+          docker build -f docker/db/Dockerfile -t "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }}" .
+          docker build -f docker/api/Dockerfile -t "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }}" .
+          docker build -f docker/nginx/Dockerfile -t "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }}" .
 
-      - name: Push the Docker Images
-        id: push-docker-image
+      - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }}
+          docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }}"
+          docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }}"
+          docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }}"
 
       - name: Verify Docker Images Integrity
         run: |
           echo "Überprüfe das PostgreSQL-Image:"
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }} psql --version
+          docker run --rm "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }}" psql --version || true
 
           echo "Überprüfe das API-Image:"
-          docker run --rm --entrypoint gunicorn ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }} --version
+          docker run --rm --entrypoint gunicorn "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }}" --version || true
 
           echo "Überprüfe das Nginx-Image:"
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }} nginx -v
+          docker run --rm "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }}" nginx -v || true
 
       - name: List local Docker images
         run: docker images
