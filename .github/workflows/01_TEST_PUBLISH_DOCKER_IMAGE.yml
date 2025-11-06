@@ -9,9 +9,6 @@ env:
   DB_PASSWORD: ksiEvu4eJxL5Ud9FThtZ
   DB_NAME: app-live
   DB_PORT: "5432"
-  # Setze diese beiden unbedingt sinnvoll:
-  DOCKER_REPO: dein-repo-name                   # z.B. "myapp"
-  VERSION: ${{ github.run_number }}             # oder ein Tag/Commit-Hash
 
 jobs:
   build:
