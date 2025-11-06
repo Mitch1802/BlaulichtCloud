@@ -24,15 +24,23 @@ jobs:
           ref: refactor/layered-arch
           fetch-depth: 0                        # nötig für Rebase/Merge & Push
 
-      - name: Load environment variables from .env (optional)
+      - name: Load env from .env
         if: hashFiles('.env') != ''
+        shell: bash
         run: |
-          echo "Lade Variablen aus .env..."
-          while IFS= read -r line || [ -n "$line" ]; do
-            if [ -n "$line" ] && [ "${line:0:1}" != "#" ]; then
-              echo "$line" >> "$GITHUB_ENV"
+          sed -e 's/\r$//' .env | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' >> "$GITHUB_ENV"
+
+      - name: Check required envs exist
+        shell: bash
+        run: |
+          for v in VERSION DOCKER_REPO DB_PORT; do
+            if [ -z "${!v}" ]; then
+              echo "::error title=Missing env::'$v' not set (from .env)."
+              exit 1
+            else
+              echo "$v=$\{$v}"
             fi
-          done < .env
+          done
 
       - name: Start Postgres container
         run: |
