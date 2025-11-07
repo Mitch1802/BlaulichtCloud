@@ -1,5 +1,5 @@
 from rest_framework import permissions, filters
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -12,7 +12,7 @@ class AtemschutzGeraeteViewSet(ModelViewSet):
     queryset = AtemschutzGeraet.objects.all().order_by("inv_nr")
     serializer_class = AtemschutzGeraetSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "ATEMSCHUTZ")]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    parser_classes = [JSONParser]
     lookup_field = "id"
     pagination_class = None 
     filter_backends = [filters.OrderingFilter]
@@ -23,7 +23,7 @@ class AtemschutzGeraeteProtokollViewSet(ModelViewSet):
     queryset = AtemschutzGeraetProtokoll.objects.all().order_by("datum")
     serializer_class = AtemschutzGeraetProtokollSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "ATEMSCHUTZ")]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    parser_classes = [JSONParser]
     lookup_field = "id"
     pagination_class = None 
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]

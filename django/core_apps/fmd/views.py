@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -16,7 +16,7 @@ class FMDViewSet(ModelViewSet):
     queryset = FMD.objects.all()
     serializer_class = FMDSerializer    
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN","FMD")]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    parser_classes = [JSONParser]
     lookup_field = "id"
     pagination_class = None 
 

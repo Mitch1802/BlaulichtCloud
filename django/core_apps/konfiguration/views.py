@@ -1,6 +1,6 @@
 import os
 from rest_framework import permissions
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -16,7 +16,7 @@ class KonfigurationViewSet(ModelViewSet):
     queryset = Konfiguration.objects.all()
     serializer_class = KonfigurationSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    parser_classes = [JSONParser]
     lookup_field = "id"
     pagination_class = None 
 
