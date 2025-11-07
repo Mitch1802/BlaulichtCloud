@@ -1,5 +1,5 @@
 from rest_framework import permissions, filters
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Mitglied
@@ -11,7 +11,7 @@ class MitgliedViewSet(ModelViewSet):
     queryset = Mitglied.objects.all().order_by("stbnr")
     serializer_class = MitgliedSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "VERWALTUNG")]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    parser_classes = [JSONParser]
     lookup_field = "id"
     pagination_class = None 
     filter_backends = [filters.OrderingFilter]
