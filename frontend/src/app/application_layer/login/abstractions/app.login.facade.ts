@@ -10,4 +10,6 @@ export abstract class AppLoginFacade {
   abstract hardLogout(): void;
 
   abstract getAccessTokenSync(): string | null;
+
+  abstract getFooter(): string | null;
 }

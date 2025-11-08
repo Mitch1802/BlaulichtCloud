@@ -13,8 +13,8 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.sass'],
   imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule]
 })
 export class LoginComponent {
@@ -25,6 +25,7 @@ export class LoginComponent {
   showPassword = false;
   error: string | null = null;
   loading = false;
+  footer = this.auth.getFooter();
 
   form = this.fb.group({
     username: ['', [Validators.required]],

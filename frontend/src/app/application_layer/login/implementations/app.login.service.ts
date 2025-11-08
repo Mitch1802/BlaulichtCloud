@@ -4,6 +4,7 @@ import { AppLoginFacade } from '../abstractions/app.login.facade';
 import { LoginCredentials, Tokens } from '../models/login.models';
 import { InfraLoginFacade } from 'src/app/infrastructure_layer/login/abstractions/infra.login.facade';
 import { LoginResponseDto } from 'src/app/infrastructure_layer/login/models/login-response.dto';
+import { environment } from 'src/environments/environment';
 
 const SESSION_TOKENS_KEY = 'auth:tokens';
 
@@ -25,7 +26,7 @@ export class AppLoginService extends AppLoginFacade {
         expiresAt: parsed.expiresAt ? new Date(parsed.expiresAt) : undefined
       };
       this._tokens$.next(tokens);
-    } catch {}
+    } catch { }
   }
 
   private persist(tokens: Tokens): void {
@@ -36,6 +37,10 @@ export class AppLoginService extends AppLoginFacade {
         ...(tokens.expiresAt ? { expiresAt: tokens.expiresAt.toISOString() } : {})
       })
     );
+    // TODO Ändern wenn Start Komponente geändert
+    sessionStorage.setItem("Token", tokens.accessToken);
+    sessionStorage.setItem('Benutzername', tokens.user!.username);
+    sessionStorage.setItem('Rollen', JSON.stringify(tokens.user!.roles));
   }
 
   private mapDtoToDomain(dto: LoginResponseDto): Tokens {
@@ -64,5 +69,12 @@ export class AppLoginService extends AppLoginFacade {
 
   getAccessTokenSync(): string | null {
     return this._tokens$.value?.accessToken ?? null;
+  }
+
+  getFooter(): string | null {
+    const year = new Date().getFullYear();
+    const author = environment.author;
+    const footer = "Version " + environment.version + "\n" + String.fromCharCode(169) + " " + year + " by " + author;
+    return footer;
   }
 }

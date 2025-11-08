@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   version: "dev",
+  author: "Ing. M. Reichenauer",
   apiUrl: "https://blaulichtcloud.at/api/v1/",
   loginUrl: "auth/login/",
   registerUrl: "auth/registration/",

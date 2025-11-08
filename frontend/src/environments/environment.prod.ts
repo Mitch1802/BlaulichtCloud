@@ -3,6 +3,7 @@ import packageJson from '../../package.json';
 export const environment = {
   production: true,
   version: packageJson.version,
+  author: "Ing. M. Reichenauer",
   apiUrl: 'https://' + window.location.host + '/api/v1/',
   loginUrl: "auth/login/",
   registerUrl: "auth/registration/",
