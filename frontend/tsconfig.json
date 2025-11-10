@@ -25,7 +25,12 @@
       "@app/*": ["src/app/*"],
       "@app/application/*": ["src/app/application_layer/*"],
       "@app/infrastructure/*": ["src/app/infrastructure_layer/*"],
-      "@app/presentation/*": ["src/app/presentation_layer/*"]
+      "@app/presentation/*": [
+        "src/app/presentation_layer/*"
+      ],
+      "ui": [
+        "./dist/ui"
+      ]
     }
   },
   "angularCompilerOptions": {
@@ -33,5 +38,13 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "references": [
+    {
+      "path": "./projects/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ui/tsconfig.spec.json"
+    }
+  ]
 }

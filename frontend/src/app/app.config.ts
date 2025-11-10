@@ -3,13 +3,17 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 // === Deine Abstraktionen/Implementierungen verdrahten ===
-import { AppLoginFacade } from './application_layer/login/abstractions/app.login.facade';
-import { AppLoginService } from './application_layer/login/implementations/app.login.service';
 import { InfraLoginFacade } from './infrastructure_layer/login/abstractions/infra.login.facade';
 import { InfraLoginService } from './infrastructure_layer/login/implementations/infra.login.service';
+import { InfraStartFacade } from './infrastructure_layer/start/abstractions/infra.start.facade';
+import { InfraStartService } from './infrastructure_layer/start/implementations/infra.start.service';
+import { AppLoginFacade } from './application_layer/login/abstractions/app.login.facade';
+import { AppLoginService } from './application_layer/login/implementations/app.login.service';
+import { AppStartFacade } from './application_layer/start/abstractions/app.start.facade';
+import { AppStartService } from './application_layer/start/implementations/app.start.service';
 
 // (falls du den Token-Provider + Interceptor nutzt)
 import { AccessTokenProvider } from './infrastructure_layer/common/abstractions/access-token.provider';
@@ -35,11 +39,13 @@ export const appConfig: ApplicationConfig = {
       ])
     ),
 
-    provideAnimationsAsync(),
+    provideAnimations(),
 
     // DI-Mapping der Abstraktionen
-    { provide: AppLoginFacade,   useClass: AppLoginService },
     { provide: InfraLoginFacade, useClass: InfraLoginService },
+    { provide: InfraStartFacade, useClass: InfraStartService },
+    { provide: AppLoginFacade,   useClass: AppLoginService },
+    { provide: AppStartFacade,   useClass: AppStartService },
     { provide: AccessTokenProvider, useClass: AccessTokenProviderAdapter },
 
     // Initializer sauber über ApplicationConfig

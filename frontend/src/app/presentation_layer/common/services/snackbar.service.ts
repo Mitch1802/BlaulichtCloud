@@ -9,9 +9,10 @@ export class SnackbarService {
 
   show(message: string, variant: Variant = 'info', cfg: MatSnackBarConfig = {}) {
     const panelClass = this.variantClass(variant);
-    return this.snack.open(message, 'OK', {
-      duration: 3500,
-      horizontalPosition: 'right',
+    return this.snack.open(message, '', {
+      // duration: 3000,
+      duration: 600000,
+      horizontalPosition: 'center',
       verticalPosition: 'bottom',
       panelClass,
       ...cfg,
@@ -27,7 +28,7 @@ export class SnackbarService {
   confirm(message: string, action = 'OK', variant: Variant = 'info', cfg: MatSnackBarConfig = {}): Promise<boolean> {
     return new Promise(res => {
       this.snack.open(message, action, {
-        horizontalPosition: 'right',
+        horizontalPosition: 'center',
         verticalPosition: 'bottom',
         panelClass: this.variantClass(variant),
         ...cfg,

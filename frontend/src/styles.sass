@@ -8,7 +8,7 @@
     font-family: "Roboto", sans-serif
 
 html, body
-    background-color: theme.$app-background
+    background-color: var(--app-background-color)
     height: 100vh
     display: flex
     flex-direction: column
@@ -19,7 +19,7 @@ mat-toolbar
     height: 50px
     display: flex
     flex-wrap: wrap
-    background-color: theme.$app-primary !important
+    background-color: var(--app-color-primary) !important
 
     .spacer
         flex: 1 1 auto
@@ -61,15 +61,6 @@ p
 div:has(> .mat-mdc-button-disabled)
     cursor: not-allowed !important
 
-.breadcrumb
-    display: flex
-    flex-wrap: wrap
-    padding: 5px
-
-    button
-        margin-right: 5px
-        padding: 7px !important
-        min-width: 0px !important
 
 .error-top
     color: white
@@ -113,12 +104,12 @@ mat-card
 
 .mat-list-link span
     text-decoration: underline
-    color: theme.$app-primary !important
+    color: var(--app-color-primary) !important
     cursor: pointer !important
 
 .mat-tree-link span
     text-decoration: underline
-    color: theme.$app-primary !important
+    color: var(--app-color-primary) !important
     cursor: pointer !important
 
 mat-list
@@ -154,69 +145,36 @@ mat-select
     margin: 0px
     padding: 0px
 
-// .msg-snackbar-success
-//     --mdc-snackbar-supporting-text-size: 1.2rem
-//     --mdc-snackbar-container-color: #{theme.$app-success}
-//     --mdc-snackbar-supporting-text-color: white
-//     --mat-snack-bar-button-color: white
-//     white-space: pre-line !important
-//     word-wrap: break-word !important
-//     opacity: 0.8 !important
-
-// .msg-snackbar-info
-//     --mdc-snackbar-supporting-text-size: 1.2rem
-//     --mdc-snackbar-container-color: #{theme.$app-error}
-//     --mdc-snackbar-supporting-text-color: black
-//     --mat-snack-bar-button-color: black
-//     white-space: pre-line !important
-//     word-wrap: break-word !important
-//     opacity: 0.8 !important
-
-// .msg-snackbar-error
-//     --mdc-snackbar-supporting-text-size: 1.2rem
-//     --mdc-snackbar-container-color: #{theme.$app-error}
-//     --mdc-snackbar-supporting-text-color: white
-//     --mat-snack-bar-button-color: white
-//     white-space: pre-line !important
-//     word-wrap: break-word !important
-//     opacity: 0.8 !important
-
-.mat-mdc-snack-bar-container.snackbar-success
-    --mdc-snackbar-container-color: #1b5e20
-    --mdc-snackbar-supporting-text-color: #ffffff
-    --mat-mdc-snack-bar-button-color: #bbf7d0
-    --mat-snack-bar-button-color: black
-    white-space: pre-line !important
-    word-wrap: break-word !important
-    opacity: 0.8 !important
+// SNACKBAR
+.mat-mdc-snack-bar-container
+  white-space: pre-line !important
+  word-wrap: break-word !important
+  font-size: 1.2rem
+  opacity: 0.9
+  border-radius: 0.5rem
+  box-shadow: 0 4px 10px rgba(0,0,0,.3)
 
 .mat-mdc-snack-bar-container.snackbar-error
-    --mdc-snackbar-container-color: #b71c1c
-    --mdc-snackbar-supporting-text-color: #ffffff
-    --mat-mdc-snack-bar-button-color: #ffcdd2
-    --mat-snack-bar-button-color: black
-    white-space: pre-line !important
-    word-wrap: break-word !important
-    opacity: 0.8 !important
+  --mat-snackbar-container-color: var(--md-sys-color-error) !important
+  --mdc-snackbar-supporting-text-color: var(--md-sys-color-on-error)
+  --mat-mdc-snack-bar-button-color: var(--md-sys-color-on-error)
+
+.mat-mdc-snack-bar-container.snackbar-success
+  --mdc-snackbar-container-color: var(--md-sys-color-primary-container)
+  --mdc-snackbar-supporting-text-color: var(--md-sys-color-on-primary-container)
+  --mat-mdc-snack-bar-button-color: var(--md-sys-color-on-primary-container)
 
 .mat-mdc-snack-bar-container.snackbar-info
-    --mdc-snackbar-container-color: #0d47a1
-    --mdc-snackbar-supporting-text-color: #ffffff
-    --mat-mdc-snack-bar-button-color: #bbdefb
-    --mat-snack-bar-button-color: black
-    white-space: pre-line !important
-    word-wrap: break-word !important
-    opacity: 0.8 !important
+  --mdc-snackbar-container-color: var(--md-sys-color-surface-container-high)
+  --mdc-snackbar-supporting-text-color: var(--md-sys-color-on-surface-variant)
+  --mat-mdc-snack-bar-button-color: var(--md-sys-color-primary)
 
 .mat-mdc-snack-bar-container.snackbar-warning
-    --mdc-snackbar-container-color: #f57f17
-    --mdc-snackbar-supporting-text-color: #000000
-    --mat-mdc-snack-bar-button-color: #000000
-    --mat-snack-bar-button-color: black
-    white-space: pre-line !important
-    word-wrap: break-word !important
-    opacity: 0.8 !important
+  --mdc-snackbar-container-color: var(--md-sys-color-tertiary-container)
+  --mdc-snackbar-supporting-text-color: var(--md-sys-color-on-tertiary-container)
+  --mat-mdc-snack-bar-button-color: var(--md-sys-color-on-tertiary-container)
 
+// LOGIN FOOTER
 .footer
     color: grey
     text-align: center

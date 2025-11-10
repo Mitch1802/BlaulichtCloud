@@ -10,14 +10,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { ImrButton } from 'projects/ui/src/public-api';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.sass'],
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule]
+  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, ImrButton]
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
@@ -50,7 +50,7 @@ export class LoginComponent {
       },
       error: (e) => { 
         this.loading = false; 
-        const msg = e?.error?.message ?? 'Login fehlgeschlagen.';
+        const msg = e?.error?.non_field_errors ?? 'Login fehlgeschlagen.';
         this.snack.error(msg);
       }
     });
