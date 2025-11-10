@@ -4,7 +4,6 @@
 @use './assets/css/material-design-icons.css'
 @use './assets/css/material-design-icons-outlined.css'
 
-
 :root
     font-family: "Roboto", sans-serif
 
@@ -37,7 +36,7 @@ h1
     text-align: center !important
 
 button, a, .link-card, .link-card *
-    cursor: pointer !important  
+    cursor: pointer !important
 
 .link-card
     .mat-mdc-card
@@ -149,35 +148,71 @@ mat-list-item span span
         margin-block: 0px
 
 mat-form-field
-    width: 100%
+        width: 100%
 
 mat-select
     margin: 0px
     padding: 0px
 
-.msg-snackbar-success
-    --mdc-snackbar-supporting-text-size: 1.2rem
-    --mdc-snackbar-container-color: #{theme.$app-success}
-    --mdc-snackbar-supporting-text-color: white
-    --mat-snack-bar-button-color: white
-    white-space: pre-line !important
-    word-wrap: break-word !important
-    opacity: 0.8 !important
+// .msg-snackbar-success
+//     --mdc-snackbar-supporting-text-size: 1.2rem
+//     --mdc-snackbar-container-color: #{theme.$app-success}
+//     --mdc-snackbar-supporting-text-color: white
+//     --mat-snack-bar-button-color: white
+//     white-space: pre-line !important
+//     word-wrap: break-word !important
+//     opacity: 0.8 !important
 
-.msg-snackbar-info
-    --mdc-snackbar-supporting-text-size: 1.2rem
-    --mdc-snackbar-container-color: #{theme.$app-error}
-    --mdc-snackbar-supporting-text-color: black
+// .msg-snackbar-info
+//     --mdc-snackbar-supporting-text-size: 1.2rem
+//     --mdc-snackbar-container-color: #{theme.$app-error}
+//     --mdc-snackbar-supporting-text-color: black
+//     --mat-snack-bar-button-color: black
+//     white-space: pre-line !important
+//     word-wrap: break-word !important
+//     opacity: 0.8 !important
+
+// .msg-snackbar-error
+//     --mdc-snackbar-supporting-text-size: 1.2rem
+//     --mdc-snackbar-container-color: #{theme.$app-error}
+//     --mdc-snackbar-supporting-text-color: white
+//     --mat-snack-bar-button-color: white
+//     white-space: pre-line !important
+//     word-wrap: break-word !important
+//     opacity: 0.8 !important
+
+.mat-mdc-snack-bar-container.snackbar-success
+    --mdc-snackbar-container-color: #1b5e20
+    --mdc-snackbar-supporting-text-color: #ffffff
+    --mat-mdc-snack-bar-button-color: #bbf7d0
     --mat-snack-bar-button-color: black
     white-space: pre-line !important
     word-wrap: break-word !important
     opacity: 0.8 !important
 
-.msg-snackbar-error
-    --mdc-snackbar-supporting-text-size: 1.2rem
-    --mdc-snackbar-container-color: #{theme.$app-error}
-    --mdc-snackbar-supporting-text-color: white
-    --mat-snack-bar-button-color: white
+.mat-mdc-snack-bar-container.snackbar-error
+    --mdc-snackbar-container-color: #b71c1c
+    --mdc-snackbar-supporting-text-color: #ffffff
+    --mat-mdc-snack-bar-button-color: #ffcdd2
+    --mat-snack-bar-button-color: black
+    white-space: pre-line !important
+    word-wrap: break-word !important
+    opacity: 0.8 !important
+
+.mat-mdc-snack-bar-container.snackbar-info
+    --mdc-snackbar-container-color: #0d47a1
+    --mdc-snackbar-supporting-text-color: #ffffff
+    --mat-mdc-snack-bar-button-color: #bbdefb
+    --mat-snack-bar-button-color: black
+    white-space: pre-line !important
+    word-wrap: break-word !important
+    opacity: 0.8 !important
+
+.mat-mdc-snack-bar-container.snackbar-warning
+    --mdc-snackbar-container-color: #f57f17
+    --mdc-snackbar-supporting-text-color: #000000
+    --mat-mdc-snack-bar-button-color: #000000
+    --mat-snack-bar-button-color: black
     white-space: pre-line !important
     word-wrap: break-word !important
     opacity: 0.8 !important
@@ -187,7 +222,6 @@ mat-select
     text-align: center
     padding-top: 10px
     white-space: pre-wrap
-
 
 .a-tel, .a-mailto
     color: black

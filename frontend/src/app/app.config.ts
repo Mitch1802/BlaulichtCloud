@@ -1,0 +1,48 @@
+import { ApplicationConfig, APP_INITIALIZER, inject } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
+
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
+// === Deine Abstraktionen/Implementierungen verdrahten ===
+import { AppLoginFacade } from './application_layer/login/abstractions/app.login.facade';
+import { AppLoginService } from './application_layer/login/implementations/app.login.service';
+import { InfraLoginFacade } from './infrastructure_layer/login/abstractions/infra.login.facade';
+import { InfraLoginService } from './infrastructure_layer/login/implementations/infra.login.service';
+
+// (falls du den Token-Provider + Interceptor nutzt)
+import { AccessTokenProvider } from './infrastructure_layer/common/abstractions/access-token.provider';
+import { AccessTokenProviderAdapter } from './application_layer/login/implementations/access-token.provider.adapter';
+import { authTokenInterceptor } from './infrastructure_layer/http/auth-token.interceptor';
+// (optional) globaler Error-Snackbar-Interceptor
+import { errorSnackbarInterceptor } from './infrastructure_layer/http/error-snackbar.interceptor';
+
+// Hydration-Funktion (Session laden VOR dem ersten Routing)
+function authInitFactory() {
+  const auth = inject(AppLoginFacade);
+  return () => auth.hydrateFromSession(); // synchron, Promise nicht nötig
+}
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+
+    provideHttpClient(
+      withInterceptors([
+        authTokenInterceptor,
+        errorSnackbarInterceptor,
+      ])
+    ),
+
+    provideAnimationsAsync(),
+
+    // DI-Mapping der Abstraktionen
+    { provide: AppLoginFacade,   useClass: AppLoginService },
+    { provide: InfraLoginFacade, useClass: InfraLoginService },
+    { provide: AccessTokenProvider, useClass: AccessTokenProviderAdapter },
+
+    // Initializer sauber über ApplicationConfig
+    { provide: APP_INITIALIZER, useFactory: authInitFactory, multi: true },
+  ],
+};

@@ -1,7 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+
 import { AppLoginFacade } from 'src/app/application_layer/login/abstractions/app.login.facade';
+import { SnackbarService } from '@app/presentation_layer/common/services/snackbar.service';
 
 // Angular Material Module-Imports (Standalone!)
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +23,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AppLoginFacade);
   private router = inject(Router);
+  private snack = inject(SnackbarService);
 
   showPassword = false;
   error: string | null = null;
@@ -42,9 +45,14 @@ export class LoginComponent {
     this.auth.login({ username, password }).subscribe({
       next: () => { 
         this.loading = false; 
+        this.snack.success('Erfolgreich angemeldet.');
         this.router.navigateByUrl('/start'); 
       },
-      error: (e) => { this.loading = false; this.error = e?.error?.message ?? 'Login fehlgeschlagen'; }
+      error: (e) => { 
+        this.loading = false; 
+        const msg = e?.error?.message ?? 'Login fehlgeschlagen.';
+        this.snack.error(msg);
+      }
     });
   }
 }
