@@ -6,7 +6,8 @@ export interface LoginCredentials {
 export interface Tokens {
   accessToken: string;
   refreshToken?: string;
-  expiresAt?: Date;
+  accessExpiresAt?: Date;
+  refreshExpiresAt?: Date;
   user?: {
     id: string;
     username: string;

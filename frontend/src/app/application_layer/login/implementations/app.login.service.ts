@@ -8,6 +8,16 @@ import { environment } from 'src/environments/environment';
 
 const SESSION_TOKENS_KEY = 'auth:tokens';
 
+function parseDdMmYyyyTHHmmss(value?: string): Date | undefined {
+  if (!value) return undefined;
+  // Erwartet "dd.MM.yyyyTHH:mm:ss"
+  const m = /^(\d{2})\.(\d{2})\.(\d{4})T(\d{2}):(\d{2}):(\d{2})$/.exec(value);
+  if (!m) return undefined;
+  const [, dd, mm, yyyy, HH, MM, SS] = m.map(Number);
+  // Date: Monate 0-basiert
+  return new Date(yyyy, mm - 1, dd, HH, MM, SS);
+}
+
 @Injectable({ providedIn: 'root' })
 export class AppLoginService extends AppLoginFacade {
   private infra = inject(InfraLoginFacade);
@@ -20,24 +30,25 @@ export class AppLoginService extends AppLoginFacade {
     try {
       const raw = sessionStorage.getItem(SESSION_TOKENS_KEY);
       if (!raw) return;
-      const parsed = JSON.parse(raw) as Tokens & { expiresAt?: string };
-      const tokens: Tokens = {
-        ...parsed,
-        expiresAt: parsed.expiresAt ? new Date(parsed.expiresAt) : undefined
+      const parsed = JSON.parse(raw) as Omit<Tokens, 'accessExpiresAt' | 'refreshExpiresAt'> & {
+        accessExpiresAt?: string; refreshExpiresAt?: string;
       };
-      this._tokens$.next(tokens);
-    } catch { }
+      this._tokens$.next({
+        ...parsed,
+        accessExpiresAt: parsed.accessExpiresAt ? new Date(parsed.accessExpiresAt) : undefined,
+        refreshExpiresAt: parsed.refreshExpiresAt ? new Date(parsed.refreshExpiresAt) : undefined,
+      });
+    } catch {}
   }
 
   private persist(tokens: Tokens): void {
-    sessionStorage.setItem(
-      SESSION_TOKENS_KEY,
-      JSON.stringify({
-        ...tokens,
-        ...(tokens.expiresAt ? { expiresAt: tokens.expiresAt.toISOString() } : {})
-      })
-    );
-    // TODO Ändern wenn Start Komponente geändert
+    // Speichern neu
+    sessionStorage.setItem(SESSION_TOKENS_KEY, JSON.stringify({
+      ...tokens,
+      accessExpiresAt: tokens.accessExpiresAt?.toISOString(),
+      refreshExpiresAt: tokens.refreshExpiresAt?.toISOString(),
+    }));
+    // Speichern alt TODO
     sessionStorage.setItem("Token", tokens.accessToken);
     sessionStorage.setItem('Benutzername', tokens.user!.username);
     sessionStorage.setItem('Rollen', JSON.stringify(tokens.user!.roles));
@@ -46,9 +57,14 @@ export class AppLoginService extends AppLoginFacade {
   private mapDtoToDomain(dto: LoginResponseDto): Tokens {
     return {
       accessToken: dto.access_token,
-      refreshToken: dto.refresh_token,
-      expiresAt: dto.expires_at ? new Date(dto.expires_at) : undefined,
-      user: dto.user
+      refreshToken: dto.refresh_token || undefined,
+      accessExpiresAt: parseDdMmYyyyTHHmmss(dto.access_token_expiration),
+      refreshExpiresAt: parseDdMmYyyyTHHmmss(dto.refresh_token_expiration),
+      user: {
+        id: dto.user.id,
+        username: dto.user.username,
+        roles: dto.user.roles ?? [],
+      },
     };
   }
 

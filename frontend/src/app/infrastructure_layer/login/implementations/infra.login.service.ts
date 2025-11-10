@@ -8,9 +8,9 @@ import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class InfraLoginService extends InfraLoginFacade {
-  private http = inject(HttpClient);
+    private http = inject(HttpClient);
 
-  login(credentials: LoginRequestDto): Observable<LoginResponseDto> {
-    return this.http.post<LoginResponseDto>(`${environment.apiUrl}${environment.loginUrl}`, credentials);
-  }
+    login(credentials: LoginRequestDto): Observable<LoginResponseDto> {
+        return this.http.post<LoginResponseDto>(`${environment.apiUrl}${environment.loginUrl}`, credentials);
+    }
 }

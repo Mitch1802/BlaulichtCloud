@@ -40,7 +40,10 @@ export class LoginComponent {
     this.error = null;
     const { username, password } = this.form.value as { username: string; password: string };
     this.auth.login({ username, password }).subscribe({
-      next: () => { this.loading = false; this.router.navigateByUrl('/start'); },
+      next: () => { 
+        this.loading = false; 
+        this.router.navigateByUrl('/start'); 
+      },
       error: (e) => { this.loading = false; this.error = e?.error?.message ?? 'Login fehlgeschlagen'; }
     });
   }

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { LoginComponent } from './login/login.component';
 import { StartComponent } from './start/start.component';
 import { UserComponent } from './user/user.component';
@@ -13,8 +14,10 @@ import { NewsExternComponent } from './news-extern/news-extern.component';
 import { AtemschutzMessgeraeteComponent } from './_template/atemschutz-messgeraete/atemschutz-messgeraete.component';
 import { AtemschutzGeraeteComponent } from './_template/atemschutz-geraete/atemschutz-geraete.component';
 import { AtemschutzMaskenComponent } from './_template/atemschutz-masken/atemschutz-masken.component';
+
 import { startOrLoginHelper } from './presentation_layer/helpers/auth/start-or-login.helper';
 import { redirectIfAuthHelper } from './presentation_layer/helpers/auth/redirect-if-auth.helper';
+import { requireAuthHelper } from './presentation_layer/helpers/auth/require-auth.helper';
 
 export const routes: Routes = [
   { path: '', canActivate: [startOrLoginHelper], children: [] },
@@ -23,13 +26,10 @@ export const routes: Routes = [
     canActivate: [redirectIfAuthHelper],
     loadComponent: () => import('./presentation_layer/features/login/login.component').then(m => m.LoginComponent)
   },
-  // {
-  //   path: 'Start',
-  //   canActivate: [requireAuthHelper],
-  //   loadComponent: () => import('./presentation_layer/features/start/start.component').then(m => m.StartComponent)
-  // },
   {
-    path: 'start', component: StartComponent
+    path: 'start',
+    canActivate: [requireAuthHelper],
+    loadComponent: () => import('./presentation_layer/features/start/start.component').then(m => m.StartComponent)
   },
   {
     path: 'fmd', component: FmdComponent

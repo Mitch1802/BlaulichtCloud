@@ -8,8 +8,6 @@ export abstract class AppLoginFacade {
   abstract hydrateFromSession(): void;
   abstract login(credentials: LoginCredentials): Observable<Tokens>;
   abstract hardLogout(): void;
-
   abstract getAccessTokenSync(): string | null;
-
   abstract getFooter(): string | null;
 }
