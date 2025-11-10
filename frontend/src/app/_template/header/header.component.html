@@ -7,14 +7,4 @@
   </button>
 </mat-toolbar>
 
-<div class="breadcrumb">
-  @for (link of breadcrumb; track link) {
-    <div>
-      @if (link.active) {
-        <button mat-raised-button color="primary" (click)="onClick(link.link)">{{link.kuerzel}}</button>
-      } @else {
-        <button mat-raised-button (click)="onClick(link.link)">{{link.kuerzel}}</button>
-      }
-    </div>
-  }
-</div>
+<app-breadcrumbs></app-breadcrumbs>

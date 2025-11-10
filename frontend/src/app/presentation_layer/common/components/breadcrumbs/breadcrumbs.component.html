@@ -1,0 +1,14 @@
+@if (crumbs$ | async; as crumbs) {
+  <div class="breadcrumb">
+    @for (c of crumbs; track c.url) {
+      <div>
+        <button
+          mat-raised-button
+          [routerLink]="c.url"
+          [color]="c.active ? 'primary' : undefined">
+          {{ c.label }}
+        </button>
+      </div>
+    }
+  </div>
+}

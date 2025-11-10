@@ -9,7 +9,7 @@ export const startOrLoginHelper: CanActivateFn = () => {
   return auth.isAuthenticated$.pipe(
     take(1),
     map(isAuth => {
-      router.navigateByUrl(isAuth ? '/start' : '/login');
+      router.navigateByUrl(isAuth ? '/Start' : '/login');
       return false;
     })
   );

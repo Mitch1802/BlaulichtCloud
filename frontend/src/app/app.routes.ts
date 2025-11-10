@@ -29,8 +29,33 @@ export const routes: Routes = [
   {
     path: 'start',
     canActivate: [requireAuthHelper],
+    data: { breadcrumb: 'Start' },
     loadComponent: () => import('./presentation_layer/features/start/start.component').then(m => m.StartComponent)
   },
+  // // FMD
+  // { path: 'fmd',
+  //   data: { breadcrumb: 'FMD' },
+  //   loadComponent: () => import('./presentation_layer/features/fmd/fmd.component').then(m => m.FmdComponent)
+  // },
+
+  // // Atemschutz
+  // { path: 'atemschutz',
+  //   data: { breadcrumb: 'Atemschutz' },
+  //   children: [
+  //     { path: 'masken',
+  //       data: { breadcrumb: 'Masken' },
+  //       loadComponent: () => import('./presentation_layer/features/atemschutz/masken/masken.component').then(m => m.MaskenComponent)
+  //     },
+  //     { path: 'geraete',
+  //       data: { breadcrumb: 'Geräte' },
+  //       loadComponent: () => import('./presentation_layer/features/atemschutz/geraete/geraete.component').then(m => m.GeraeteComponent)
+  //     },
+  //     { path: 'messgeraete',
+  //       data: { breadcrumb: 'Messgeräte' },
+  //       loadComponent: () => import('./presentation_layer/features/atemschutz/messgeraete/messgeraete.component').then(m => m.MessgeraeteComponent)
+  //     },
+  //   ]
+  // },
   {
     path: 'fmd', component: FmdComponent
   },
