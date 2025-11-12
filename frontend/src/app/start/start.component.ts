@@ -42,33 +42,11 @@ export class StartComponent implements OnInit {
           const konfigs = erg.main.find((m: any) => m.modul === 'start');
           this.start_konfig = konfigs?.konfiguration ?? [];
 
-          if (this.meine_rollen) {
-            try {
-              this.meineRollenKeys = JSON.parse(this.meine_rollen);
-            } catch {
-              this.meineRollenKeys = [];
-            }
-          }
-
-          if (!this.meineRollenKeys.length) {
-            const rollenArray: { id: number; key: string }[] = erg.rollen;
-            const meineRollenIds: number[] = this.meine_rollen
-              .split(',')
-              .map((s: any) => parseInt(s.trim(), 10))
-              .filter((n: any) => !isNaN(n));
-
-            this.meineRollenKeys = rollenArray
-              .filter(r => meineRollenIds.includes(r.id))
-              .map(r => r.key);
-
-            sessionStorage.setItem('Rollen', JSON.stringify(this.meineRollenKeys));
-          }
-
           this.visibleItems = this.start_konfig.filter((item: any) =>
             item.rolle
               .split(',')
               .map((r: string) => r.trim())
-              .some((rName: any) => this.meineRollenKeys.includes(rName))
+              .some((rName: any) => this.meine_rollen.includes(rName))
           );
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
