@@ -35,6 +35,7 @@ class AtemschutzMaskeProtokoll(TimeStampedModel):
     tausch_ausatemventil = models.BooleanField(verbose_name=_("Tausch Ausatemventil"), blank=True, null=True, default=False)
     tausch_sichtscheibe = models.BooleanField(verbose_name=_("Tausch Sichtscheibe"), blank=True, null=True, default=False)
     name_pruefer = models.CharField(verbose_name=_("Prüfername"), max_length=255)
+    notiz = models.TextField(verbose_name=_("Notiz"), blank=True, null=True)
 
     def __str__(self):
         return f"{self.datum}"

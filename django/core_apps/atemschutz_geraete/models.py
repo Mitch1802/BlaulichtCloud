@@ -40,6 +40,7 @@ class AtemschutzGeraetProtokoll(TimeStampedModel):
     pruefung_jaehrlich = models.BooleanField(verbose_name=_("Prüfung Jährlich"), blank=True, null=True, default=False)
     preufung_monatlich = models.BooleanField(verbose_name=_("Prüfung Monatlich"), blank=True, null=True, default=False)
     name_pruefer = models.CharField(verbose_name=_("Prüfername"), max_length=255)
+    notiz = models.TextField(verbose_name=_("Notiz"), blank=True, null=True)
 
     def __str__(self):
         return f"{self.datum}"

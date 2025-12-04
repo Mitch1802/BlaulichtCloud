@@ -16,6 +16,7 @@ export interface IAtemschutzMaskenProtokoll {
   tausch_ausatemventil: boolean;
   tausch_sichtscheibe: boolean;
   name_pruefer: string;
+  notiz: string;
   created_at: string;
   updated_at: string;
 }

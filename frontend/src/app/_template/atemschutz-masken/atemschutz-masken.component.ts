@@ -104,6 +104,7 @@ export class AtemschutzMaskenComponent implements OnInit {
     tausch_ausatemventil: new FormControl(false),
     tausch_sichtscheibe: new FormControl(false),
     name_pruefer: new FormControl('', Validators.required),
+    notiz: new FormControl(''),
   });
 
   ngOnInit(): void {
@@ -235,6 +236,7 @@ export class AtemschutzMaskenComponent implements OnInit {
             tausch_ausatemventil: details.tausch_ausatemventil,
             tausch_sichtscheibe: details.tausch_sichtscheibe,
             name_pruefer: details.name_pruefer,
+            notiz: details.notiz,
           });
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
@@ -369,6 +371,7 @@ export class AtemschutzMaskenComponent implements OnInit {
                 tausch_ausatemventil: false,
                 tausch_sichtscheibe: false,
                 name_pruefer: '',
+                notiz: '',
               });
               this.formPruefung.disable();
               this.showPruefungTable = true;
@@ -412,6 +415,7 @@ export class AtemschutzMaskenComponent implements OnInit {
                 tausch_ausatemventil: false,
                 tausch_sichtscheibe: false,
                 name_pruefer: '',
+                notiz: '',
               });
               this.formPruefung.disable();
               this.showPruefungTable = true;
@@ -464,6 +468,7 @@ export class AtemschutzMaskenComponent implements OnInit {
       tausch_ausatemventil: false,
       tausch_sichtscheibe: false,
       name_pruefer: '',
+      notiz: '',
     });
     this.formPruefung.disable();
     this.title = this.title_modul;
@@ -543,6 +548,7 @@ export class AtemschutzMaskenComponent implements OnInit {
             tausch_ausatemventil: false,
             tausch_sichtscheibe: false,
             name_pruefer: '',
+            notiz: '',
           });
           this.formPruefung.disable();
           this.globalDataService.erstelleMessage(
