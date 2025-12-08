@@ -144,7 +144,7 @@
                 <mat-label>Maske</mat-label>
                 <mat-select formControlName="maske_id">
                   @for (opt of masken; track opt) {
-                  <mat-option [value]="opt.pkid"> {{ opt.inv_nr }} </mat-option>
+                  <mat-option [value]="opt.pkid"> {{ opt.inv_nr }} - {{ opt.typ }} </mat-option>
                   }
                 </mat-select>
                 @if (formPruefung.controls['maske_id'].hasError('required')) {

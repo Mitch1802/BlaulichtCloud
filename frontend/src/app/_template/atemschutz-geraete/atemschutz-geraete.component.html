@@ -180,7 +180,7 @@
                 <mat-label>Gerät</mat-label>
                 <mat-select formControlName="geraet_id">
                   @for (opt of geraete; track opt) {
-                  <mat-option [value]="opt.pkid"> {{ opt.inv_nr }} </mat-option>
+                  <mat-option [value]="opt.pkid"> {{ opt.inv_nr }} - {{ opt.typ }} </mat-option>
                   }
                 </mat-select>
                 @if (formPruefung.controls['geraet_id'].hasError('required')) {
@@ -240,6 +240,44 @@
               <mat-form-field hintLabel="* Pflichtfeld">
                 <mat-label>Name Prüfer</mat-label>
                 <input matInput type="text" formControlName="name_pruefer" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="tausch_hochdruckdichtring"
+                >Tausch Hochdruckdichtring</mat-checkbox
+              >
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="tausch_membran"
+                >Tausch Membran</mat-checkbox
+              >
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-checkbox formControlName="tausch_gleitring"
+                >Tausch Gleitring</mat-checkbox
+              >
+            </div>
+            <hr>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-checkbox formControlName="preufung_monatlich"
+                >Prüfung Monatlich </mat-checkbox
+              >
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-checkbox formControlName="pruefung_jaehrlich"
+                >Prüfung Jährlich </mat-checkbox
+              >
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-checkbox formControlName="pruefung_10jahre"
+                >Prüfung 10 Jahre </mat-checkbox
+              >
+            </div>
+            <hr>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field>
+                <mat-label>Notiz</mat-label>
+                <input matInput type="text" formControlName="notiz" />
               </mat-form-field>
             </div>
           </section>
@@ -326,7 +364,17 @@
           <ng-container matColumnDef="taetigkeit">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Tätigkeit</th>
             <td mat-cell *matCellDef="let element">
-              {{ element.taetigkeit }}
+              @if (element.pruefung_10jahre == true) {
+                Prüfung 10 Jahre
+              }@else if (element.pruefung_jaehrlich == true) {
+                Prüfung Jährlich
+              }@else if (element.preufung_monatlich == true) {
+                Prüfung Monatlich
+              }@else if (element.taetigkeit) {
+                {{ element.taetigkeit }}
+              }@else {
+                Wartung / Tausch
+              }
             </td>
           </ng-container>
           <ng-container matColumnDef="name_pruefer">

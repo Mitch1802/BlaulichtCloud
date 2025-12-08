@@ -7,6 +7,12 @@ export interface IAtemschutzGeraeteProtokoll {
   verwendung_min: number;
   geraet_ok: boolean;
   name_pruefer: string;
+  tausch_hochdruckdichtring: boolean;
+  tausch_membran: boolean;
+  tausch_gleitring: boolean;
+  pruefung_10jahre: boolean;
+  pruefung_jaehrlich: boolean;
+  preufung_monatlich: boolean;
   notiz: string;
   created_at: string;
   updated_at: string;

@@ -86,6 +86,13 @@ export class AtemschutzGeraeteComponent implements OnInit {
     verwendung_min: new FormControl(0),
     geraet_ok: new FormControl(false),
     name_pruefer: new FormControl('', Validators.required),
+    tausch_gleitring: new FormControl(false),
+    tausch_hochdruckdichtring: new FormControl(false),
+    tausch_membran: new FormControl(false),
+    pruefung_10jahre: new FormControl(false),
+    pruefung_jaehrlich: new FormControl(false),
+    preufung_monatlich: new FormControl(false),
+    notiz: new FormControl(''),
   });
 
   ngOnInit(): void {
@@ -214,6 +221,13 @@ export class AtemschutzGeraeteComponent implements OnInit {
             verwendung_min: details.verwendung_min,
             geraet_ok: details.geraet_ok,
             name_pruefer: details.name_pruefer,
+            tausch_hochdruckdichtring: details.tausch_hochdruckdichtring,
+            tausch_membran: details.tausch_membran,
+            tausch_gleitring: details.tausch_gleitring,
+            pruefung_10jahre: details.pruefung_10jahre,
+            pruefung_jaehrlich: details.pruefung_jaehrlich,
+            preufung_monatlich: details.preufung_monatlich,
+            notiz: details.notiz,
           });
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
@@ -330,6 +344,13 @@ export class AtemschutzGeraeteComponent implements OnInit {
               verwendung_min: 0,
               geraet_ok: false,
               name_pruefer: '',
+              tausch_hochdruckdichtring: false,
+              tausch_membran: false,
+              tausch_gleitring: false,
+              pruefung_10jahre: false,
+              pruefung_jaehrlich: false,
+              preufung_monatlich: false,
+              notiz: '',
             });
             this.formPruefung.disable();
             this.showPruefungTable = true;
@@ -359,6 +380,13 @@ export class AtemschutzGeraeteComponent implements OnInit {
               verwendung_min: 0,
               geraet_ok: false,
               name_pruefer: '',
+              tausch_hochdruckdichtring: false,
+              tausch_membran: false,
+              tausch_gleitring: false,
+              pruefung_10jahre: false,
+              pruefung_jaehrlich: false,
+              preufung_monatlich: false,
+              notiz: '',
             });
             this.formPruefung.disable();
             this.showPruefungTable = true;
@@ -402,6 +430,13 @@ export class AtemschutzGeraeteComponent implements OnInit {
       verwendung_min: 0,
       geraet_ok: false,
       name_pruefer: '',
+      tausch_hochdruckdichtring: false,
+      tausch_membran: false,
+      tausch_gleitring: false,
+      pruefung_10jahre: false,
+      pruefung_jaehrlich: false,
+      preufung_monatlich: false,
+      notiz: '',
     });
     this.formPruefung.disable();
     this.title = this.title_modul;
@@ -469,6 +504,13 @@ export class AtemschutzGeraeteComponent implements OnInit {
             verwendung_min: 0,
             geraet_ok: false,
             name_pruefer: '',
+            tausch_hochdruckdichtring: false,
+            tausch_membran: false,
+            tausch_gleitring: false,
+            pruefung_10jahre: false,
+            pruefung_jaehrlich: false,
+            preufung_monatlich: false,
+            notiz: '',
           });
           this.formPruefung.disable();
           this.globalDataService.erstelleMessage('success', 'Protokoll erfolgreich gelöscht!');
