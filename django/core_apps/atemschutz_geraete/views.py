@@ -37,3 +37,20 @@ class AtemschutzGeraeteProtokollViewSet(ModelViewSet):
     filterset_fields = ['geraet_id']
     ordering_fields = ["datum"]
     ordering = ["datum"]
+
+class AtemschutzGeraeteDienstbuchViewSet(ModelViewSet):
+    queryset = AtemschutzGeraetProtokoll.objects.all().order_by("datum")
+    serializer_class = AtemschutzGeraetProtokollSerializer
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "ATEMSCHUTZ")]
+    parser_classes = [JSONParser]
+    lookup_field = "id"
+    pagination_class = None 
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filterset_fields = ['geraet_id']
+    ordering_fields = ["datum"]
+    ordering = ["datum"]
+
+    def list(self, request, *args, **kwargs):
+        resp = super().list(request, *args, **kwargs)
+        mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
+        return Response({"protokoll": resp.data, "mitglieder": mitglieder})
