@@ -346,7 +346,12 @@
           <ng-container matColumnDef="taetigkeit">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Tätigkeit</th>
             <td mat-cell *matCellDef="let element">
-              {{ element.taetigkeit }}
+              @if (element.taetigkeit) {
+                {{ element.taetigkeit }}
+              }@else {
+                Wartung / Tausch
+              }
+              
             </td>
           </ng-container>
           <ng-container matColumnDef="name_pruefer">
