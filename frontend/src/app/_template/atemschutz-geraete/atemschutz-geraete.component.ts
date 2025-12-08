@@ -15,6 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IAtemschutzGeraeteProtokoll } from 'src/app/_interface/atemschutz_geraete_protokoll';
+import { IMitglied } from 'src/app/_interface/mitglied';
 
 @Component({
   selector: 'app--atemschutzgeraete',
@@ -51,6 +52,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
 
   geraete: IAtemschutzGeraete[] = [];
   pruefungen: IAtemschutzGeraeteProtokoll[] = [];
+  mitglieder: IMitglied[] = [];
   breadcrumb: any = [];
   dataSource = new MatTableDataSource<IAtemschutzGeraete>(this.geraete);
   dataSourcePruefungen = new MatTableDataSource<IAtemschutzGeraeteProtokoll>(this.pruefungen);
@@ -84,6 +86,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
     taetigkeit: new FormControl(''),
     verwendung_typ: new FormControl(''),
     verwendung_min: new FormControl(0),
+    mitglied_id: new FormControl(0),
     geraet_ok: new FormControl(false),
     name_pruefer: new FormControl('', Validators.required),
     tausch_gleitring: new FormControl(false),
@@ -105,8 +108,9 @@ export class AtemschutzGeraeteComponent implements OnInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.geraete = erg;
-          this.dataSource.data = erg;
+          this.geraete = erg.main;
+          this.dataSource.data = erg.main;
+          this.mitglieder = erg.mitglieder
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -219,6 +223,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
             taetigkeit: details.taetigkeit,
             verwendung_typ: details.verwendung_typ,
             verwendung_min: details.verwendung_min,
+            mitglied_id: details.mitglied_id,
             geraet_ok: details.geraet_ok,
             name_pruefer: details.name_pruefer,
             tausch_hochdruckdichtring: details.tausch_hochdruckdichtring,
@@ -342,6 +347,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
               taetigkeit: '',
               verwendung_typ: '',
               verwendung_min: 0,
+              mitglied_id: 0,
               geraet_ok: false,
               name_pruefer: '',
               tausch_hochdruckdichtring: false,
@@ -378,6 +384,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
               taetigkeit: '',
               verwendung_typ: '',
               verwendung_min: 0,
+              mitglied_id: 0,
               geraet_ok: false,
               name_pruefer: '',
               tausch_hochdruckdichtring: false,
@@ -428,6 +435,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
       taetigkeit: '',
       verwendung_typ: '',
       verwendung_min: 0,
+      mitglied_id: 0,
       geraet_ok: false,
       name_pruefer: '',
       tausch_hochdruckdichtring: false,
@@ -502,6 +510,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
             taetigkeit: '',
             verwendung_typ: '',
             verwendung_min: 0,
+            mitglied_id: 0,
             geraet_ok: false,
             name_pruefer: '',
             tausch_hochdruckdichtring: false,

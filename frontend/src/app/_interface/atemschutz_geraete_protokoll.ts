@@ -5,6 +5,7 @@ export interface IAtemschutzGeraeteProtokoll {
   taetigkeit: string;
   verwendung_typ: string;
   verwendung_min: number;
+  mitglied_id: number;
   geraet_ok: boolean;
   name_pruefer: string;
   tausch_hochdruckdichtring: boolean;

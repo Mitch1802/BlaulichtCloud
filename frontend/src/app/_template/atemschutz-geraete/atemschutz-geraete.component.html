@@ -232,6 +232,16 @@
               </mat-form-field>
             </div>
             <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field>
+                <mat-label>Mitglied</mat-label>
+                <mat-select formControlName="mitglied_id">
+                  @for (opt of mitglieder; track opt) {
+                  <mat-option [value]="opt.pkid"> {{ opt.stbnr }} - {{ opt.vorname }} {{ opt.nachname }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
               <mat-checkbox formControlName="geraet_ok"
                 >Gerät OK</mat-checkbox
               >
