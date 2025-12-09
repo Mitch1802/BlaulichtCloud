@@ -1,4 +1,4 @@
-export interface IAtemschutzMasken {
+export interface IAtemschutzMaske {
   pkid: number;
   id: string;
   inv_nr: string;

@@ -2,7 +2,7 @@ import { Component, OnInit, QueryList, ViewChild, ViewChildren, inject } from '@
 import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { HeaderComponent } from '../header/header.component';
 import { MatCardModule } from '@angular/material/card';
-import { IAtemschutzGeraeteProtokoll } from 'src/app/_interface/atemschutz_geraete_protokoll';
+import { IAtemschutzGeraetProtokoll } from 'src/app/_interface/atemschutz_geraet_protokoll';
 import { IMitglied } from 'src/app/_interface/mitglied';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -34,7 +34,7 @@ export class AtemschutzDienstbuchComponent implements OnInit {
 
   breadcrumb: any = [];
 
-  protokoll: IAtemschutzGeraeteProtokoll[] = [];
+  protokoll: IAtemschutzGeraetProtokoll[] = [];
   mitglieder: IMitglied[] = [];
   list_protokoll_mitglieder: any[] = [];
 
@@ -68,7 +68,7 @@ export class AtemschutzDienstbuchComponent implements OnInit {
           );
 
           // Nur die gefilterten Protokolle joinen
-          this.list_protokoll_mitglieder = gefilterteProtokolle.map((p: IAtemschutzGeraeteProtokoll) => {
+          this.list_protokoll_mitglieder = gefilterteProtokolle.map((p: IAtemschutzGeraetProtokoll) => {
             const mitglied =
               p.mitglied_id != null ? mitgliederMap.get(p.mitglied_id) : undefined;
 

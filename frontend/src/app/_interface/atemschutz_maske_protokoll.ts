@@ -1,4 +1,4 @@
-export interface IAtemschutzMaskenProtokoll {
+export interface IAtemschutzMaskeProtokoll {
   id: string;
   maske_id: number;
   datum: string;

@@ -1,4 +1,4 @@
-export interface IAtemschutzGeraeteProtokoll {
+export interface IAtemschutzGeraetProtokoll {
   id: string;
   geraet_id: number;
   datum: string;

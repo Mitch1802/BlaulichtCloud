@@ -10,11 +10,11 @@ import { MatInput } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { IAtemschutzGeraete } from 'src/app/_interface/atemschutz_geraete';
+import { IAtemschutzGeraet } from 'src/app/_interface/atemschutz_geraet';
 import { MatIcon } from '@angular/material/icon';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { IAtemschutzGeraeteProtokoll } from 'src/app/_interface/atemschutz_geraete_protokoll';
+import { IAtemschutzGeraetProtokoll } from 'src/app/_interface/atemschutz_geraet_protokoll';
 import { IMitglied } from 'src/app/_interface/mitglied';
 
 @Component({
@@ -50,12 +50,12 @@ export class AtemschutzGeraeteComponent implements OnInit {
   modul = "atemschutz/geraete";
   showPruefungTable: boolean = false;
 
-  geraete: IAtemschutzGeraete[] = [];
-  pruefungen: IAtemschutzGeraeteProtokoll[] = [];
+  geraete: IAtemschutzGeraet[] = [];
+  pruefungen: IAtemschutzGeraetProtokoll[] = [];
   mitglieder: IMitglied[] = [];
   breadcrumb: any = [];
-  dataSource = new MatTableDataSource<IAtemschutzGeraete>(this.geraete);
-  dataSourcePruefungen = new MatTableDataSource<IAtemschutzGeraeteProtokoll>(this.pruefungen);
+  dataSource = new MatTableDataSource<IAtemschutzGeraet>(this.geraete);
+  dataSourcePruefungen = new MatTableDataSource<IAtemschutzGeraetProtokoll>(this.pruefungen);
   sichtbareSpalten: string[] = ['inv_nr', 'typ', 'art', 'actions'];
   sichtbareSpaltenPruefungen: string[] = ['datum', 'taetigkeit', 'name_pruefer', 'actions'];
 
@@ -146,7 +146,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          const details: IAtemschutzGeraete = erg;
+          const details: IAtemschutzGeraet = erg;
 
           this.formModul.enable();
           this.formModul.setValue({
@@ -214,7 +214,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
       next: (erg: any) => {
         try {
           this.showPruefungTable = false;
-          const details: IAtemschutzGeraeteProtokoll = erg;
+          const details: IAtemschutzGeraetProtokoll = erg;
           this.formPruefung.enable();
           this.formPruefung.setValue({
             id: details.id,
@@ -257,7 +257,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
       this.globalDataService.post(this.modul, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            const newMask: IAtemschutzGeraete = erg;
+            const newMask: IAtemschutzGeraet = erg;
 
             this.geraete.push(newMask);
             this.geraete = this.globalDataService.arraySortByKey(this.geraete, 'inv_nr');
@@ -336,7 +336,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
       this.globalDataService.post(`${this.modul}/protokoll`, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            const newPrufung: IAtemschutzGeraeteProtokoll = erg;
+            const newPrufung: IAtemschutzGeraetProtokoll = erg;
             this.pruefungen.push(newPrufung);
             this.pruefungen = this.globalDataService.arraySortByKey(this.pruefungen, 'datum');
             this.dataSourcePruefungen.data = this.pruefungen;

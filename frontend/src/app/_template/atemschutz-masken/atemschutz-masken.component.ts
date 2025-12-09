@@ -18,9 +18,9 @@ import { MatInput } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { IAtemschutzMasken } from 'src/app/_interface/atemschutz_masken';
+import { IAtemschutzMaske } from 'src/app/_interface/atemschutz_maske';
 import { MatIcon } from '@angular/material/icon';
-import { IAtemschutzMaskenProtokoll } from 'src/app/_interface/atemschutz_masken_protokoll';
+import { IAtemschutzMaskeProtokoll } from 'src/app/_interface/atemschutz_maske_protokoll';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
@@ -57,11 +57,11 @@ export class AtemschutzMaskenComponent implements OnInit {
   modul = 'atemschutz/masken';
   showPruefungTable: boolean = false;
 
-  masken: IAtemschutzMasken[] = [];
-  pruefungen: IAtemschutzMaskenProtokoll[] = [];
+  masken: IAtemschutzMaske[] = [];
+  pruefungen: IAtemschutzMaskeProtokoll[] = [];
   breadcrumb: any = [];
-  dataSource = new MatTableDataSource<IAtemschutzMasken>(this.masken);
-  dataSourcePruefungen = new MatTableDataSource<IAtemschutzMaskenProtokoll>(
+  dataSource = new MatTableDataSource<IAtemschutzMaske>(this.masken);
+  dataSourcePruefungen = new MatTableDataSource<IAtemschutzMaskeProtokoll>(
     this.pruefungen
   );
   sichtbareSpalten: string[] = ['inv_nr', 'typ', 'art', 'actions'];
@@ -154,7 +154,7 @@ export class AtemschutzMaskenComponent implements OnInit {
     this.globalDataService.get(abfrageUrl).subscribe({
       next: (erg: any) => {
         try {
-          const details: IAtemschutzMasken = erg;
+          const details: IAtemschutzMaske = erg;
 
           this.formModul.enable();
           this.formModul.setValue({
@@ -216,7 +216,7 @@ export class AtemschutzMaskenComponent implements OnInit {
       next: (erg: any) => {
         try {
           this.showPruefungTable = false;
-          const details: IAtemschutzMaskenProtokoll = erg;
+          const details: IAtemschutzMaskeProtokoll = erg;
           this.formPruefung.enable();
           this.formPruefung.setValue({
             id: details.id,
@@ -264,7 +264,7 @@ export class AtemschutzMaskenComponent implements OnInit {
       this.globalDataService.post(this.modul, objekt, false).subscribe({
         next: (erg: any) => {
           try {
-            const newMask: IAtemschutzMasken = erg;
+            const newMask: IAtemschutzMaske = erg;
             this.masken.push(newMask);
             this.masken = this.globalDataService.arraySortByKey(
               this.masken,
@@ -346,7 +346,7 @@ export class AtemschutzMaskenComponent implements OnInit {
         .subscribe({
           next: (erg: any) => {
             try {
-              const newPrufung: IAtemschutzMaskenProtokoll = erg;
+              const newPrufung: IAtemschutzMaskeProtokoll = erg;
               this.pruefungen.push(newPrufung);
               this.pruefungen = this.globalDataService.arraySortByKey(
                 this.pruefungen,
