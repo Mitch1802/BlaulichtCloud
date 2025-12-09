@@ -1,0 +1,100 @@
+import { Component, OnInit, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
+import { GlobalDataService } from 'src/app/_service/global-data.service';
+import { HeaderComponent } from '../header/header.component';
+import { MatCardModule } from '@angular/material/card';
+import { IAtemschutzGeraeteProtokoll } from 'src/app/_interface/atemschutz_geraete_protokoll';
+import { IMitglied } from 'src/app/_interface/mitglied';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+
+@Component({
+  selector: 'app-atemschutz-dienstbuch',
+  imports: [
+    HeaderComponent,
+    MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+  ],
+  templateUrl: './atemschutz-dienstbuch.component.html',
+  styleUrl: './atemschutz-dienstbuch.component.sass'
+})
+export class AtemschutzDienstbuchComponent implements OnInit {
+  globalDataService = inject(GlobalDataService);
+
+  title = "Dienstbuch";
+  modul = "atemschutz/geraete/dienstbuch";
+
+  breadcrumb: any = [];
+
+  protokoll: IAtemschutzGeraeteProtokoll[] = [];
+  mitglieder: IMitglied[] = [];
+  list_protokoll_mitglieder: any[] = [];
+
+  pageOptions: any[] = [10, 50, 100]
+  sichtbareSpalten: string[] = ['datum', 'verwendung_typ', 'verwendung_min', 'stbnr', 'vorname', 'nachname'];
+  dataSource = new MatTableDataSource<any>(this.list_protokoll_mitglieder);
+
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+  @ViewChildren(MatSort) sorts?: QueryList<MatSort>;
+
+  ngOnInit(): void {
+    sessionStorage.setItem("PageNumber", "3");
+    sessionStorage.setItem("Page3", "ATM_DB");
+    this.breadcrumb = this.globalDataService.ladeBreadcrumb();
+
+    this.globalDataService.get(this.modul).subscribe({
+      next: (erg: any) => {
+        try {
+          this.protokoll = Array.isArray(erg.protokoll) ? erg.protokoll : [];
+          this.mitglieder = Array.isArray(erg.mitglieder) ? erg.mitglieder : [];
+
+          // **VORFILTER**: nur E oder Ü
+          const erlaubteTypen = ['E', 'Ü'];
+          const gefilterteProtokolle = this.protokoll.filter(p =>
+            erlaubteTypen.includes((p.verwendung_typ ?? '').toUpperCase())
+          );
+
+          // Map: mitglieder.pkid → Mitglied
+          const mitgliederMap = new Map<number, IMitglied>(
+            this.mitglieder.map((m: IMitglied) => [m.pkid, m])
+          );
+
+          // Nur die gefilterten Protokolle joinen
+          this.list_protokoll_mitglieder = gefilterteProtokolle.map((p: IAtemschutzGeraeteProtokoll) => {
+            const mitglied =
+              p.mitglied_id != null ? mitgliederMap.get(p.mitglied_id) : undefined;
+
+            return {
+              ...p,
+              stbnr: mitglied?.stbnr ?? null,
+              vorname: mitglied?.vorname ?? '',
+              nachname: mitglied?.nachname ?? '',
+            };
+          });
+
+          this.dataSource = new MatTableDataSource(this.list_protokoll_mitglieder);
+          this.dataSource.paginator = this.paginator ?? null;
+          this.dataSource.sort = this.sorts?.first ?? null;
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage("error", e);
+        }
+      },
+      error: (error: any) => {
+        this.globalDataService.errorAnzeigen(error);
+      }
+    });
+  }
+
+  applyFilter(value: string): void {
+    this.dataSource.filter = (value || '').trim().toLowerCase();
+    this.paginator?.firstPage();
+  }
+}

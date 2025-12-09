@@ -13,6 +13,7 @@ import { NewsExternComponent } from './news-extern/news-extern.component';
 import { AtemschutzMessgeraeteComponent } from './_template/atemschutz-messgeraete/atemschutz-messgeraete.component';
 import { AtemschutzGeraeteComponent } from './_template/atemschutz-geraete/atemschutz-geraete.component';
 import { AtemschutzMaskenComponent } from './_template/atemschutz-masken/atemschutz-masken.component';
+import { AtemschutzDienstbuchComponent } from './_template/atemschutz-dienstbuch/atemschutz-dienstbuch.component';
 
 export const routes: Routes = [
   {
@@ -41,6 +42,9 @@ export const routes: Routes = [
   },
   {
     path: 'atemschutz/messgeraete', component: AtemschutzMessgeraeteComponent
+  },
+  {
+    path: 'atemschutz/dienstbuch', component: AtemschutzDienstbuchComponent
   },
   {
     path: 'news', component: NewsComponent
