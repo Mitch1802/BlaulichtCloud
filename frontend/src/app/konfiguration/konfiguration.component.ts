@@ -45,7 +45,7 @@ export class KonfigurationComponent implements OnInit {
   });
 
   formKonfig = new FormGroup({
-    id: new FormControl(0),
+    id: new FormControl(''),
     plz: new FormControl('', Validators.required),
     ort: new FormControl('', Validators.required)
   });
@@ -133,7 +133,7 @@ export class KonfigurationComponent implements OnInit {
     const object = this.formKonfig.value;
 
     const idValue = this.formKonfig.controls["id"].value;
-    if (idValue === 0 || idValue === null) {
+    if (idValue === '' || idValue === null) {
       this.globalDataService.post(this.modul2, object, false).subscribe({
         next: (erg: any) => {
           try {

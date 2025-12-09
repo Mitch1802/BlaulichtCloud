@@ -1,5 +1,5 @@
 export interface IKonfiguration {
-    id: number,
+    id: string,
     plz: string,
     ort: string
 }

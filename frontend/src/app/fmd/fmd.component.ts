@@ -72,12 +72,12 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   get dropdownMitglieder(): IMitglied[] {
     const frei = this.freieMitglieder;
-    const currentId = this.formModul.controls['mitglied_id'].value as string;
+    const currentId = this.formModul.controls['mitglied_id'].value as number;
     let liste: IMitglied[];
 
-    if (currentId) {
-      const aktuell = this.mitglieder.find(m => m.pkid === currentId);
-      if (aktuell && !frei.some(m => m.pkid === currentId)) {
+    if (Number(currentId)) {
+      const aktuell = this.mitglieder.find(m => m.pkid === Number(currentId));
+      if (aktuell && !frei.some(m => m.pkid === Number(currentId))) {
         liste = [aktuell, ...frei];
       } else {
         liste = frei;
@@ -140,8 +140,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
   };
 
   formModul = new FormGroup({
-    id: new FormControl(0),
-    mitglied_id: new FormControl(''),
+    id: new FormControl(''),
+    mitglied_id: new FormControl(0),
     arzt: new FormControl(''),
     arzttyp: new FormControl(''),
     letzte_untersuchung: new FormControl('', [
@@ -350,8 +350,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
             this.updateChartData();
 
             this.formModul.reset({
-              id: 0,
-              mitglied_id: '',
+              id: '',
+              mitglied_id: 0,
               arzt: '',
               arzttyp: '',
               letzte_untersuchung: '',
@@ -387,8 +387,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
             this.dataSource.data = this.atstraeger;
 
             this.formModul.reset({
-              id: 0,
-              mitglied_id: '',
+              id: '',
+              mitglied_id: 0,
               arzt: '',
               arzttyp: '',
               letzte_untersuchung: '',
@@ -413,8 +413,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "ATS Träger nicht gespeichert!");
     this.formModul.reset({
-      id: 0,
-      mitglied_id: '',
+      id: '',
+      mitglied_id: 0,
       arzt: '',
       arzttyp: '',
       letzte_untersuchung: '',
@@ -441,8 +441,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
           this.updateChartData();
 
           this.formModul.reset({
-            id: 0,
-            mitglied_id: '',
+            id: '',
+            mitglied_id: 0,
             arzt: '',
             arzttyp: '',
             letzte_untersuchung: '',

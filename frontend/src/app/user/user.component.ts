@@ -49,7 +49,7 @@ export class UserComponent implements OnInit {
   });
 
   formModul = new FormGroup({
-    id: new FormControl(0),
+    id: new FormControl(''),
     username: new FormControl('', Validators.required),
     first_name: new FormControl('', Validators.required),
     last_name: new FormControl('', Validators.required),
@@ -164,7 +164,7 @@ export class UserComponent implements OnInit {
     const object = this.formModul.value;
     const idValue = this.formModul.controls["id"].value;
 
-    if (idValue === 0 || idValue === null) {
+    if (idValue === '' || idValue === null) {
       if (this.formModul.controls["password1"].value == "" || this.formModul.controls["password1"].value == "") {
         this.globalDataService.erstelleMessage("error", "Passwort 1 & 2 müssen ausgefüllt sein!");
         return

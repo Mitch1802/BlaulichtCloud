@@ -1,5 +1,5 @@
 export interface IAtemschutzGeraete {
-  pkid: string;
+  pkid: number;
   id: string;
   inv_nr: string;
   bezeichnung: string;

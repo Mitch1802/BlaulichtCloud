@@ -203,18 +203,20 @@ export class GlobalDataService {
   addFeldInArray(
     arrayGesamt: any[],
     array: any[],
-    feldName: string
+    feldName: string,
+    joinKey: string
   ): any[] {
-    for (let i = 0; i < array.length; i++) {
-      const kuerzel = array[i].kuerzel;
-      for (let x = 0; x < arrayGesamt.length; x++) {
-        if (kuerzel == arrayGesamt[x].kuerzel) {
-          array[i][feldName] = arrayGesamt[x][feldName];
-        }
-      }
-    }
+    const map = new Map(
+      arrayGesamt.map(item => [item[joinKey], item[feldName]])
+    );
 
-    return array;
+    return array.map(item => {
+      const key = item[joinKey];
+      if (map.has(key)) {
+        return { ...item, [feldName]: map.get(key) };
+      }
+      return item;
+    });
   }
 
   addAllFieldsToNumberArray(arrayGesamt: any[], array: any[]): any[] {
@@ -372,6 +374,9 @@ export class GlobalDataService {
     } else if (page == 'ATM_MG') {
       link = '/atemschutz/messgeraete';
       kuerzel = 'Messgeräte';
+    } else if (page == 'ATM_DB') {
+      link = '/atemschutz/dienstbuch';
+      kuerzel = 'Dienstbuch';
     } else if (page == 'NEWS') {
       link = '/news';
       kuerzel = 'News';

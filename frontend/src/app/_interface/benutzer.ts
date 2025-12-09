@@ -1,5 +1,5 @@
 export interface IBenutzer {
-    id: number,
+    id: string,
     username: string,
     name: string,
     first_name: string,

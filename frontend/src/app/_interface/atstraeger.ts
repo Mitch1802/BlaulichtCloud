@@ -1,6 +1,6 @@
 export interface IATSTraeger {
-    id: number,
-    mitglied_id: string,
+    id: string,
+    mitglied_id: number,
     arzt: string,
     arzttyp: string,
     letzte_untersuchung: string,

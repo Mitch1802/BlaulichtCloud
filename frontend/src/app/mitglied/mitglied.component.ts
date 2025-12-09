@@ -59,7 +59,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
   });
 
   formModul = new FormGroup({
-    id: new FormControl(0),
+    id: new FormControl(''),
     stbnr: new FormControl(0, Validators.required),
     vorname: new FormControl('', Validators.required),
     nachname: new FormControl('', Validators.required),
@@ -236,7 +236,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
           this.dataSource.data = this.mitglieder;
 
           this.formModul.reset({
-            id: 0,
+            id: '',
             stbnr: 0,
             vorname: '',
             nachname: '',
@@ -260,7 +260,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
   abbrechen(): void {
     this.globalDataService.erstelleMessage("info", "Mitglied nicht gespeichert!");
     this.formModul.reset({
-      id: 0,
+      id: '',
       stbnr: 0,
       vorname: '',
       nachname: '',
@@ -289,7 +289,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
             this.dataSource.data = this.mitglieder;
 
             this.formModul.reset({
-              id: 0,
+              id: '',
               stbnr: 0,
               vorname: '',
               nachname: '',
@@ -316,7 +316,7 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
             this.dataSource.data = this.mitglieder;
 
             this.formModul.reset({
-              id: 0,
+              id: '',
               stbnr: 0,
               vorname: '',
               nachname: '',
