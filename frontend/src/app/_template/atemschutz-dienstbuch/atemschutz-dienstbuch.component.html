@@ -7,9 +7,21 @@
         <mat-card-title>{{ title }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <hr>
+        <div class="row">
+            <h4 class="col-6 col-lg-2 mb-0">{{ jahrHeuer }}:</h4>
+            <p class="col-6 col-lg-4 mb-0">
+              <span>{{ formatDauer(dauerHeuer) }}</span>
+            </p>
+            <h4 class="col-6 col-lg-2 mb-0">{{ jahrLetztesJahr }}:</h4>
+            <p class="col-6 col-lg-4 mb-0">
+              <span>{{ formatDauer(dauerLetztesJahr) }}</span>
+            </p>
+          </div>
+        <hr>
         <mat-form-field
           appearance="outline"
-          class="mb-2"
+          class="mt-2"
           style="max-width: 320px"
         >
           <mat-label>Filter</mat-label>

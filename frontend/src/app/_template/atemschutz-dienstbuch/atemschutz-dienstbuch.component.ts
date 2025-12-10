@@ -33,6 +33,10 @@ export class AtemschutzDienstbuchComponent implements OnInit {
   modul = "atemschutz/geraete/dienstbuch";
 
   breadcrumb: any = [];
+  jahrHeuer: number = new Date().getFullYear();
+  dauerHeuer: number = 0;
+  jahrLetztesJahr: number = this.jahrHeuer - 1;
+  dauerLetztesJahr: number = 0;
 
   protokoll: IAtemschutzGeraetProtokoll[] = [];
   mitglieder: IMitglied[] = [];
@@ -83,6 +87,8 @@ export class AtemschutzDienstbuchComponent implements OnInit {
           this.dataSource = new MatTableDataSource(this.list_protokoll_mitglieder);
           this.dataSource.paginator = this.paginator ?? null;
           this.dataSource.sort = this.sorts?.first ?? null;
+
+          this.summenBerechnen(this.protokoll);
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
@@ -96,5 +102,30 @@ export class AtemschutzDienstbuchComponent implements OnInit {
   applyFilter(value: string): void {
     this.dataSource.filter = (value || '').trim().toLowerCase();
     this.paginator?.firstPage();
+  }
+
+  summenBerechnen(liste: IAtemschutzGeraetProtokoll[]): void {
+    for (const l of liste) {
+      const y = new Date(l.datum).getFullYear();
+      const d = l.verwendung_min;
+
+      if (y == this.jahrHeuer) {
+        this.dauerHeuer += d;
+      }else if (y == this.jahrLetztesJahr) {
+        this.dauerLetztesJahr += d;
+      }
+    }
+
+    console.log(this.dauerHeuer);
+    console.log(this.dauerLetztesJahr);
+  }
+
+  formatDauer(dauer: number): string {
+    if (dauer >= 60) {
+      return (dauer / 60).toFixed(2) + ' h oder ' + dauer + ' min'
+    }else {
+      return dauer + ' min'
+    }
+    
   }
 }
