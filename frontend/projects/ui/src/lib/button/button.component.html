@@ -1,0 +1,11 @@
+<button
+  mat-raised-button
+  [color]="color()"
+  [disabled]="disabled()"
+  [type]="type()"
+  [class.imr-button--outlined]="variant() === 'outlined'"
+  [class.imr-button--text]="variant() === 'text'"
+  (click)="onClick($event)"
+>
+  <ng-content></ng-content>
+</button>
