@@ -1,78 +1,181 @@
-import base64
-import io
-from datetime import datetime
-
-import qrcode
+import logging
+from django.db.models import Max
 from django.http import HttpResponse
-from django.template.loader import render_to_string
-from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
+
+from rest_framework import permissions
 from rest_framework.response import Response
-from playwright.sync_api import sync_playwright
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError
+
+from core_apps.common.permissions import any_of, HasAnyRolePermission, HasReadOnlyRolePermission
+from .models import PdfTemplate
+from .serializers import PdfTemplateSerializer
+from .services import PdfTemplateService
+
+logger = logging.getLogger(__name__)
 
 
-def _qr_base64_png(data: str) -> str:
-    qr = qrcode.QRCode(box_size=6, border=2)
-    qr.add_data(data)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
+# -----------------------------
+# CRUD ViewSet (ohne actions)
+# -----------------------------
+class PdfTemplateViewSet(ModelViewSet):
+    queryset = PdfTemplate.objects.all().order_by("key", "-version")
+    serializer_class = PdfTemplateSerializer
+    lookup_field = "id"
+    pagination_class = None
 
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    return base64.b64encode(buf.getvalue()).decode("utf-8")
+    # exakt dein Stil: Admin voll, Mitglied read-only
+    permission_classes = [
+        permissions.IsAuthenticated,
+        any_of(
+            HasAnyRolePermission.with_roles("ADMIN"),
+            HasReadOnlyRolePermission.with_roles("MITGLIED"),
+        ),
+    ]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        is_admin = HasAnyRolePermission.with_roles("ADMIN")().has_permission(self.request, self)
+        if not is_admin:
+            qs = qs.filter(status=PdfTemplate.Status.PUBLISHED)
+        return qs
+
+    def update(self, request, *args, **kwargs):
+        tmpl = self.get_object()
+        if tmpl.status == PdfTemplate.Status.PUBLISHED:
+            raise ValidationError("Published templates are immutable. Create a new version instead.")
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        tmpl = self.get_object()
+        if tmpl.status == PdfTemplate.Status.PUBLISHED:
+            raise ValidationError("Published templates are immutable. Create a new version instead.")
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        tmpl = self.get_object()
+        if tmpl.status == PdfTemplate.Status.PUBLISHED:
+            raise ValidationError("Published templates cannot be deleted. Create a new version instead.")
+        return super().destroy(request, *args, **kwargs)
 
 
-def _render_html(template_name: str, payload: dict) -> str:
-    # Beispiel: Logo als Base64 (optional)
-    # Wenn du ein echtes Logo hast, lies es hier ein und base64-encodiere es.
-    # logo_base64 = ...
-    logo_base64 = None
+# -----------------------------
+# Spezial-Endpunkte (APIView)
+# -----------------------------
 
-    ctx = {
-        "now": datetime.now(),
-        "payload": payload,
-        "qr_base64": _qr_base64_png(payload.get("qr_text", "https://example.com")),
-        "logo_base64": logo_base64,
-    }
-    return render_to_string(f"pdf/{template_name}.html", ctx)
+class PdfTemplatePublishView(APIView):
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
+    def post(self, request, template_id: int):
+        tmpl = get_object_or_404(PdfTemplate, id=template_id)
 
-@api_view(["GET"])
-def list_templates(request):
-    # hart codiert (später aus DB oder filesystem)
-    return Response([
-        {"key": "invoice_v1", "label": "Rechnung v1"},
-        {"key": "report_v1", "label": "Report v1"},
-    ])
+        if tmpl.status != PdfTemplate.Status.DRAFT:
+            raise ValidationError("Only DRAFT templates can be published.")
+
+        tmpl.publish()
+        tmpl.save(update_fields=["status", "published_at", "updated_at"])
+
+        return Response(PdfTemplateSerializer(tmpl).data)
 
 
-@api_view(["POST"])
-def preview_html(request, template_key: str):
-    html = _render_html(template_key, request.data or {})
-    return HttpResponse(html, content_type="text/html; charset=utf-8")
+class PdfTemplateNewVersionView(APIView):
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
+    def post(self, request, template_id: int):
+        tmpl = get_object_or_404(PdfTemplate, id=template_id)
 
-@api_view(["POST"])
-def render_pdf(request, template_key: str):
-    html = _render_html(template_key, request.data or {})
+        next_version = (PdfTemplate.objects.filter(key=tmpl.key).aggregate(v=Max("version"))["v"] or 0) + 1
 
-    header_html = render_to_string("pdf/_header.html", {"title": "Dokumenttitel"})
-    footer_html = render_to_string("pdf/_footer.html", {})
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch(args=["--no-sandbox"])
-        page = browser.new_page()
-        page.set_content(html, wait_until="networkidle")
-
-        pdf_bytes = page.pdf(
-            format="A4",
-            print_background=True,
-            display_header_footer=True,
-            header_template=header_html,
-            footer_template=footer_html,
-            margin={"top": "80px", "bottom": "70px", "left": "25px", "right": "25px"},
+        cloned = PdfTemplate.objects.create(
+            key=tmpl.key,
+            version=next_version,
+            label=request.data.get("label") or f"{tmpl.label} v{next_version}",
+            status=PdfTemplate.Status.DRAFT,
+            source=tmpl.source,
         )
-        browser.close()
 
-    resp = HttpResponse(pdf_bytes, content_type="application/pdf")
-    resp["Content-Disposition"] = f'inline; filename="{template_key}.pdf"'
-    return resp
+        return Response(PdfTemplateSerializer(cloned).data, status=201)
+
+
+class PdfTemplatePreviewView(APIView):
+    # Mitglieder dürfen Preview (POST), deshalb KEIN ReadOnlyRolePermission hier
+    permission_classes = [
+        permissions.IsAuthenticated,
+        HasAnyRolePermission.with_roles("ADMIN", "MITGLIED"),
+    ]
+
+    def post(self, request, template_id: int):
+        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+
+        is_admin = HasAnyRolePermission.with_roles("ADMIN")().has_permission(request, self)
+        if (not is_admin) and tmpl.status != PdfTemplate.Status.PUBLISHED:
+            raise ValidationError("Template not published.")
+
+        try:
+            html, _, _ = PdfTemplateService.render_html(tmpl, request.data or {})
+        except ValueError as e:
+            raise ValidationError(str(e))
+
+        return HttpResponse(html, content_type="text/html; charset=utf-8")
+
+
+class PdfTemplateRenderView(APIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        HasAnyRolePermission.with_roles("ADMIN", "MITGLIED"),
+    ]
+
+    def post(self, request, template_id: int):
+        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+
+        is_admin = HasAnyRolePermission.with_roles("ADMIN")().has_permission(request, self)
+        if (not is_admin) and tmpl.status != PdfTemplate.Status.PUBLISHED:
+            raise ValidationError("Template not published.")
+
+        try:
+            html, header_html, footer_html = PdfTemplateService.render_html(tmpl, request.data or {})
+        except ValueError as e:
+            raise ValidationError(str(e))
+
+        pdf_bytes = PdfTemplateService.render_pdf_bytes(html, header_html, footer_html)
+
+        resp = HttpResponse(pdf_bytes, content_type="application/pdf")
+        resp["Content-Disposition"] = f'inline; filename="{tmpl.key}_v{tmpl.version}.pdf"'
+        return resp
+
+
+class PdfTemplateTestView(APIView):
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
+
+    def post(self, request, template_id: int):
+        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+
+        sample_payload = {
+            "title": "Template Test",
+            "number": "TEST-2025-0001",
+            "company_name": "BlaulichtCloud",
+            "company_address": "Musterstraße 1, 1010 Wien",
+            "customer_name": "Max Mustermann",
+            "customer_address": "Testweg 10, 1020 Wien",
+            "qr_text": "https://blaulichtcloud.at/test",
+            "items": [
+                {"name": "Leistung A", "note": "Beschreibung", "qty": 1, "price": "100.00", "total": "100.00"},
+                {"name": "Material", "note": "", "qty": 2, "price": "15.00", "total": "30.00"},
+            ],
+            "subtotal": "130.00",
+            "tax": "26.00",
+            "total": "156.00",
+        }
+
+        try:
+            html, header_html, footer_html = PdfTemplateService.render_html(tmpl, sample_payload)
+        except ValueError as e:
+            raise ValidationError(str(e))
+
+        pdf_bytes = PdfTemplateService.render_pdf_bytes(html, header_html, footer_html)
+
+        resp = HttpResponse(pdf_bytes, content_type="application/pdf")
+        resp["Content-Disposition"] = f'inline; filename="TEST_{tmpl.key}_v{tmpl.version}.pdf"'
+        return resp
