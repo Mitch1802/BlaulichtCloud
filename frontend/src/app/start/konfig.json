@@ -1,0 +1,67 @@
+[
+  {
+    "icon": "healing",
+    "modul": "FMD",
+    "rolle": "ADMIN, FMD",
+    "routerlink": "/fmd"
+  },
+  {
+    "icon": "battery_alert",
+    "modul": "Atemschutz",
+    "rolle": "ADMIN, ATEMSCHUTZ",
+    "routerlink": "/atemschutz"
+  },
+  {
+    "icon": "event",
+    "modul": "Newsfeed",
+    "rolle": "ADMIN, NEWS",
+    "routerlink": "/news"
+  },
+  {
+    "icon": "construction",
+    "modul": "Inventar",
+    "rolle": "ADMIN, INVENTAR",
+    "routerlink": "/inventar"
+  },
+  {
+    "icon": "fire_truck",
+    "modul": "Fahrzeuge",
+    "rolle": "ADMIN, FAHRZEUG",
+    "routerlink": "/fahrzeug"
+  },
+  {
+    "icon": "euro",
+    "modul": "Verwaltung",
+    "rolle": "ADMIN, VERWALTUNG",
+    "routerlink": "/verwaltung"
+  },
+  {
+    "icon": "groups",
+    "modul": "Mitglieder",
+    "rolle": "ADMIN, VERWALTUNG",
+    "routerlink": "/mitglied"
+  },
+  {
+    "icon": "tune",
+    "modul": "Modul Konfiguration",
+    "rolle": "ADMIN",
+    "routerlink": "/modul_konfiguration"
+  },
+  {
+    "icon": "engineering",
+    "modul": "Benutzerverwaltung",
+    "rolle": "ADMIN",
+    "routerlink": "/benutzer"
+  },
+  {
+    "icon": "picture_as_pdf",
+    "modul": "PDF Templates",
+    "rolle": "ADMIN",
+    "routerlink": "/template"
+  },
+  {
+    "icon": "settings",
+    "modul": "Konfiguration",
+    "rolle": "ADMIN",
+    "routerlink": "/konfiguration"
+  }
