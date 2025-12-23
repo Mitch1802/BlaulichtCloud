@@ -383,6 +383,9 @@ export class GlobalDataService {
     } else if (page == 'INV') {
       link = '/inventar';
       kuerzel = 'Inventar';
+    } else if (page == 'PDF') {
+      link = '/pdf_templates';
+      kuerzel = 'PDF Templates';
     } else if (page == 'VER') {
       link = '/verwaltung';
       kuerzel = 'Verwaltung';

@@ -21,12 +21,10 @@ logger = logging.getLogger(__name__)
 # CRUD ViewSet (ohne actions)
 # -----------------------------
 class PdfTemplateViewSet(ModelViewSet):
-    queryset = PdfTemplate.objects.all().order_by("key", "-version")
+    queryset = PdfTemplate.objects.all().order_by("typ", "-version")
     serializer_class = PdfTemplateSerializer
     lookup_field = "id"
     pagination_class = None
-
-    # exakt dein Stil: Admin voll, Mitglied read-only
     permission_classes = [
         permissions.IsAuthenticated,
         any_of(
@@ -86,12 +84,12 @@ class PdfTemplateNewVersionView(APIView):
     def post(self, request, template_id: int):
         tmpl = get_object_or_404(PdfTemplate, id=template_id)
 
-        next_version = (PdfTemplate.objects.filter(key=tmpl.key).aggregate(v=Max("version"))["v"] or 0) + 1
+        next_version = (PdfTemplate.objects.filter(key=tmpl.typ).aggregate(v=Max("version"))["v"] or 0) + 1
 
         cloned = PdfTemplate.objects.create(
-            key=tmpl.key,
+            key=tmpl.typ,
             version=next_version,
-            label=request.data.get("label") or f"{tmpl.label} v{next_version}",
+            bezeichnung=request.data.get("bezeichnung") or f"{tmpl.bezeichnung} v{next_version}",
             status=PdfTemplate.Status.DRAFT,
             source=tmpl.source,
         )
@@ -142,7 +140,7 @@ class PdfTemplateRenderView(APIView):
         pdf_bytes = PdfTemplateService.render_pdf_bytes(html, header_html, footer_html)
 
         resp = HttpResponse(pdf_bytes, content_type="application/pdf")
-        resp["Content-Disposition"] = f'inline; filename="{tmpl.key}_v{tmpl.version}.pdf"'
+        resp["Content-Disposition"] = f'inline; filename="{tmpl.typ}_v{tmpl.version}.pdf"'
         return resp
 
 
@@ -177,5 +175,5 @@ class PdfTemplateTestView(APIView):
         pdf_bytes = PdfTemplateService.render_pdf_bytes(html, header_html, footer_html)
 
         resp = HttpResponse(pdf_bytes, content_type="application/pdf")
-        resp["Content-Disposition"] = f'inline; filename="TEST_{tmpl.key}_v{tmpl.version}.pdf"'
+        resp["Content-Disposition"] = f'inline; filename="TEST_{tmpl.typ}_v{tmpl.version}.pdf"'
         return resp
