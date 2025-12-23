@@ -56,7 +56,7 @@ export class PdfTemplatesComponent implements OnInit {
   router = inject(Router);
 
   title = 'PDF Templates';
-  modul = 'pdf';
+  modul = 'pdf/templates';
 
   typModul = [
     'ATEMSCHUTZ',
@@ -73,9 +73,9 @@ export class PdfTemplatesComponent implements OnInit {
   formModul = new FormGroup({
     id: new FormControl<string | ''>(''),
     typ: new FormControl<string>('', Validators.required),
-    version: new FormControl<number>(0, Validators.required),
+    version: new FormControl<number>(0),
     bezeichnung: new FormControl<string>('', Validators.required),
-    status: new FormControl<string>('', Validators.required),
+    status: new FormControl<string>(''),
     source: new FormControl<string>('', Validators.required),
   });
 
@@ -164,6 +164,18 @@ export class PdfTemplatesComponent implements OnInit {
     });
   }
 
+  publish(): void {
+
+  }
+
+  newVersion(): void {
+
+  }
+
+  test(): void {
+
+  }
+
   abbrechen(): void {
     this.globalDataService.erstelleMessage('info', 'Pdf Template nicht gespeichert!');
     this.router.navigate(['/pdf_template']);
@@ -171,8 +183,7 @@ export class PdfTemplatesComponent implements OnInit {
 
   neueDetails(): void {
     this.formModul.enable();
-    this.formModul.patchValue({ id: '', typ: '', version: 1, bezeichnung: '', status: '', source: '' });
-
+    this.formModul.patchValue({ id: '', typ: '', version: 1, bezeichnung: '', status: 'DRAFT', source: '' });
   }
 
   datenSpeichern(): void {
