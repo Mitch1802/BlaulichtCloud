@@ -1,4 +1,4 @@
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -289,15 +289,15 @@ export class GlobalDataService {
   }
 
   postBlob(modul: string, daten: any): Observable<Blob> {
-    let headers = this.ladeHeaders(true)
-      .set('Accept', '*/*');
-    const url = this.AppUrl + modul + '/';
-    const response: any = this.http.post(url, daten, {
-      headers: headers,
-      responseType: 'blob' as 'json'
-    }) as Observable<Blob>;
+    const isFD = typeof FormData !== 'undefined' && daten instanceof FormData;
+    const headers = this.ladeHeaders(isFD).set('Accept', 'application/pdf');
 
-    return response;
+    const url = this.AppUrl + modul + '/';
+
+    return this.http.post(url, daten, {
+      headers,
+      responseType: 'blob'
+    });
   }
 
   patch(modul: string, id: any, daten: any, filesVorhanden?: boolean): Observable<any[]> {
@@ -337,7 +337,7 @@ export class GlobalDataService {
     if (pageNumber == 2) {
       list.push(this.erstelleBreadcrumbLink(page2, true));
       sessionStorage.setItem('Page3', '');
-    }  else if (pageNumber >= 2) {
+    } else if (pageNumber >= 2) {
       list.push(this.erstelleBreadcrumbLink(page2, false));
     }
 

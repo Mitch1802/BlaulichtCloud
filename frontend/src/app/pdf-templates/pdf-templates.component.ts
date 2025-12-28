@@ -172,9 +172,30 @@ export class PdfTemplatesComponent implements OnInit {
 
   }
 
-  test(): void {
+  test(element: any): void {
+    if (!element?.id) return; // UUID, kein 0-check
 
+    const abfrageUrl = `${this.modul}/${element.id}/test`;
+
+    this.globalDataService.postBlob(abfrageUrl, {}).subscribe({
+      next: (blob: Blob) => {
+        // optional: sicherstellen, dass es wirklich ein PDF ist
+        if (blob.type && blob.type !== 'application/pdf') {
+          this.globalDataService.erstelleMessage('error', `Unerwarteter Content-Type: ${blob.type}`);
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+
+        // optional später:
+        // setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      },
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
+    });
   }
+
+
 
   abbrechen(): void {
     this.globalDataService.erstelleMessage('info', 'Pdf Template nicht gespeichert!');
