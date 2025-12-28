@@ -66,8 +66,8 @@ class PdfTemplateViewSet(ModelViewSet):
 class PdfTemplatePublishView(APIView):
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
-    def post(self, request, template_id: int):
-        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+    def post(self, request, id):
+        tmpl = get_object_or_404(PdfTemplate, id=id)
 
         if tmpl.status != PdfTemplate.Status.DRAFT:
             raise ValidationError("Only DRAFT templates can be published.")
@@ -81,8 +81,8 @@ class PdfTemplatePublishView(APIView):
 class PdfTemplateNewVersionView(APIView):
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
-    def post(self, request, template_id: int):
-        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+    def post(self, request, id):
+        tmpl = get_object_or_404(PdfTemplate, id=id)
 
         next_version = (PdfTemplate.objects.filter(key=tmpl.typ).aggregate(v=Max("version"))["v"] or 0) + 1
 
@@ -104,8 +104,8 @@ class PdfTemplatePreviewView(APIView):
         HasAnyRolePermission.with_roles("ADMIN", "MITGLIED"),
     ]
 
-    def post(self, request, template_id: int):
-        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+    def post(self, request, id):
+        tmpl = get_object_or_404(PdfTemplate, id=id)
 
         is_admin = HasAnyRolePermission.with_roles("ADMIN")().has_permission(request, self)
         if (not is_admin) and tmpl.status != PdfTemplate.Status.PUBLISHED:
@@ -125,8 +125,8 @@ class PdfTemplateRenderView(APIView):
         HasAnyRolePermission.with_roles("ADMIN", "MITGLIED"),
     ]
 
-    def post(self, request, template_id: int):
-        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+    def post(self, request, id):
+        tmpl = get_object_or_404(PdfTemplate, id=id)
 
         is_admin = HasAnyRolePermission.with_roles("ADMIN")().has_permission(request, self)
         if (not is_admin) and tmpl.status != PdfTemplate.Status.PUBLISHED:
@@ -147,8 +147,8 @@ class PdfTemplateRenderView(APIView):
 class PdfTemplateTestView(APIView):
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
-    def post(self, request, template_id: int):
-        tmpl = get_object_or_404(PdfTemplate, id=template_id)
+    def post(self, request, id):
+        tmpl = get_object_or_404(PdfTemplate, id=id)
 
         sample_payload = {
             "title": "Template Test",
