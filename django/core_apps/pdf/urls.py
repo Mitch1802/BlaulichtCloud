@@ -16,9 +16,9 @@ router.register(r"templates", PdfTemplateViewSet, basename="pdf-templates")
 urlpatterns = [
     path("", include(router.urls)),
 
-    path("templates/<int:template_id>/publish/", PdfTemplatePublishView.as_view(), name="pdf-template-publish"),
-    path("templates/<int:template_id>/new-version/", PdfTemplateNewVersionView.as_view(), name="pdf-template-new-version"),
-    path("templates/<int:template_id>/preview/", PdfTemplatePreviewView.as_view(), name="pdf-template-preview"),
-    path("templates/<int:template_id>/render/", PdfTemplateRenderView.as_view(), name="pdf-template-render"),
-    path("templates/<int:template_id>/test/", PdfTemplateTestView.as_view(), name="pdf-template-test"),
+    path("templates/<uuid:id>/publish/", PdfTemplatePublishView.as_view(), name="pdf-template-publish"),
+    path("templates/<uuid:id>/new-version/", PdfTemplateNewVersionView.as_view(), name="pdf-template-new-version"),
+    path("templates/<uuid:id>/preview/", PdfTemplatePreviewView.as_view(), name="pdf-template-preview"),
+    path("templates/<uuid:id>/render/", PdfTemplateRenderView.as_view(), name="pdf-template-render"),
+    path("templates/<uuid:id>/test/", PdfTemplateTestView.as_view(), name="pdf-template-test"),
 ]
