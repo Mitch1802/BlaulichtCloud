@@ -8,11 +8,13 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
+from rest_framework.renderers import StaticHTMLRenderer
 
 from core_apps.common.permissions import any_of, HasAnyRolePermission, HasReadOnlyRolePermission
 from .models import PdfTemplate
 from .serializers import PdfTemplateSerializer
 from .services import PdfTemplateService
+from .renderers import PdfRenderer
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +74,15 @@ class PdfTemplatePublishView(APIView):
         if tmpl.status != PdfTemplate.Status.DRAFT:
             raise ValidationError("Only DRAFT templates can be published.")
 
+        PdfTemplate.objects.filter(
+            typ=tmpl.typ,
+            bezeichnung=tmpl.bezeichnung,
+            status=PdfTemplate.Status.PUBLISHED,
+        ).exclude(id=tmpl.id).update(
+            status=PdfTemplate.Status.ARCHIVED,
+            published_at=None
+        )
+
         tmpl.publish()
         tmpl.save(update_fields=["status", "published_at", "updated_at"])
 
@@ -84,21 +95,25 @@ class PdfTemplateNewVersionView(APIView):
     def post(self, request, id):
         tmpl = get_object_or_404(PdfTemplate, id=id)
 
-        next_version = (PdfTemplate.objects.filter(key=tmpl.typ).aggregate(v=Max("version"))["v"] or 0) + 1
+        next_version = (
+            PdfTemplate.objects.filter(typ=tmpl.typ, bezeichnung=tmpl.bezeichnung)
+            .aggregate(v=Max("version"))["v"] or 0
+        ) + 1
 
         cloned = PdfTemplate.objects.create(
-            key=tmpl.typ,
+            typ=tmpl.typ,
+            bezeichnung=request.data.get("bezeichnung") or tmpl.bezeichnung,
             version=next_version,
-            bezeichnung=request.data.get("bezeichnung") or f"{tmpl.bezeichnung} v{next_version}",
             status=PdfTemplate.Status.DRAFT,
             source=tmpl.source,
         )
+
 
         return Response(PdfTemplateSerializer(cloned).data, status=201)
 
 
 class PdfTemplatePreviewView(APIView):
-    # Mitglieder dürfen Preview (POST), deshalb KEIN ReadOnlyRolePermission hier
+    renderer_classes = [StaticHTMLRenderer]
     permission_classes = [
         permissions.IsAuthenticated,
         HasAnyRolePermission.with_roles("ADMIN", "MITGLIED"),
@@ -116,10 +131,11 @@ class PdfTemplatePreviewView(APIView):
         except ValueError as e:
             raise ValidationError(str(e))
 
-        return HttpResponse(html, content_type="text/html; charset=utf-8")
+        return Response(html, content_type="text/html; charset=utf-8")
 
 
 class PdfTemplateRenderView(APIView):
+    renderer_classes = [PdfRenderer]
     permission_classes = [
         permissions.IsAuthenticated,
         HasAnyRolePermission.with_roles("ADMIN", "MITGLIED"),
@@ -139,12 +155,13 @@ class PdfTemplateRenderView(APIView):
 
         pdf_bytes = PdfTemplateService.render_pdf_bytes(html, header_html, footer_html)
 
-        resp = HttpResponse(pdf_bytes, content_type="application/pdf")
+        resp = Response(pdf_bytes, content_type="application/pdf")
         resp["Content-Disposition"] = f'inline; filename="{tmpl.typ}_v{tmpl.version}.pdf"'
         return resp
 
 
 class PdfTemplateTestView(APIView):
+    renderer_classes = [PdfRenderer]
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
 
     def post(self, request, id):
@@ -174,6 +191,6 @@ class PdfTemplateTestView(APIView):
 
         pdf_bytes = PdfTemplateService.render_pdf_bytes(html, header_html, footer_html)
 
-        resp = HttpResponse(pdf_bytes, content_type="application/pdf")
+        resp = Response(pdf_bytes, content_type="application/pdf")
         resp["Content-Disposition"] = f'inline; filename="TEST_{tmpl.typ}_v{tmpl.version}.pdf"'
         return resp

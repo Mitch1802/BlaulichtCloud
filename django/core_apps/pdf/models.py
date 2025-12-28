@@ -20,6 +20,10 @@ class PdfTemplate(TimeStampedModel):
     source = models.TextField(verbose_name=_("Source"))
     published_at = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        unique_together = ("typ", "bezeichnung", "version")
+        ordering = ["typ", "-version"]
+
 
     def publish(self):
         self.status = self.Status.PUBLISHED
