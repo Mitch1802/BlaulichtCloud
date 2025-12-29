@@ -18,9 +18,6 @@ _SECTION_RE = re.compile(
     re.DOTALL | re.IGNORECASE,
 )
 
-
-
-
 class PdfTemplateService:
     """
     Template Source Format (stored in DB as ONE string):
@@ -64,7 +61,7 @@ class PdfTemplateService:
 
     @staticmethod
     def build_context(payload: dict) -> dict:
-        logo_path = Path(settings.BASE_DIR) / "static" / "pdf" / "logo.png"
+        logo_path = Path(settings.ROOT_DIR) / "static" / "pdf" / "logo.png"
         logo_base64 = ""
         try:
             logo_base64 = PdfTemplateService.file_to_base64(logo_path)
