@@ -35,6 +35,11 @@ class PdfTemplateViewSet(ModelViewSet):
         ),
     ]
 
+    def _assert_mutable(self, tmpl: PdfTemplate):
+        if tmpl.status in (PdfTemplate.Status.PUBLISHED, PdfTemplate.Status.ARCHIVED):
+            raise ValidationError("Only DRAFT templates can be modified. Create a new version instead.")
+
+
     def get_queryset(self):
         qs = super().get_queryset()
         is_admin = HasAnyRolePermission.with_roles("ADMIN")().has_permission(self.request, self)
@@ -44,20 +49,17 @@ class PdfTemplateViewSet(ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         tmpl = self.get_object()
-        if tmpl.status == PdfTemplate.Status.PUBLISHED:
-            raise ValidationError("Published templates are immutable. Create a new version instead.")
+        self._assert_mutable(tmpl)
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
         tmpl = self.get_object()
-        if tmpl.status == PdfTemplate.Status.PUBLISHED:
-            raise ValidationError("Published templates are immutable. Create a new version instead.")
+        self._assert_mutable(tmpl)
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         tmpl = self.get_object()
-        if tmpl.status == PdfTemplate.Status.PUBLISHED:
-            raise ValidationError("Published templates cannot be deleted. Create a new version instead.")
+        self._assert_mutable(tmpl)
         return super().destroy(request, *args, **kwargs)
 
 
