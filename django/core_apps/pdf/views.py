@@ -168,20 +168,45 @@ class PdfTemplateTestView(APIView):
         tmpl = get_object_or_404(PdfTemplate, id=id)
 
         sample_payload = {
-            "title": "Template Test",
-            "number": "TEST-2025-0001",
-            "company_name": "BlaulichtCloud",
-            "company_address": "Musterstraße 1, 1010 Wien",
-            "customer_name": "Max Mustermann",
-            "customer_address": "Testweg 10, 1020 Wien",
-            "qr_text": "https://blaulichtcloud.at/test",
-            "items": [
-                {"name": "Leistung A", "note": "Beschreibung", "qty": 1, "price": "100.00", "total": "100.00"},
-                {"name": "Material", "note": "", "qty": 2, "price": "15.00", "total": "30.00"},
+            "company_name": "Freiwillige Feuerwehr Schwadorf",
+            "company_street": "Bruckerstraße 8a",
+            "company_plz": "2432",
+            "company_ort": "Schwadorf",
+            "company_email": "schwadorf@feuerwehr.gv.at",
+            "company_telefon": "02230 22 22",
+            "company_ceo": "HBI Wolfgang Niederauer",
+            "comapny_webseite": "www.ff-schwadorf.at",
+            "company_konto": "Freiwillige Feuerwehr Schwadorf",
+            "company_iban": "AT65 3282 3000 0380 4861",
+            "company_bic": "RLNWATWW823",
+
+            "customer_name": "Customer 1",
+            "customer_street": "Musterstraße 1",
+            "customer_plz": "0000",
+            "customer_ort": "Musterstadt",
+
+            "qr_text": "https://blaulichtcloud.at/",
+
+            "invoice_nummer": "EV-00",
+            "invoice_datum": "01.01.2026",
+            "invoice_items": [
+                {"name": "Material", "note": "Bemerkung", "qty": 2, "price": "15.00", "total": "30.00"}
             ],
-            "subtotal": "130.00",
-            "tax": "26.00",
-            "total": "156.00",
+            "invoice_hinweis": "",
+            "invoice_referenz": "",
+            "invoice_terms": "",
+            "invoice_anrede": "",
+            "invoice_kopftext": "",
+            "invoice_fusstext": "",
+
+            "title": "",
+            "betreff": "",
+            "einsatz_ort": "",
+            "einsatz_datum": "",
+            "einsatzberichtnummer": "",
+            "taetigkeit": "",
+
+
         }
 
         try:

@@ -58,7 +58,6 @@
             page-break-before: always;
         }
     </style>
-    <!--PDF:CSS-->
 </head>
 
 <body>
@@ -67,10 +66,10 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <strong>{{ payload.title|default:"Rechnung" }}</strong>
             <span>{{ now|date:"d.m.Y H:i" }}</span>
+            <img src="data:image/png;base64,{{ logo_base64 }}" style="height:60px;" alt="Logo">
         </div>
         <div style="border-bottom:1px solid #e0e0e0; margin-top:6px;"></div>
     </div>
-    <!--PDF:HEADER-->
 
 
 
@@ -82,16 +81,14 @@
             <span>Seite <span class="pageNumber"></span> / <span class="totalPages"></span></span>
         </div>
     </div>
-    <!--PDF:FOOTER-->
 
 
 
     <!--PDF:BODY-->
-
-    <h1>Rechnung {{ payload.number }}</h1>
+    <h1>Rechnung {{ payload.invoice_nummer }}</h1>
 
     <div class="muted">
-        Rechnungsdatum: {{ payload.invoice_date|default:"—" }}
+        Rechnungsdatum: {{ payload.invoice_datum|default:"—" }}
     </div>
 
     <br>
@@ -100,7 +97,8 @@
         <div style="flex:1;">
             <strong>Rechnung an</strong><br>
             {{ payload.customer_name }}<br>
-            {{ payload.customer_address }}
+            {{ payload.customer_street }}
+            {{ payload.customer_plz }} {{ payload.customer_ort }}
         </div>
 
         <div style="width:200px; text-align:center;">
@@ -139,7 +137,7 @@
         </tbody>
     </table>
 
-    <div class="totals">
+    <!-- <div class="totals">
         <table style="width:100%;">
             <tr>
                 <td class="muted">Zwischensumme</td>
@@ -160,9 +158,8 @@
     <div class="page-break"></div>
     <h2>Anmerkungen</h2>
     <p>{{ payload.notes }}</p>
-    {% endif %}
+    {% endif %} -->
 
-    <!--PDF:BODY-->
 
 </body>
 

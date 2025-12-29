@@ -3,8 +3,10 @@ import io
 import re
 from datetime import datetime
 from typing import Tuple
-
+from pathlib import Path
 import qrcode
+
+from django.conf import settings
 from django.template import Context, Template
 from playwright.sync_api import sync_playwright
 
@@ -15,6 +17,8 @@ _SECTION_RE = re.compile(
     r"<!--PDF:(CSS|HEADER|FOOTER|BODY)-->\s*(.*?)(?=(<!--PDF:(CSS|HEADER|FOOTER|BODY)-->|\Z))",
     re.DOTALL | re.IGNORECASE,
 )
+
+
 
 
 class PdfTemplateService:
@@ -28,7 +32,11 @@ class PdfTemplateService:
     NOTE:
       - CSS block SHOULD include <style>...</style> so you can test in LiveServer.
       - BODY is required. Others optional.
-    """
+    """    
+    
+    @staticmethod
+    def file_to_base64(path: Path) -> str:
+        return base64.b64encode(path.read_bytes()).decode("utf-8")
 
     @staticmethod
     def split_source(source: str) -> Tuple[str, str, str, str]:
@@ -56,12 +64,20 @@ class PdfTemplateService:
 
     @staticmethod
     def build_context(payload: dict) -> dict:
+        logo_path = Path(settings.BASE_DIR) / "static" / "pdf" / "logo.png"
+        logo_base64 = ""
+        try:
+            logo_base64 = PdfTemplateService.file_to_base64(logo_path)
+        except FileNotFoundError:
+            logo_base64 = ""
+
         return {
             "now": datetime.now(),
             "payload": payload,
             "qr_base64": PdfTemplateService.qr_base64_png(
                 payload.get("qr_text", "https://blaulichtcloud.at")
             ),
+            "logo_base64": logo_base64,
         }
 
     @staticmethod
@@ -120,3 +136,5 @@ class PdfTemplateService:
             browser.close()
 
         return pdf_bytes
+    
+
