@@ -1,166 +1,174 @@
-<!DOCTYPE html>
-<html lang="de">
+<!--PDF:CSS-->
+<style>
+	body {
+		margin: 0;
+		font-family: Arial;
+		font-size: 9pt;
+	}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Rechnung – Template Vorschau</title>
-    <!--PDF:CSS-->
-    <style>
-        body {
-            font-family: DejaVu Sans, Arial, sans-serif;
-            font-size: 12px;
-            color: #222;
-        }
+	/* Falzmarken */
+	.foldline {
+		position: fixed;
+		left: 0;
+		height: 0;
+		border-top: 0.5pt solid #000;
+		z-index: 9999;
+	}
+	.foldline1 {
+		top: 55mm;
+		width: 4mm;
+	}
+	.foldline3 {
+		top: 98.5mm;
+		width: 7mm;
+	}
+	.foldline2 {
+		top: 160mm;
+		width: 4mm;
+	}
 
-        h1 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
+	.table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 10mm;
+	}
+	.table th,
+	.table td {
+		border-bottom: 1px solid #ddd;
+		padding: 6px;
+	}
+	.table th {
+		background: #f5f5f5;
+		text-align: left;
+	}
+	.text-right {
+		text-align: right;
+	}
+	.muted {
+		color: #666;
+		font-size: 11px;
+	}
+</style>
 
-        h2 {
-            font-size: 14px;
-            margin-top: 20px;
-        }
+<!--PDF:HEADER-->
+<div style="width: 100%; padding: 0 25px; font-family: Arial; font-size: 10px">
+	<div
+		style="
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #000;
+			padding-bottom: 6px;
+		">
+		<div
+			style="
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				text-align: center;
+				width: 100%;
+			">
+			{% if logo_base64 %}
+			<img
+				src="data:image/png;base64,{{ logo_base64 }}"
+				style="height: 20mm; max-height: 20mm" />
+			{% endif %}
+			<div style="width: 100%">
+				<div
+					style="
+						font-size: 15pt;
+						font-weight: 700;
+						line-height: 20pt;
+					">
+					{{ payload.company_name }}
+				</div>
+				<div style="font-size: 7pt; font-weight: 700">
+					{{ payload.company_street }} | {{ payload.company_plz }} {{ payload.company_ort }}
+				</div>
+				<div style="font-size: 7pt; font-weight: 700">
+					E-Mail: {{ payload.company_email }} | Tel: {{ payload.company_telefon }}
+				</div>
+			</div>
+			{% if logo_base64 %}
+			<img
+				src="data:image/png;base64,{{ logo_base64 }}"
+				style="height:20mm; max-height:20mm; visibility: hidden;" />
+			{% endif %}
+		</div>
+		<!-- <div style="text-align:right;">
+      <div>{{ now|date:"d.m.Y" }}</div>
+      <div>Rechnungsnummer: {{ payload.invoice_nummer }}</div>
+    </div> -->
+	</div>
+</div>
 
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
+<!--PDF:FOOTER-->
+<div style="width: 100%; padding: 0 25px; font-size: 10px; color: #666">
+	<div style="border-top: 1px solid #e0e0e0; margin-bottom: 6px"></div>
+	<div style="display: flex; justify-content: space-between">
+		<span>BlaulichtCloud · Internes Dokument</span>
+		<span
+			>Seite <span class="pageNumber"></span> /
+			<span class="totalPages"></span
+		></span>
+	</div>
+</div>
 
-        .table th,
-        .table td {
-            border-bottom: 1px solid #ddd;
-            padding: 6px;
-        }
+<!--PDF:BODY-->
+{% if payload.print_fold_lines %}
+<div class="foldline foldline1"></div>
+<div class="foldline foldline3"></div>
+<div class="foldline foldline2"></div>
+{% endif %}
 
-        .table th {
-            background: #f5f5f5;
-            text-align: left;
-        }
+<h1>Rechnung {{ payload.invoice_nummer }}</h1>
 
-        .text-right {
-            text-align: right;
-        }
+<div class="muted">Rechnungsdatum: {{ payload.invoice_datum|default:"—" }}</div>
 
-        .muted {
-            color: #666;
-            font-size: 11px;
-        }
+<br />
 
-        .totals {
-            margin-top: 20px;
-            width: 300px;
-            margin-left: auto;
-        }
+<div style="display: flex; gap: 30px">
+	<div style="flex: 1">
+		<strong>Rechnung an</strong><br />
+		{{ payload.customer_name }}<br />
+		{{ payload.customer_street }}<br />
+		{{ payload.customer_plz }} {{ payload.customer_ort }}
+	</div>
 
-        .page-break {
-            page-break-before: always;
-        }
-    </style>
-</head>
+	<div style="width: 200px; text-align: center">
+		<img
+			src="data:image/png;base64,{{ qr_base64 }}"
+			alt="QR Code"
+			style="width: 140px; height: 140px" />
+		<div class="muted" style="word-break: break-all">
+			{{ payload.qr_text }}
+		</div>
+	</div>
+</div>
 
-<body>
-    <!--PDF:HEADER-->
-    <div style="width:100%; padding:0 25px; font-size:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <strong>{{ payload.title|default:"Rechnung" }}</strong>
-            <span>{{ now|date:"d.m.Y H:i" }}</span>
-            <img src="data:image/png;base64,{{ logo_base64 }}" style="height:60px;" alt="Logo">
-        </div>
-        <div style="border-bottom:1px solid #e0e0e0; margin-top:6px;"></div>
-    </div>
-
-
-
-    <!--PDF:FOOTER-->
-    <div style="width:100%; padding:0 25px; font-size:10px; color:#666;">
-        <div style="border-top:1px solid #e0e0e0; margin-bottom:6px;"></div>
-        <div style="display:flex; justify-content:space-between;">
-            <span>BlaulichtCloud · Internes Dokument</span>
-            <span>Seite <span class="pageNumber"></span> / <span class="totalPages"></span></span>
-        </div>
-    </div>
-
-
-
-    <!--PDF:BODY-->
-    <h1>Rechnung {{ payload.invoice_nummer }}</h1>
-
-    <div class="muted">
-        Rechnungsdatum: {{ payload.invoice_datum|default:"—" }}
-    </div>
-
-    <br>
-
-    <div style="display:flex; gap:30px;">
-        <div style="flex:1;">
-            <strong>Rechnung an</strong><br>
-            {{ payload.customer_name }}<br>
-            {{ payload.customer_street }}
-            {{ payload.customer_plz }} {{ payload.customer_ort }}
-        </div>
-
-        <div style="width:200px; text-align:center;">
-            <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code" style="width:140px; height:140px;">
-            <div class="muted" style="word-break:break-all;">
-                {{ payload.qr_text }}
-            </div>
-        </div>
-    </div>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Beschreibung</th>
-                <th class="text-right">Menge</th>
-                <th class="text-right">Preis</th>
-                <th class="text-right">Summe</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in payload.items %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>
-                    {{ item.name }}
-                    {% if item.note %}
-                    <div class="muted">{{ item.note }}</div>
-                    {% endif %}
-                </td>
-                <td class="text-right">{{ item.qty }}</td>
-                <td class="text-right">{{ item.price }} €</td>
-                <td class="text-right">{{ item.total }} €</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- <div class="totals">
-        <table style="width:100%;">
-            <tr>
-                <td class="muted">Zwischensumme</td>
-                <td class="text-right">{{ payload.subtotal }} €</td>
-            </tr>
-            <tr>
-                <td class="muted">MwSt</td>
-                <td class="text-right">{{ payload.tax }} €</td>
-            </tr>
-            <tr>
-                <td><strong>Gesamt</strong></td>
-                <td class="text-right"><strong>{{ payload.total }} €</strong></td>
-            </tr>
-        </table>
-    </div>
-
-    {% if payload.notes %}
-    <div class="page-break"></div>
-    <h2>Anmerkungen</h2>
-    <p>{{ payload.notes }}</p>
-    {% endif %} -->
-
-
-</body>
-
-</html>
+<table class="table">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Beschreibung</th>
+			<th class="text-right">Menge</th>
+			<th class="text-right">Preis</th>
+			<th class="text-right">Summe</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in payload.invoice_items %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>
+				{{ item.name }} {% if item.note %}
+				<div class="muted">{{ item.note }}</div>
+				{% endif %}
+			</td>
+			<td class="text-right">{{ item.qty }}</td>
+			<td class="text-right">{{ item.price }} €</td>
+			<td class="text-right">{{ item.total }} €</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

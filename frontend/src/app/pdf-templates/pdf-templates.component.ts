@@ -176,8 +176,11 @@ export class PdfTemplatesComponent implements OnInit {
     if (!element?.id) return; // UUID, kein 0-check
 
     const abfrageUrl = `${this.modul}/${element.id}/test`;
+    const payload = { 
+      "print_fold_lines": true, 
+    }
 
-    this.globalDataService.postBlob(abfrageUrl, {}).subscribe({
+    this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
       next: (blob: Blob) => {
         // optional: sicherstellen, dass es wirklich ein PDF ist
         if (blob.type && blob.type !== 'application/pdf') {

@@ -199,7 +199,7 @@ class PdfTemplateTestView(APIView):
             "invoice_kopftext": "",
             "invoice_fusstext": "",
 
-            "title": "",
+            "title": "Testdokument",
             "betreff": "",
             "einsatz_ort": "",
             "einsatz_datum": "",
