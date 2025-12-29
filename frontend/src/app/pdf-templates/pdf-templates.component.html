@@ -1,4 +1,7 @@
 <app-header [breadcrumb]="breadcrumb"></app-header>
+@if (loading$ | async) {
+<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
 
 <div class="row justify-content-center content">
   <div class="col-12 col-md-10 col-lg-8 p-0 m-0">
@@ -17,6 +20,19 @@
         >
           Hinzufügen
         </button>
+        
+        @if (tableVisible) {
+        <mat-form-field style="width: 220px;">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="statusFilter" [ngModelOptions]="{ standalone: true }" (selectionChange)="applyStatusFilter()">
+            <mat-option value="ALL">Alle</mat-option>
+            <mat-option value="DRAFT">Draft</mat-option>
+            <mat-option value="PUBLISHED">Published</mat-option>
+            <mat-option value="ARCHIVED">Archived</mat-option>
+          </mat-select>
+        </mat-form-field>
+        }
+
         <form
           [formGroup]="formModul"
           (ngSubmit)="datenSpeichern()"
@@ -39,7 +55,7 @@
             mat-raised-button
             color="accent"
             class="me-3 mb-3"
-            [hidden]="!formModul.valid"
+            [hidden]="readonlyMode || !formModul.valid"
             type="submit"
           >
             Daten speichern
@@ -84,6 +100,7 @@
                   matInput
                   formControlName="source"
                   rows="10"
+                  [disabled]="!formModul.controls['id'].value"
                 ></textarea>
               </mat-form-field>
             </div>
@@ -98,10 +115,11 @@
             Daten löschen
           </button>
         </form>
+        
         <table
           mat-table
           [dataSource]="dataSource"
-          [hidden]="!formModul.disabled"
+          [hidden]="!tableVisible"
           matSort
         >
           <ng-container matColumnDef="typ">
@@ -145,6 +163,26 @@
               >
                 <mat-icon class="m-0">bug_report</mat-icon>
               </button>
+              @if (element.status == 'DRAFT') {
+              <button
+                mat-raised-button
+                class="ms-2"
+                color="primary"
+                (click)="publish(element)"
+              >
+                <mat-icon class="m-0">public</mat-icon>
+              </button>
+              }
+              @if (element.status == 'PUBLISHED') {
+              <button
+                mat-raised-button
+                class="ms-2"
+                color="primary"
+                (click)="newVersion(element)"
+              >
+                <mat-icon class="m-0">upgrade</mat-icon>
+              </button>
+              }
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="sichtbareSpalten"></tr>

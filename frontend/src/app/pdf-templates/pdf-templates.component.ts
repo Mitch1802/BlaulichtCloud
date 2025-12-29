@@ -25,6 +25,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { IPdfTemplate } from '../_interface/pdf_template';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-pdf-templates',
@@ -44,19 +46,22 @@ import { MatOption, MatSelect } from '@angular/material/select';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatIcon
+    MatIcon,
+    MatProgressBarModule,
+    AsyncPipe
   ],
   templateUrl: './pdf-templates.component.html',
   styleUrl: './pdf-templates.component.sass'
 })
-export class PdfTemplatesComponent implements OnInit {
 
+export class PdfTemplatesComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   formatService = inject(FormatService);
   router = inject(Router);
 
   title = 'PDF Templates';
   modul = 'pdf/templates';
+  statusFilter: string = 'ALL';
 
   typModul = [
     'ATEMSCHUTZ',
@@ -78,6 +83,37 @@ export class PdfTemplatesComponent implements OnInit {
     status: new FormControl<string>(''),
     source: new FormControl<string>('', Validators.required),
   });
+  
+  readonlyMode = false;
+  loading$ = this.globalDataService.loading$;
+
+  get tableVisible(): boolean {
+    return this.formModul.disabled && (this.dataSource?.data?.length ?? 0) > 0;
+  }
+
+  private setReadonlyMode(on: boolean): void {
+    this.readonlyMode = on;
+
+    // welche Felder sollen NIE editierbar sein?
+    this.formModul.controls['status'].disable({ emitEvent: false });
+    this.formModul.controls['version'].disable({ emitEvent: false });
+
+    if (on) {
+      // Published/Archived: alles sperren
+      this.formModul.controls['typ'].disable({ emitEvent: false });
+      this.formModul.controls['bezeichnung'].disable({ emitEvent: false });
+      this.formModul.controls['source'].disable({ emitEvent: false });
+    } else {
+      // Draft: editierbar
+      this.formModul.controls['typ'].enable({ emitEvent: false });
+      this.formModul.controls['bezeichnung'].enable({ emitEvent: false });
+      this.formModul.controls['source'].enable({ emitEvent: false });
+    }
+  }
+
+  applyStatusFilter(): void {
+    this.dataSource.filter = JSON.stringify({ status: this.statusFilter });
+  }
 
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '2');
@@ -86,18 +122,23 @@ export class PdfTemplatesComponent implements OnInit {
 
     this.formModul.disable();
 
+    this.dataSource.filterPredicate = (data: IPdfTemplate, filter: string) => {
+      const f = JSON.parse(filter || '{}') as { status?: string };
+      if (!f.status || f.status === 'ALL') return true;
+      return (data.status || '').toUpperCase() === f.status.toUpperCase();
+    };
+
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
           this.pdfTemplateArray = this.convertNewsDate(erg) as IPdfTemplate[];
           this.dataSource.data = this.pdfTemplateArray;
+          this.applyStatusFilter();
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
         }
       },
-      error: (error: any) => {
-        this.globalDataService.errorAnzeigen(error);
-      }
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
     });
   }
 
@@ -156,6 +197,7 @@ export class PdfTemplatesComponent implements OnInit {
             status: details.status,
             source: details.source,
           });
+          this.setReadonlyMode(details.status === 'PUBLISHED' || details.status === 'ARCHIVED');
         } catch (e: any) {
           this.globalDataService.erstelleMessage('error', e);
         }
@@ -164,41 +206,74 @@ export class PdfTemplatesComponent implements OnInit {
     });
   }
 
-  publish(): void {
+  publish(element: any): void {
+    if (!element?.id) return;
+    const abfrageUrl = `${this.modul}/${element.id}/publish`;
+    const payload = {};
 
-  }
+    this.globalDataService.post(abfrageUrl, payload).subscribe({
+      next: (erg: any) => {
+        try {
+          const updated: any = erg;
+          this.pdfTemplateArray = this.pdfTemplateArray
+            .map(m => m.id === updated.id ? updated : m)
+            .sort((a, b) => (a.typ || '').localeCompare(b.typ || ''));
 
-  newVersion(): void {
-
-  }
-
-  test(element: any): void {
-    if (!element?.id) return; // UUID, kein 0-check
-
-    const abfrageUrl = `${this.modul}/${element.id}/test`;
-    const payload = { 
-      "print_fold_lines": true, 
-    }
-
-    this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
-      next: (blob: Blob) => {
-        // optional: sicherstellen, dass es wirklich ein PDF ist
-        if (blob.type && blob.type !== 'application/pdf') {
-          this.globalDataService.erstelleMessage('error', `Unerwarteter Content-Type: ${blob.type}`);
-          return;
+          this.dataSource.data = this.pdfTemplateArray;
+          this.applyStatusFilter();
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
         }
-
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-
-        // optional später:
-        // setTimeout(() => URL.revokeObjectURL(url), 60_000);
       },
       error: (error: any) => this.globalDataService.errorAnzeigen(error)
     });
   }
 
+  newVersion(element: any): void {
+    if (!element?.id) return;
+    const abfrageUrl = `${this.modul}/${element.id}/new-version`;
+    const payload = {};
 
+    this.globalDataService.post(abfrageUrl, payload).subscribe({
+      next: (erg: any) => {
+        try {
+          const newMask: IPdfTemplate = erg;
+          this.pdfTemplateArray.push(newMask);
+          this.pdfTemplateArray.sort((a, b) => {
+            const typCompare = a.typ.localeCompare(b.typ);
+            if (typCompare !== 0) {
+              return typCompare;
+            }
+            return b.version - a.version;
+          });
+          this.dataSource.data = this.pdfTemplateArray;
+          this.applyStatusFilter();
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
+        }
+      },
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
+    });
+  }
+
+  test(element: any): void {
+    if (!element?.id) return;
+    const abfrageUrl = `${this.modul}/${element.id}/test`;
+    const payload = { print_fold_lines: true };
+
+    this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
+      next: (blob: Blob) => {
+        if (blob.size === 0) {
+          this.globalDataService.erstelleMessage('error', 'PDF ist leer (0 Bytes).');
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
+    });
+  }
 
   abbrechen(): void {
     this.globalDataService.erstelleMessage('info', 'Pdf Template nicht gespeichert!');
@@ -208,6 +283,7 @@ export class PdfTemplatesComponent implements OnInit {
   neueDetails(): void {
     this.formModul.enable();
     this.formModul.patchValue({ id: '', typ: '', version: 1, bezeichnung: '', status: 'DRAFT', source: '' });
+    this.setReadonlyMode(false);
   }
 
   datenSpeichern(): void {
@@ -228,6 +304,7 @@ export class PdfTemplatesComponent implements OnInit {
             this.dataSource.data = this.pdfTemplateArray;
             this.resetFormNachAktion();
             this.globalDataService.erstelleMessage('success', 'Pdf Template erfolgreich gespeichert!');
+            this.applyStatusFilter();
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
           }
@@ -242,11 +319,12 @@ export class PdfTemplatesComponent implements OnInit {
             const updated: any = erg;
             this.pdfTemplateArray = this.pdfTemplateArray
               .map(m => m.id === updated.id ? updated : m)
-              .sort((a, b) => a.typ - b.typ);
+              .sort((a, b) => (a.typ || '').localeCompare(b.typ || ''));
 
             this.dataSource.data = this.pdfTemplateArray;
             this.resetFormNachAktion();
             this.globalDataService.erstelleMessage('success', 'Pdf Template erfolgreich geändert!');
+            this.applyStatusFilter();
           } catch (e: any) {
             this.globalDataService.erstelleMessage('error', e);
           }

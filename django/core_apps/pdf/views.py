@@ -59,7 +59,6 @@ class PdfTemplateViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         tmpl = self.get_object()
-        self._assert_mutable(tmpl)
         return super().destroy(request, *args, **kwargs)
 
 

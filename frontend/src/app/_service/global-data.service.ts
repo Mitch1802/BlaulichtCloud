@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
 import { MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, finalize } from 'rxjs';
 import { environment } from "src/environments/environment";
 
 
@@ -22,7 +22,20 @@ export class GlobalDataService {
   Author = "Ing. M. Reichenauer";
   AppUrl: string = environment.apiUrl;
   MaxUploadSize = 20480; // 20 MB => 1024 KB = 1 MB
-  MessageShowInSeconds = 5; // Sekunden
+  MessageShowInSeconds = 5; // Sekundenloading$ = new BehaviorSubject<boolean>(false);
+  private loadingCount = 0;
+  loading$ = new BehaviorSubject<boolean>(false);
+
+  private setLoading(on: boolean) {
+    this.loadingCount += on ? 1 : -1;
+    if (this.loadingCount < 0) this.loadingCount = 0;
+    this.loading$.next(this.loadingCount > 0);
+  }
+
+  private withLoading<T>(obs: Observable<T>): Observable<T> {
+    this.setLoading(true);
+    return obs.pipe(finalize(() => this.setLoading(false)));
+  }
 
   abmelden(): void {
     const modul = 'auth/logout';
@@ -272,20 +285,20 @@ export class GlobalDataService {
 
     const response: any = this.http.get<any[]>(url, { headers: headers });
 
-    return response;
+    return this.withLoading(response);
   }
 
   getURL(url: string): Observable<any[]> {
     const response: any = this.http.get<any[]>(url);
 
-    return response;
+    return this.withLoading(response);
   }
 
   post(modul: string, daten: any, filesVorhanden?: boolean): Observable<any[]> {
     const isFD = typeof FormData !== 'undefined' && daten instanceof FormData;
     const headers = this.ladeHeaders(isFD ?? false);
     const url = this.AppUrl + modul + '/';
-    return this.http.post<any[]>(url, daten, { headers });
+    return this.withLoading(this.http.post<any[]>(url, daten, { headers }));
   }
 
   postBlob(modul: string, daten: any): Observable<Blob> {
@@ -294,17 +307,17 @@ export class GlobalDataService {
 
     const url = this.AppUrl + modul + '/';
 
-    return this.http.post(url, daten, {
+    return this.withLoading(this.http.post(url, daten, {
       headers,
       responseType: 'blob'
-    });
+    }));
   }
 
   patch(modul: string, id: any, daten: any, filesVorhanden?: boolean): Observable<any[]> {
     const isFD = typeof FormData !== 'undefined' && daten instanceof FormData;
     const headers = this.ladeHeaders(isFD ?? false);
     const url = `${this.AppUrl}${modul}/${id}/`;
-    return this.http.patch<any[]>(url, daten, { headers });
+    return this.withLoading(this.http.patch<any[]>(url, daten, { headers }));
   }
 
   delete(modul: string, id: any): Observable<any[]> {
@@ -312,7 +325,7 @@ export class GlobalDataService {
     const url = this.AppUrl + modul + '/' + id + '/';
     const response: any = this.http.delete<any[]>(url, { headers: headers });
 
-    return response;
+    return this.withLoading(response);
   }
 
   ladeBreadcrumb(): any[] {
