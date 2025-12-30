@@ -207,7 +207,10 @@ class PdfTemplateTestView(APIView):
             "einsatzberichtnummer": "",
             "taetigkeit": "",
 
-
+            "fw_nummer": "03313",
+            "mitglied_stbnr": "123",
+            "mitglied_vorname": "Max",
+            "mitglied_zuname": "Mustermann"
         }
 
         try:
