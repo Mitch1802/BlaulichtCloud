@@ -667,4 +667,39 @@ export class FmdComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  printChecklist(element: any): void {
+    if (!element?.id) return;
+    const idPdfCheckliste = this.modul_konfig['idPdfCheckliste'];
+    const abfrageUrl = `pdf/templates/${idPdfCheckliste}/render`;
+
+    const payload = {
+      "company_name": "Freiwillige Feuerwehr Schwadorf",
+      "company_street": "Bruckerstraße 8a",
+      "company_plz": "2432",
+      "company_ort": "Schwadorf",
+      "company_email": "schwadorf@feuerwehr.gv.at",
+      "company_telefon": "02230 22 22",
+      "fw_nummer": "03313",
+      "mitglied_stbnr": element.stbnr,
+      "mitglied_vorname": element.vorname,
+      "mitglied_zuname": element.nachname,
+      "mitglied_alter": this.berechneAlter(element.geburtsdatum)
+    }
+
+    this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
+      next: (blob: Blob) => {
+        if (blob.size === 0) {
+          this.globalDataService.erstelleMessage('error', 'PDF ist leer (0 Bytes).');
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
+    });
+  }
 }
+
+

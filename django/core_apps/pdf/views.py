@@ -208,9 +208,10 @@ class PdfTemplateTestView(APIView):
             "taetigkeit": "",
 
             "fw_nummer": "03313",
-            "mitglied_stbnr": "123",
+            "mitglied_stbnr": 123,
             "mitglied_vorname": "Max",
-            "mitglied_zuname": "Mustermann"
+            "mitglied_zuname": "Mustermann",
+            "mitglied_alter": 99,
         }
 
         try:

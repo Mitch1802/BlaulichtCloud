@@ -1,0 +1,216 @@
+<!--PDF:CSS-->
+<style>
+	/* Hinweis: Header und Footer nur Inline Css! */
+	body {
+		margin: 0;
+		font-family: Arial;
+		font-size: 11px;
+	}
+
+	main {
+		margin-top: 100px;
+		margin-left: 50px;
+		margin-right: 50px;
+	}
+
+	.main__header {
+		text-align: center;
+	}
+
+	.main__header-title {
+		font-size: 30px;
+	}
+
+	.main__header-subtitle {
+		font-size: 20px;
+	}
+
+	.main__mitglied {
+		margin-top: 50px;
+		font-size: 20px;
+	}
+
+	.main__mitglied th {
+		text-align: left;
+	}
+
+	.main__mitglied td {
+		text-align: left;
+		padding-left: 50px;
+	}
+
+	.main__fragebogen {
+		margin-top: 100px;
+		width: 100%;
+	}
+
+	.main__fragebogen th {
+		text-align: left;
+		font-size: 15px;
+	}
+
+	.main__fragebogen td {
+		text-align: left;
+		font-size: 15px;
+		line-height: 30px;
+	}
+
+	.main__fragebogen td.center {
+		padding-left: 50px;
+	}
+</style>
+
+<!--PDF:HEADER-->
+<header
+	style="width: 100%; padding: 0 25px; font-family: Arial; font-size: 10px">
+	<div
+		style="
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #000;
+			padding-bottom: 6px;
+		">
+		<div
+			style="
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				text-align: center;
+				width: 100%;
+			">
+			{% if logo_base64 %}
+			<img
+				src="data:image/png;base64,{{ logo_base64 }}"
+				style="height: 20mm; max-height: 20mm" />
+			{% endif %}
+			<div style="width: 100%">
+				<div
+					style="
+						font-size: 15pt;
+						font-weight: 700;
+						line-height: 20pt;
+					">
+					{{ payload.company_name }}
+				</div>
+				<div style="font-size: 7pt; font-weight: 700">
+					{{ payload.company_street }} | {{ payload.company_plz }} 
+					{{ payload.company_ort }}
+				</div>
+				<div style="font-size: 7pt; font-weight: 700">
+					E-Mail: {{ payload.company_email }} | Tel: 
+					{{ payload.company_telefon }}
+				</div>
+			</div>
+			{% if logo_base64 %}
+			<img
+				src="data:image/png;base64,{{ logo_base64 }}"
+				style="height: 20mm; max-height: 20mm; visibility: hidden" />
+			{% endif %}
+		</div>
+	</div>
+</header>
+
+<!--PDF:FOOTER-->
+<footer style="width: 100%; padding: 0 25px; font-size: 10px; color: #666">
+	<div style="border-top: 1px solid #e0e0e0; margin-bottom: 6px"></div>
+	<div style="display: flex; justify-content: space-between">
+		<span>BlaulichtCloud · Internes Dokument</span>
+		<span
+			>Seite <span class="pageNumber"></span> /
+			<span class="totalPages"></span
+		></span>
+	</div>
+</footer>
+
+<!--PDF:BODY-->
+<main>
+	<div class="main__header">
+		<h1 class="main__header-title">Checkliste</h1>
+		<hr />
+		<h2 class="main__header-subtitle">Atemschutz – Erstuntersuchung</h2>
+	</div>
+
+	<div class="main__mitglied">
+		<table>
+			<tr>
+				<th>Feuerwehrnummer:</th>
+				<td>{{ payload.fw_nummer }}</td>
+			</tr>
+			<tr>
+				<th>Zuname:</th>
+				<td>{{ payload.mitglied_zuname }}</td>
+			</tr>
+			<tr>
+				<th>Vorname:</th>
+				<td>{{ payload.mitglied_vorname }}</td>
+			</tr>
+			<tr>
+				<th>Standesbuchnummer:</th>
+				<td>{{ payload.mitglied_stbnr }}</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="main__fragebogen">
+		<table>
+			{% if payload.mitglied_alter <= 18 %}
+			<tr>
+				<th colspan="2">Feuerwehrmitglied bis zum vollendeten 18. Lebensjahr</th>
+			</tr>
+			<tr>
+				<td>
+					<ol type="a">
+						<li>Allgemeine Einsatztauglichkeit</li>
+						<ol type="a">
+							<li>Persönliches Gespräch FW Kommandant</li>
+							<li>Medizinischer Fragebogen/ Anhang 2	</li>
+							<li>Bestätigung der allg. Einsatztauglichkeit und ATS Tauglichkeit/ Anhang 3</li>
+							<li>Klinische Untersuchung durch den FW Arzt oder betreuenden Arzt</li>
+						</ol>
+						<li>Erfolgreicher Leistungstest (nur Cooper-Test oder Fahrrad-Test)</li>
+					</ol>
+				</td>
+				<td class="center">
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" />
+				</td>
+			</tr>
+			{% endif %}
+			{% if payload.mitglied_alter > 18 %}
+			<tr>
+				<th colspan="2">Feuerwehrmitglied ab vollendeten 18. Lebensjahr bis vollendeten 65. Lebensjahr</th>
+			</tr>
+			<tr>
+				<td>
+					<ol type="a">
+						<li>Allgemeine Einsatztauglichkeit</li>
+						<ol type="a">
+							<li>Persönliches Gespräch FW Kommandant</li>
+							<li>Medizinischer Fragebogen/ Anhang 2	</li>
+							<li>Bestätigung der allg. Einsatztauglichkeit und ATS Tauglichkeit/ Anhang 3</li>
+							<li>Klinische Untersuchung durch den FW Arzt oder betreuenden Arzt</li>
+						</ol>
+						<li>Erfolgreicher Leistungstest (nur Cooper-Test oder Fahrrad-Test)</li>
+						<li>Untersuchung beim praktischen Arzt (nicht älter als 18 Monate)</li>
+					</ol>
+				</td>
+				<td class="center">
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" />
+				</td>
+			</tr>
+			{% endif %}
+		</table>
+	</div>
+	
+</main>
