@@ -169,17 +169,18 @@ class PdfTemplateTestView(APIView):
         tmpl = get_object_or_404(PdfTemplate, id=id)
 
         sample_payload = {
-            "company_name": "Freiwillige Feuerwehr Schwadorf",
-            "company_street": "Bruckerstraße 8a",
-            "company_plz": "2432",
-            "company_ort": "Schwadorf",
-            "company_email": "schwadorf@feuerwehr.gv.at",
-            "company_telefon": "02230 22 22",
-            "company_ceo": "HBI Wolfgang Niederauer",
-            "comapny_webseite": "www.ff-schwadorf.at",
-            "company_konto": "Freiwillige Feuerwehr Schwadorf",
-            "company_iban": "AT65 3282 3000 0380 4861",
-            "company_bic": "RLNWATWW823",
+            "fw_name": "Freiwillige Feuerwehr Schwadorf",
+            "fw_street": "Bruckerstraße 8a",
+            "fw_plz": "2432",
+            "fw_ort": "Schwadorf",
+            "fw_email": "schwadorf@feuerwehr.gv.at",
+            "fw_telefon": "02230 22 22",
+            "fw_ceo": "HBI Wolfgang Niederauer",
+            "fw_webseite": "www.ff-schwadorf.at",
+            "fw_konto": "Freiwillige Feuerwehr Schwadorf",
+            "fw_iban": "AT65 3282 3000 0380 4861",
+            "fw_bic": "RLNWATWW823",
+            "fw_nummer": "03313",
 
             "customer_name": "Customer 1",
             "customer_street": "Musterstraße 1",
@@ -201,17 +202,17 @@ class PdfTemplateTestView(APIView):
             "invoice_fusstext": "",
 
             "title": "Testdokument",
-            "betreff": "",
-            "einsatz_ort": "",
-            "einsatz_datum": "",
-            "einsatzberichtnummer": "",
-            "taetigkeit": "",
+            "betreff": "...",
+            "einsatz_ort": "B10 Schwadorf",
+            "einsatz_datum": "01.01.2026",
+            "einsatzberichtnummer": "25/12",
+            "taetigkeit": "Reinigung der Straße nach VU...",
 
-            "fw_nummer": "03313",
             "mitglied_stbnr": 123,
             "mitglied_vorname": "Max",
             "mitglied_zuname": "Mustermann",
-            "mitglied_alter": 99,
+            "mitglied_alter": 17,
+            "mitglied_letzte_untersuchung": ""
         }
 
         try:
