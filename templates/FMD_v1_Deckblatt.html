@@ -58,6 +58,14 @@
 	.main__fragebogen td.center {
 		padding-left: 50px;
 	}
+
+	.main__fragebogen ul ul, .main__fragebogen ol ol {
+		font-size: 13px;
+	}
+
+	.main__fragebogen__folgeuntersuchung-beitext {
+		font-size: 12px;
+	}
 </style>
 
 <!--PDF:HEADER-->
@@ -91,15 +99,15 @@
 						font-weight: 700;
 						line-height: 20pt;
 					">
-					{{ payload.company_name }}
+					{{ payload.fw_name }}
 				</div>
 				<div style="font-size: 7pt; font-weight: 700">
-					{{ payload.company_street }} | {{ payload.company_plz }} 
-					{{ payload.company_ort }}
+					{{ payload.fw_street }} | {{ payload.fw_plz }} 
+					{{ payload.fw_ort }}
 				</div>
 				<div style="font-size: 7pt; font-weight: 700">
-					E-Mail: {{ payload.company_email }} | Tel: 
-					{{ payload.company_telefon }}
+					E-Mail: {{ payload.fw_email }} | Tel: 
+					{{ payload.fw_telefon }}
 				</div>
 			</div>
 			{% if logo_base64 %}
@@ -115,7 +123,7 @@
 <footer style="width: 100%; padding: 0 25px; font-size: 10px; color: #666">
 	<div style="border-top: 1px solid #e0e0e0; margin-bottom: 6px"></div>
 	<div style="display: flex; justify-content: space-between">
-		<span>BlaulichtCloud · Internes Dokument</span>
+		<span>Quelle: Dienstanweisung Tauglichkeitsuntersuchung 1.5.3 / Version 05/25</span>
 		<span
 			>Seite <span class="pageNumber"></span> /
 			<span class="totalPages"></span
@@ -128,7 +136,11 @@
 	<div class="main__header">
 		<h1 class="main__header-title">Checkliste</h1>
 		<hr />
+		{% if payload.mitglied_letzte_untersuchung == "" %}
 		<h2 class="main__header-subtitle">Atemschutz – Erstuntersuchung</h2>
+		{% else %}
+		<h2 class="main__header-subtitle">Atemschutz – Folgeuntersuchung</h2>
+		{% endif %}
 	</div>
 
 	<div class="main__mitglied">
@@ -153,7 +165,8 @@
 	</div>
 
 	<div class="main__fragebogen">
-		<table>
+		{% if payload.mitglied_letzte_untersuchung == "" %}
+		<table class="main__fragebogen__erstuntersuchung">
 			{% if payload.mitglied_alter <= 18 %}
 			<tr>
 				<th colspan="2">Feuerwehrmitglied bis zum vollendeten 18. Lebensjahr</th>
@@ -180,8 +193,7 @@
 					<input type="checkbox" />
 				</td>
 			</tr>
-			{% endif %}
-			{% if payload.mitglied_alter > 18 %}
+			{% elif payload.mitglied_alter > 18 %}
 			<tr>
 				<th colspan="2">Feuerwehrmitglied ab vollendeten 18. Lebensjahr bis vollendeten 65. Lebensjahr</th>
 			</tr>
@@ -196,7 +208,7 @@
 							<li>Klinische Untersuchung durch den FW Arzt oder betreuenden Arzt</li>
 						</ol>
 						<li>Erfolgreicher Leistungstest (nur Cooper-Test oder Fahrrad-Test)</li>
-						<li>Untersuchung beim praktischen Arzt (nicht älter als 18 Monate)</li>
+						<li>Untersuchung beim praktischen Arzt<br>(Untersuchungstermin darf nicht mehr als 18 Monate zurückliegen)</li>
 					</ol>
 				</td>
 				<td class="center">
@@ -206,11 +218,82 @@
 					<input type="checkbox" /><br>
 					<input type="checkbox" /><br>
 					<input type="checkbox" /><br>
+					<input type="checkbox" /><br><br>
+				</td>
+			</tr>
+			{% endif %}
+		</table>
+		{% else %}
+		<table class="main__fragebogen__folgeuntersuchung">
+			{% if payload.mitglied_alter <= 40 %}
+			<tr>
+				<th colspan="2">Altersgruppe vom vollendeten 18. Lebensjahr bis vollendeten 40. Lebensjahr</th>
+			</tr>
+			<tr>
+				<td>
+					<ul style="list-style-type: none;">
+						<li>Jährlicher Leistungstest</li>
+						<li>Untersuchungsintervall: 5 Jahre
+							<ul>
+								<li>Medizinischer Fragebogen</li>
+								<li>Untersuchung beim praktischen Arzt (inkl. Bestätigung, siehe Beilage 5)</li>
+							</ul>
+						</li>
+					</ul>
+				</td>
+				<td class="center">
+					<input type="checkbox" /><br><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" />
+				</td>
+			</tr>
+			{% elif payload.mitglied_alter > 40 and payload.mitglied_alter <= 60 %}
+			<tr>
+				<th colspan="2">Altersgruppe vom vollendeten 40. Lebensjahr bis zum vollendeten 60. Lebensjahr</th>
+			</tr>
+			<tr>
+				<td>
+					<ul style="list-style-type: none;">
+						<li>Jährlicher Leistungstest</li>
+						<li>Untersuchungsintervall: 3 Jahre
+							<ul>
+								<li>Medizinischer Fragebogen</li>
+								<li>Untersuchung beim praktischen Arzt (inkl. Bestätigung, siehe Beilage 5)</li>
+							</ul>
+						</li>
+					</ul>
+				</td>
+				<td class="center">
+					<input type="checkbox" /><br><br>
+					<input type="checkbox" /><br>
+					<input type="checkbox" />
+				</td>
+			</tr>
+			{% elif payload.mitglied_alter > 60 %}
+			<tr>
+				<th colspan="2">Altersgruppe vom vollendeten 60. Lebensjahr bis zum vollendeten 65. Lebensjahr</th>
+			</tr>
+			<tr>
+				<td>
+					<ul style="list-style-type: none;">
+						<li>Jährlicher Leistungstest</li>
+						<li>Untersuchungsintervall: 1 Jahre
+							<ul>
+								<li>Medizinischer Fragebogen</li>
+								<li>Untersuchung beim praktischen Arzt (inkl. Bestätigung, siehe Beilage 5)</li>
+							</ul>
+						</li>
+					</ul>
+				</td>
+				<td class="center">
+					<input type="checkbox" /><br><br>
+					<input type="checkbox" /><br>
 					<input type="checkbox" />
 				</td>
 			</tr>
 			{% endif %}
 		</table>
+		<p class="main__fragebogen__folgeuntersuchung-beitext">Falls die Leistungsüberprüfung, der medizinische Fragebogen oder die ärztliche Überprüfung eine Untauglichkeit ergibt, kann diese nach neuerlicher Evaluierung (beim Leistungstest durch Wiederholung und bei medizinischen Gründen durch Zusatzuntersuchungen oder entsprechender Therapie) wieder eine Atemschutztauglichkeit erlangt werden.</p>
+		{% endif %}
 	</div>
-	
 </main>

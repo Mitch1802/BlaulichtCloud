@@ -143,7 +143,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
     id: new FormControl(''),
     mitglied_id: new FormControl(0),
     arzt: new FormControl(''),
-    arzttyp: new FormControl(''),
+    arzt_typ: new FormControl(''),
     letzte_untersuchung: new FormControl('', [
       Validators.pattern(/^([0-3]\d)\.([0-1]\d)\.(\d{4})$/),
       this.validDateDDMMYYYY()
@@ -259,7 +259,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
             id: details.id,
             mitglied_id: details.mitglied_id,
             arzt: details.arzt,
-            arzttyp: details.arzttyp,
+            arzt_typ: details.arzt_typ,
             letzte_untersuchung: details.letzte_untersuchung,
             leistungstest: details.leistungstest,
             leistungstest_art: details.leistungstest_art,
@@ -353,7 +353,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
               id: '',
               mitglied_id: 0,
               arzt: '',
-              arzttyp: '',
+              arzt_typ: '',
               letzte_untersuchung: '',
               leistungstest: '',
               leistungstest_art: '',
@@ -390,7 +390,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
               id: '',
               mitglied_id: 0,
               arzt: '',
-              arzttyp: '',
+              arzt_typ: '',
               letzte_untersuchung: '',
               leistungstest: '',
               leistungstest_art: '',
@@ -416,7 +416,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
       id: '',
       mitglied_id: 0,
       arzt: '',
-      arzttyp: '',
+      arzt_typ: '',
       letzte_untersuchung: '',
       leistungstest: '',
       leistungstest_art: '',
@@ -444,7 +444,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
             id: '',
             mitglied_id: 0,
             arzt: '',
-            arzttyp: '',
+            arzt_typ: '',
             letzte_untersuchung: '',
             leistungstest: '',
             leistungstest_art: '',
@@ -674,17 +674,18 @@ export class FmdComponent implements OnInit, AfterViewInit {
     const abfrageUrl = `pdf/templates/${idPdfCheckliste}/render`;
 
     const payload = {
-      "company_name": "Freiwillige Feuerwehr Schwadorf",
-      "company_street": "Bruckerstraße 8a",
-      "company_plz": "2432",
-      "company_ort": "Schwadorf",
-      "company_email": "schwadorf@feuerwehr.gv.at",
-      "company_telefon": "02230 22 22",
+      "fw_name": "Freiwillige Feuerwehr Schwadorf",
+      "fw_street": "Bruckerstraße 8a",
+      "fw_plz": "2432",
+      "fw_ort": "Schwadorf",
+      "fw_email": "schwadorf@feuerwehr.gv.at",
+      "fw_telefon": "02230 22 22",
       "fw_nummer": "03313",
-      "mitglied_stbnr": element.stbnr,
-      "mitglied_vorname": element.vorname,
-      "mitglied_zuname": element.nachname,
-      "mitglied_alter": this.berechneAlter(element.geburtsdatum)
+      "mitglied_stbnr": element.stbnr ?? "",
+      "mitglied_vorname": element.vorname ?? "",
+      "mitglied_zuname": element.nachname ?? "",
+      "mitglied_alter": this.berechneAlter(element.geburtsdatum) ?? 0,
+      "mitglied_letzte_untersuchung": element.letzte_untersuchung ?? ""
     }
 
     this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
