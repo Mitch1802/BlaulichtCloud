@@ -289,7 +289,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
     const gebDatum = mitglied?.geburtsdatum ?? null;
     const alter = this.berechneAlter(gebDatum);
 
-    if (objekt.letzte_untersuchung != '') {
+    if (objekt.letzte_untersuchung != '' && objekt.letzte_untersuchung != null) {
       const parts = objekt.letzte_untersuchung.split('.');
       if (parts.length === 3) {
         const [tag, monat, jahr] = parts.map((n: any) => parseInt(n, 10));
@@ -307,6 +307,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
           }
         }
       }
+    } else {
+      objekt.naechste_untersuchung = '';
     }
 
     const currentYear = new Date().getFullYear();
@@ -519,10 +521,10 @@ export class FmdComponent implements OnInit, AfterViewInit {
       if (
         !isNaN(lastYear) &&
         !isNaN(testYear) &&
-        Boolean(item.leistungstest) &&
-        lastYear > 0 &&
-        this.isOlderThanOneYear(item.leistungstest) == false &&
         !isNaN(nextYear) &&
+        lastYear > 0 &&
+        Boolean(item.leistungstest) &&
+        this.isOlderThanOneYear(item.leistungstest) == false &&
         nextYear > currentYear
       ) {
         item.tauglichkeit = 'tauglich';
