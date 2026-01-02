@@ -321,16 +321,21 @@ export class FmdComponent implements OnInit, AfterViewInit {
       }
     }
 
+    const nextYearNum = Number(objekt.naechste_untersuchung);
+
     if (
-      objekt.letzte_untersuchung != '' &&
-      objekt.leistungstest != '' &&
-      objekt.naechste_untersuchung > currentYear &&
-      testJahr === currentYear
+      objekt.letzte_untersuchung !== '' &&
+      objekt.leistungstest !== '' &&
+      !isNaN(nextYearNum) &&
+      nextYearNum > currentYear &&
+      testJahr !== null &&
+      testJahr >= currentYear - 1
     ) {
       objekt.tauglichkeit = 'tauglich';
     } else {
       objekt.tauglichkeit = 'nein';
     }
+
 
     if (!idValue) {
       this.globalDataService.post(this.modul, objekt, false).subscribe({
@@ -511,6 +516,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   updateTauglichkeitFürAlle(): void {
     const currentYear = new Date().getFullYear();
+    
     this.atstraeger.forEach(item => {
       const lastYear = this.getYearFromDate(item.letzte_untersuchung);
       const testYear = this.getYearFromDate(item.leistungstest);
@@ -524,7 +530,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
         !isNaN(nextYear) &&
         lastYear > 0 &&
         Boolean(item.leistungstest) &&
-        this.isOlderThanOneYear(item.leistungstest) == false &&
+        testYear >= currentYear - 1 &&
         nextYear > currentYear
       ) {
         item.tauglichkeit = 'tauglich';
@@ -534,41 +540,29 @@ export class FmdComponent implements OnInit, AfterViewInit {
     });
   }
 
-  isOlderThanOneYear(dateStr?: string | Date | null): boolean {
-    if (!dateStr) return false;
-
-    if (typeof dateStr === 'string') {
-      const parsedDate = new Date(dateStr);
-
-      if (isNaN(parsedDate.getTime())) {
-        return true;
-      }
-
-      dateStr = parsedDate;
-    }
-
-    if (dateStr instanceof Date) {
-      const oneYearAgo = new Date();
-      oneYearAgo.setFullYear(new Date().getFullYear() - 1);
-
-      return dateStr < oneYearAgo;
-    }
-
-    return false;
+  isOlderThanLastYear(dateInput?: string | Date | null): boolean {
+    const year = this.getYearFromDate(dateInput);
+    if (isNaN(year)) return false;
+    const currentYear = new Date().getFullYear();
+    return year < currentYear - 1;
   }
 
   getYearFromDate(dateStr?: string | Date | null): number {
     if (!dateStr) return NaN;
-    let str = '';
 
-    if (dateStr instanceof Date) {
-      str = `${dateStr.getDate()}.${dateStr.getMonth() + 1}.${dateStr.getFullYear()}`;
-    } else {
-      str = String(dateStr);
-    }
+    if (dateStr instanceof Date) return dateStr.getFullYear();
 
-    const parts = str.split('.');
-    return parts.length === 3 ? parseInt(parts[2], 10) : NaN;
+    const s = String(dateStr).trim();
+
+    // dd.mm.yyyy
+    const parts = s.split('.');
+    if (parts.length === 3) return parseInt(parts[2], 10);
+
+    // ISO yyyy-mm-dd...
+    const m = s.match(/^(\d{4})-/);
+    if (m) return parseInt(m[1], 10);
+
+    return NaN;
   }
 
   updateChartData(): void {
@@ -608,15 +602,32 @@ export class FmdComponent implements OnInit, AfterViewInit {
     const currentYear = new Date().getFullYear();
 
     this.atstraeger.forEach(traeger => {
-      if (traeger.tauglichkeit === 'tauglich') zaehler[0]++;
-      else if (
-        Number(traeger.naechste_untersuchung) <= currentYear ||
-        traeger.naechste_untersuchung === null
-      ) zaehler[2]++;
-      else if (
-        this.isOlderThanOneYear(traeger.leistungstest) === true ||
-        traeger.leistungstest === 'nein'
-      ) zaehler[1]++;
+      const testStr = traeger.leistungstest;
+      const hasTest = testStr != null && String(testStr).trim() !== '' && testStr !== 'nein';
+
+      const nextStr = traeger.naechste_untersuchung;
+      const hasNext = nextStr != null && String(nextStr).trim() !== '';
+      const nextYear = hasNext ? Number(nextStr) : NaN;
+
+      if (traeger.tauglichkeit === 'tauglich') {
+        zaehler[0]++;
+        return;
+      }
+
+      // "kein Arzt" / Untersuchung nicht gültig
+      if (!hasNext || isNaN(nextYear) || nextYear <= currentYear) {
+        zaehler[2]++;
+        return;
+      }
+
+      // "kein Leistungstest" (fehlt oder zu alt)
+      if (!hasTest || this.isOlderThanLastYear(testStr)) {
+        zaehler[1]++;
+        return;
+      }
+
+      // Fallback: wenn was durchrutscht, zählt es sinnvollerweise als "kein Leistungstest"
+      zaehler[1]++;
     });
 
     this.chartTauglichkeit.datasets[0].data = zaehler;
@@ -628,9 +639,15 @@ export class FmdComponent implements OnInit, AfterViewInit {
     const currentYear = new Date().getFullYear();
 
     this.atstraeger.forEach(traeger => {
-      const nextStudy = Number(traeger.naechste_untersuchung);
-      if (nextStudy <= currentYear || traeger.naechste_untersuchung === null) zaehler[0]++;
-      else if (nextStudy > currentYear) zaehler[1]++;
+      const nextStr = traeger.naechste_untersuchung;
+      const hasNext = nextStr != null && String(nextStr).trim() !== '';
+      const nextYear = hasNext ? Number(nextStr) : NaN;
+
+      if (!hasNext || isNaN(nextYear) || nextYear <= currentYear) {
+        zaehler[0]++; // kein Arzt / ungültig / überfällig
+      } else {
+        zaehler[1]++; // gültig
+      }
     });
 
     this.chartUntersuchung.datasets[0].data = zaehler;
@@ -670,12 +687,29 @@ export class FmdComponent implements OnInit, AfterViewInit {
     });
   }
 
+  isLeistungstestOk(value: any): boolean {
+    if (value == null) return false;
+    const s = String(value).trim().toLowerCase();
+    if (!s || s === 'nein') return false;
+
+    const year = this.getYearFromDate(value);
+    if (isNaN(year)) return false;
+
+    const currentYear = new Date().getFullYear();
+    return year >= currentYear - 1; // aktuelles oder letztes Jahr
+  }
+
   printChecklist(element: any): void {
     if (!element?.id) return;
     const idPdfCheckliste = this.modul_konfig['idPdfCheckliste'];
     const abfrageUrl = `pdf/templates/${idPdfCheckliste}/render`;
 
+    let heute: any = new Date().toLocaleString('de-DE');
+    heute = heute.split(",");
+    heute = heute[0];
+
     const payload = {
+      "druck_datum": heute,
       "fw_name": "Freiwillige Feuerwehr Schwadorf",
       "fw_street": "Bruckerstraße 8a",
       "fw_plz": "2432",
@@ -702,6 +736,57 @@ export class FmdComponent implements OnInit, AfterViewInit {
       },
       error: (error: any) => this.globalDataService.errorAnzeigen(error)
     });
+  }
+
+  printOffeneUntersuchugen(): void {
+    const today = new Date();
+    let data = this.atstraeger.filter((m: any) => m.naechste_untersuchung == null || Number(m.naechste_untersuchung) <= today.getFullYear());
+    data = this.globalDataService.arraySortByKey(data, 'naechste_untersuchung');
+    this.printListe(data, "untersuchungen");
+  }
+
+  printTauglichkeit(): void {
+    this.printListe(this.atstraeger, "tauglichkeit");
+  }
+
+  printLeistungstest(): void {
+    this.printListe(this.atstraeger, "leistungstest");
+  }
+
+  printListe(data: any, typ: string): void {
+    const idPdfListe = this.modul_konfig['idPdfListe'];
+    const abfrageUrl = `pdf/templates/${idPdfListe}/render`;
+
+    let heute: any = new Date().toLocaleString('de-DE');
+    heute = heute.split(",");
+    heute = heute[0];
+
+    const payload = {
+      "druck_datum": heute,
+      "fw_name": "Freiwillige Feuerwehr Schwadorf",
+      "fw_street": "Bruckerstraße 8a",
+      "fw_plz": "2432",
+      "fw_ort": "Schwadorf",
+      "fw_email": "schwadorf@feuerwehr.gv.at",
+      "fw_telefon": "02230 22 22",
+      "fw_nummer": "03313",
+      "ats_traeger_liste": data,
+      "fmd_export_liste_typ": typ
+    }
+
+    this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
+      next: (blob: Blob) => {
+        if (blob.size === 0) {
+          this.globalDataService.erstelleMessage('error', 'PDF ist leer (0 Bytes).');
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
+    });
+
   }
 }
 

@@ -390,12 +390,8 @@
               <tr
                 mat-row
                 *matRowDef="let row; columns: sichtbareSpaltenLeistungstest"
-                [class.red-cell]="
-                  isOlderThanOneYear(row.leistungstest) === true
-                "
-                [class.green-cell]="
-                  isOlderThanOneYear(row.leistungstest) === false
-                "
+                [class.red-cell]="!isLeistungstestOk(row.leistungstest)"
+                [class.green-cell]="isLeistungstestOk(row.leistungstest)"
               ></tr>
             </table>
           </mat-tab>
@@ -447,6 +443,46 @@
                 [class.green-cell]="row.tauglichkeit === 'tauglich'"
               ></tr>
             </table>
+          </mat-tab>
+          <mat-tab label="Export">
+            <div class="container ps-3 py-5" style="width: 90%">
+              <div class="row m-0 align-items-center">
+                <div class="col-7">Offene Untersuchungen:</div>
+                <div class="col-auto">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="printOffeneUntersuchugen()"
+                  >
+                    <mat-icon class="m-0">picture_as_pdf</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <div class="row m-0 pt-2 align-items-center">
+                <div class="col-7">Tauglichkeit:</div>
+                <div class="col-auto">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="printTauglichkeit()"
+                  >
+                    <mat-icon class="m-0">picture_as_pdf</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <div class="row m-0 pt-2 align-items-center">
+                <div class="col-7">Leistungstest:</div>
+                <div class="col-auto">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="printLeistungstest()"
+                  >
+                    <mat-icon class="m-0">picture_as_pdf</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
           </mat-tab>
         </mat-tab-group>
 

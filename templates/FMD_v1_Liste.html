@@ -8,7 +8,6 @@
 	}
 
 	main {
-		margin-top: 100px;
 		margin-left: 50px;
 		margin-right: 50px;
 	}
@@ -98,7 +97,7 @@
 <footer style="width: 100%; padding: 0 25px; font-size: 10px; color: #666">
 	<div style="border-top: 1px solid #e0e0e0; margin-bottom: 6px"></div>
 	<div style="display: flex; justify-content: space-between">
-		<span>Ausdruck vom: {{ payload.druck_datum }}</span>
+		<span>Ausdruck vom {{ payload.druck_datum }}</span>
 		<span
 			>Seite <span class="pageNumber"></span> /
 			<span class="totalPages"></span
@@ -109,7 +108,13 @@
 <!--PDF:BODY-->
 <main>
 	<div class="main__header">
-		<h1 class="main__header-title">ATS Träger</h1>
+		{% if payload.fmd_export_liste_typ == "untersuchungen" %}
+		<h1 class="main__header-title">ATS Träger - offene Untersuchungen</h1>
+		{% elif payload.fmd_export_liste_typ == "tauglichkeit" %}
+		<h1 class="main__header-title">ATS Träger - Tauglichkeit</h1>
+		{% elif payload.fmd_export_liste_typ == "leistungstest" %}
+		<h1 class="main__header-title">ATS Träger - Leistunstest</h1>
+		{% endif %}
 	</div>
 
 	<div class="main__ats_trager">
@@ -119,20 +124,30 @@
 					<th>Stbnr.</th>
 					<th>Nachname</th>
 					<th>Vorname</th>
-					<th>Näch. U.</th>
-					<th>Leis.Test</th>
-					<th>Leis.Test Art</th>
+					{% if payload.fmd_export_liste_typ == "untersuchungen" %}
+					<th>Nächste Untersuchung</th>
+					{% elif payload.fmd_export_liste_typ == "tauglichkeit" %}
+					<th>Tauglichkeit</th>
+					{% elif payload.fmd_export_liste_typ == "leistungstest" %}
+					<th>Leistungstest</th>
+					<th>Leistungstest Art</th>
+					{% endif %}
 				</tr>
 			</thead>
 			<tbody>
 				{% for item in payload.ats_traeger_liste %}
 				<tr>
 					<td>{{ item.stbnr }}</td>
-					<td>{{ item.zuname }}</td>
+					<td>{{ item.nachname }}</td>
 					<td>{{ item.vorname }}</td>
-					<td>{{ item.naechste_untersuchung }}</td>
-					<td>{{ item.leistungstest }}</td>
-					<td>{{ item.leistungstest_art }}</td>
+					{% if payload.fmd_export_liste_typ == "untersuchungen" %}
+					<td>{{ item.naechste_untersuchung|default:"" }}</td>
+					{% elif payload.fmd_export_liste_typ == "tauglichkeit" %}
+					<td>{{ item.tauglichkeit|default:"" }}</td>
+					{% elif payload.fmd_export_liste_typ == "leistungstest" %}
+					<td>{{ item.leistungstest|default:"" }}</td>
+					<td>{{ item.leistungstest_art|default:"" }}</td>
+					{% endif %}
 				</tr>
 				{% endfor %}
 			</tbody>
