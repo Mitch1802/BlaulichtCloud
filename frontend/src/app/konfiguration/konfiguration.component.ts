@@ -26,7 +26,7 @@ export class KonfigurationComponent implements OnInit {
   breadcrumb: any = [];
 
   title = "Aktive Rollen";
-  title2 = "Konfiguration";
+  title2 = "Stammdaten";
   title3 = "Backup & Wiederherstellen";
   modul = "users/rolle";
   modul2 = "konfiguration";
