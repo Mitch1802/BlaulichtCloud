@@ -119,7 +119,7 @@ class PdfTemplateService:
             pdf_kwargs = dict(
                 format="A4",
                 print_background=True,
-                margin={"top": "80px", "bottom": "70px", "left": "25px", "right": "25px"},
+                margin={"top": "120px", "bottom": "50px", "left": "25px", "right": "25px"},
             )
 
             if header_html or footer_html:

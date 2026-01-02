@@ -1,0 +1,141 @@
+<!--PDF:CSS-->
+<style>
+	/* Hinweis: Header und Footer nur Inline Css! */
+	body {
+		margin: 0;
+		font-family: Arial;
+		font-size: 11px;
+	}
+
+	main {
+		margin-top: 100px;
+		margin-left: 50px;
+		margin-right: 50px;
+	}
+
+	.main__header {
+		text-align: center;
+	}
+
+	.main__header-title {
+		font-size: 30px;
+	}
+
+	.main__header-subtitle {
+		font-size: 20px;
+	}
+
+	.main__ats_trager table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 10mm;
+	}
+
+	.main__ats_trager table th,
+	.main__ats_trager table td {
+		border-bottom: 1px solid #ddd;
+		padding: 6px;
+	}
+
+	.main__ats_trager table th {
+		background: #f5f5f5;
+		text-align: left;
+	}
+</style>
+
+<!--PDF:HEADER-->
+<header
+	style="width: 100%; padding: 0 25px; font-family: Arial; font-size: 10px">
+	<div
+		style="
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #000;
+			padding-bottom: 6px;
+		">
+		<div
+			style="
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				text-align: center;
+				width: 100%;
+			">
+			{% if logo_base64 %}
+			<img
+				src="data:image/png;base64,{{ logo_base64 }}"
+				style="height: 20mm; max-height: 20mm" />
+			{% endif %}
+			<div style="width: 100%">
+				<div
+					style="
+						font-size: 15pt;
+						font-weight: 700;
+						line-height: 20pt;
+					">
+					{{ payload.fw_name }}
+				</div>
+				<div style="font-size: 7pt; font-weight: 700">
+					{{ payload.fw_street }} | {{ payload.fw_plz }} 
+					{{ payload.fw_ort }}
+				</div>
+				<div style="font-size: 7pt; font-weight: 700">
+					E-Mail: {{ payload.fw_email }} | Tel: 
+					{{ payload.fw_telefon }}
+				</div>
+			</div>
+			{% if logo_base64 %}
+			<img
+				src="data:image/png;base64,{{ logo_base64 }}"
+				style="height: 20mm; max-height: 20mm; visibility: hidden" />
+			{% endif %}
+		</div>
+	</div>
+</header>
+
+<!--PDF:FOOTER-->
+<footer style="width: 100%; padding: 0 25px; font-size: 10px; color: #666">
+	<div style="border-top: 1px solid #e0e0e0; margin-bottom: 6px"></div>
+	<div style="display: flex; justify-content: space-between">
+		<span>Ausdruck vom: {{ payload.druck_datum }}</span>
+		<span
+			>Seite <span class="pageNumber"></span> /
+			<span class="totalPages"></span
+		></span>
+	</div>
+</footer>
+
+<!--PDF:BODY-->
+<main>
+	<div class="main__header">
+		<h1 class="main__header-title">ATS Träger</h1>
+	</div>
+
+	<div class="main__ats_trager">
+		<table>
+			<thead>
+				<tr>
+					<th>Stbnr.</th>
+					<th>Nachname</th>
+					<th>Vorname</th>
+					<th>Näch. U.</th>
+					<th>Leis.Test</th>
+					<th>Leis.Test Art</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in payload.ats_traeger_liste %}
+				<tr>
+					<td>{{ item.stbnr }}</td>
+					<td>{{ item.zuname }}</td>
+					<td>{{ item.vorname }}</td>
+					<td>{{ item.naechste_untersuchung }}</td>
+					<td>{{ item.leistungstest }}</td>
+					<td>{{ item.leistungstest_art }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</main>
