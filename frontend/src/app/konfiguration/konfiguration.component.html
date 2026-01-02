@@ -64,21 +64,111 @@
             Konfiguration speichern
           </button>
           <section class="row mt-3 mt-2">
-            <div class="col-12 col-lg-6 mb-3">
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>FW Nummer</mat-label>
+                <input matInput type="text" formControlName="fw_nummer" />
+                @if (formKonfig.controls['fw_nummer'].hasError('required')) {
+                  <mat-error> FW Nummer ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-8 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>FW Name</mat-label>
+                <input matInput type="text" formControlName="fw_name" />
+                @if (formKonfig.controls['fw_name'].hasError('required')) {
+                  <mat-error> FW Name ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-5 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Straße</mat-label>
+                <input matInput type="text" formControlName="fw_street" />
+                @if (formKonfig.controls['fw_street'].hasError('required')) {
+                  <mat-error> Straße ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-3 mb-3">
               <mat-form-field hintLabel="* Pflichtfeld">
                 <mat-label>PLZ</mat-label>
-                <input matInput type="text" formControlName="plz" />
-                @if (formKonfig.controls['plz'].hasError('required')) {
+                <input matInput type="text" formControlName="fw_plz" />
+                @if (formKonfig.controls['fw_plz'].hasError('required')) {
                   <mat-error> PLZ ist erforderlich! </mat-error>
                 }
               </mat-form-field>
             </div>
-            <div class="col-12 col-lg-6 mb-3">
+            <div class="col-12 col-lg-4 mb-3">
               <mat-form-field hintLabel="* Pflichtfeld">
                 <mat-label>Ort</mat-label>
-                <input matInput type="text" formControlName="ort" />
-                @if (formKonfig.controls['ort'].hasError('required')) {
+                <input matInput type="text" formControlName="fw_ort" />
+                @if (formKonfig.controls['fw_ort'].hasError('required')) {
                   <mat-error> Ort ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6 mb-3 mt-5">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>E-Mail</mat-label>
+                <input matInput type="text" formControlName="fw_email" />
+                @if (formKonfig.controls['fw_email'].hasError('required')) {
+                  <mat-error> E-Mail ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6 mb-3 mt-5">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Telefon</mat-label>
+                <input matInput type="text" formControlName="fw_telefon" />
+                @if (formKonfig.controls['fw_telefon'].hasError('required')) {
+                  <mat-error> Telefon ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Webseite</mat-label>
+                <input matInput type="text" formControlName="fw_webseite" />
+                @if (formKonfig.controls['fw_webseite'].hasError('required')) {
+                  <mat-error> Webseite ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3 mt-5">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Kommandant</mat-label>
+                <input matInput type="text" formControlName="fw_kdt" />
+                @if (formKonfig.controls['fw_kdt'].hasError('required')) {
+                  <mat-error> Kommandant ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-12 mb-3 mt-5">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>Bankkonto</mat-label>
+                <input matInput type="text" formControlName="fw_konto" />
+                @if (formKonfig.controls['fw_konto'].hasError('required')) {
+                  <mat-error> Bankkonto ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-4 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>BIC</mat-label>
+                <input matInput type="text" formControlName="fw_bic" />
+                @if (formKonfig.controls['fw_bic'].hasError('required')) {
+                  <mat-error> BIC ist erforderlich! </mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-8 mb-3">
+              <mat-form-field hintLabel="* Pflichtfeld">
+                <mat-label>IBAN</mat-label>
+                <input matInput type="text" formControlName="fw_iban" />
+                @if (formKonfig.controls['fw_iban'].hasError('required')) {
+                  <mat-error> IBAN ist erforderlich! </mat-error>
                 }
               </mat-form-field>
             </div>

@@ -46,8 +46,18 @@ export class KonfigurationComponent implements OnInit {
 
   formKonfig = new FormGroup({
     id: new FormControl(''),
-    plz: new FormControl('', Validators.required),
-    ort: new FormControl('', Validators.required)
+    fw_nummer: new FormControl('', Validators.required),
+    fw_name: new FormControl('', Validators.required),
+    fw_street: new FormControl('', Validators.required),
+    fw_plz: new FormControl('', Validators.required),
+    fw_ort: new FormControl('', Validators.required),
+    fw_email: new FormControl('', Validators.required),
+    fw_telefon: new FormControl('', Validators.required),
+    fw_kdt: new FormControl('', Validators.required),
+    fw_webseite: new FormControl('', Validators.required),
+    fw_konto: new FormControl('', Validators.required),
+    fw_iban: new FormControl('', Validators.required),
+    fw_bic: new FormControl('', Validators.required)
   });
 
   ngOnInit(): void {
@@ -67,8 +77,18 @@ export class KonfigurationComponent implements OnInit {
             const details: IKonfiguration = erg.main[0];
             this.formKonfig.setValue({
               id: details.id,
-              plz: details.plz,
-              ort: details.ort
+              fw_nummer: details.fw_nummer,
+              fw_name: details.fw_name,
+              fw_street: details.fw_street,
+              fw_plz: details.fw_plz,
+              fw_ort: details.fw_ort,
+              fw_email: details.fw_email,
+              fw_telefon: details.fw_telefon,
+              fw_kdt: details.fw_kdt,
+              fw_webseite: details.fw_webseite,
+              fw_konto: details.fw_konto,
+              fw_iban: details.fw_iban,
+              fw_bic: details.fw_bic
             })
             this.rollen = erg.rollen;
             this.uploadText="";
@@ -140,8 +160,18 @@ export class KonfigurationComponent implements OnInit {
             const details: IKonfiguration = erg;
             this.formKonfig.setValue({
               id: details.id,
-              plz: details.plz,
-              ort: details.ort
+              fw_nummer: details.fw_nummer,
+              fw_name: details.fw_name,
+              fw_street: details.fw_street,
+              fw_plz: details.fw_plz,
+              fw_ort: details.fw_ort,
+              fw_email: details.fw_email,
+              fw_telefon: details.fw_telefon,
+              fw_kdt: details.fw_kdt,
+              fw_webseite: details.fw_webseite,
+              fw_konto: details.fw_konto,
+              fw_iban: details.fw_iban,
+              fw_bic: details.fw_bic
             })
             this.globalDataService.erstelleMessage("success","Konfiguration erfolgreich gespeichert!");
           } catch (e: any) {
@@ -159,8 +189,18 @@ export class KonfigurationComponent implements OnInit {
             const details: IKonfiguration = erg;
             this.formKonfig.setValue({
               id: details.id,
-              plz: details.plz,
-              ort: details.ort
+              fw_nummer: details.fw_nummer,
+              fw_name: details.fw_name,
+              fw_street: details.fw_street,
+              fw_plz: details.fw_plz,
+              fw_ort: details.fw_ort,
+              fw_email: details.fw_email,
+              fw_telefon: details.fw_telefon,
+              fw_kdt: details.fw_kdt,
+              fw_webseite: details.fw_webseite,
+              fw_konto: details.fw_konto,
+              fw_iban: details.fw_iban,
+              fw_bic: details.fw_bic
             })
             this.globalDataService.erstelleMessage("success","Konfiguration erfolgreich geändert!");
           } catch (e: any) {
@@ -259,7 +299,6 @@ export class KonfigurationComponent implements OnInit {
       }
     });
   }
-
 
   convertBackups(backup_array:any ): any {
     const version = environment.version;

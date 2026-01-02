@@ -175,7 +175,7 @@ class PdfTemplateTestView(APIView):
             "fw_ort": "Schwadorf",
             "fw_email": "schwadorf@feuerwehr.gv.at",
             "fw_telefon": "02230 22 22",
-            "fw_ceo": "HBI Wolfgang Niederauer",
+            "fw_kdt": "HBI Wolfgang Niederauer",
             "fw_webseite": "www.ff-schwadorf.at",
             "fw_konto": "Freiwillige Feuerwehr Schwadorf",
             "fw_iban": "AT65 3282 3000 0380 4861",
