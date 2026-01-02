@@ -10,6 +10,8 @@ from core_apps.mitglieder.models import Mitglied
 from core_apps.mitglieder.serializers import MitgliedSerializer
 from core_apps.modul_konfiguration.models import ModulKonfiguration
 from core_apps.modul_konfiguration.serializers import ModulKonfigurationSerializer
+from core_apps.konfiguration.models import Konfiguration
+from core_apps.konfiguration.serializers import KonfigurationSerializer
 
 
 class FMDViewSet(ModelViewSet):
@@ -24,4 +26,6 @@ class FMDViewSet(ModelViewSet):
         resp = super().list(request, *args, **kwargs)
         mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
         modul_konfig = ModulKonfigurationSerializer(ModulKonfiguration.objects.all(), many=True).data
-        return Response({"main": resp.data, 'mitglieder': mitglieder, 'modul_konfig': modul_konfig})
+        konfig = KonfigurationSerializer(Konfiguration.objects.all(), many=True).data
+
+        return Response({"main": resp.data, 'mitglieder': mitglieder, 'modul_konfig': modul_konfig, 'konfig': konfig})

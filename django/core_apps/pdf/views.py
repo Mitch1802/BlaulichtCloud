@@ -227,6 +227,7 @@ class PdfTemplateTestView(APIView):
                     "vorname": "Max",
                     "zuname": "Mustermann",
                     "naechste_untersuchung": "2026",
+                    "tauglichkeit": "tauglich",
                     "leistungstest": "01.01.2026",
                     "leistungstest_art": "Finnentest"
                 },
@@ -235,10 +236,12 @@ class PdfTemplateTestView(APIView):
                     "vorname": "Harry",
                     "zuname": "Potter",
                     "naechste_untersuchung": "2030",
+                    "tauglichkeit": "nein",
                     "leistungstest": "01.01.2025",
                     "leistungstest_art": "Finnentest"
                 }
-            ]
+            ],
+            "fmd_export_liste_typ": "leistunstest"
         }
 
         try:
