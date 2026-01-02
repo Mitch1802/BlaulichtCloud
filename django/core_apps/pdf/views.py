@@ -169,6 +169,7 @@ class PdfTemplateTestView(APIView):
         tmpl = get_object_or_404(PdfTemplate, id=id)
 
         sample_payload = {
+            "druck_datum": "01.01.2026",
             "fw_name": "Freiwillige Feuerwehr Schwadorf",
             "fw_street": "Bruckerstraße 8a",
             "fw_plz": "2432",
@@ -192,7 +193,13 @@ class PdfTemplateTestView(APIView):
             "invoice_nummer": "EV-00",
             "invoice_datum": "01.01.2026",
             "invoice_items": [
-                {"name": "Material", "note": "Bemerkung", "qty": 2, "price": "15.00", "total": "30.00"}
+                {
+                    "name": "Material", 
+                    "note": "Bemerkung", 
+                    "qty": 2, 
+                    "price": "15.00", 
+                    "total": "30.00"
+                }
             ],
             "invoice_hinweis": "",
             "invoice_referenz": "",
@@ -212,7 +219,26 @@ class PdfTemplateTestView(APIView):
             "mitglied_vorname": "Max",
             "mitglied_zuname": "Mustermann",
             "mitglied_alter": 17,
-            "mitglied_letzte_untersuchung": ""
+            "mitglied_letzte_untersuchung": "",
+
+            "ats_traeger_liste": [
+                {
+                    "stbnr": 123,
+                    "vorname": "Max",
+                    "zuname": "Mustermann",
+                    "naechste_untersuchung": "2026",
+                    "leistungstest": "01.01.2026",
+                    "leistungstest_art": "Finnentest"
+                },
+                {
+                    "stbnr": 456,
+                    "vorname": "Harry",
+                    "zuname": "Potter",
+                    "naechste_untersuchung": "2030",
+                    "leistungstest": "01.01.2025",
+                    "leistungstest_art": "Finnentest"
+                }
+            ]
         }
 
         try:
