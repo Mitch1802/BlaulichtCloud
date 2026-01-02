@@ -26,7 +26,7 @@ class KonfigurationViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         resp = super().list(request, *args, **kwargs)
 
-        if self._has_role(request.user, "ADMIN"):
+        if request.user.has_role("ADMIN"):
             backups = os.listdir(backup_path)
             rollen = RoleSerializer(Role.objects.all(), many=True).data
             return Response({"main": resp.data, "backups": backups, "rollen": rollen})
