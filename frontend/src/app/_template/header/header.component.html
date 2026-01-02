@@ -7,6 +7,10 @@
   </button>
 </mat-toolbar>
 
+@if (loading$ | async) {
+<mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
 <div class="breadcrumb">
   @for (link of breadcrumb; track link) {
     <div>

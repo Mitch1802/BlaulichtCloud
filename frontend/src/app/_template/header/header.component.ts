@@ -4,6 +4,8 @@ import { GlobalDataService } from 'src/app/_service/global-data.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { AsyncPipe } from '@angular/common';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 @Component({
@@ -15,7 +17,9 @@ import { MatIconModule } from '@angular/material/icon';
         RouterLink,
         MatIconButton,
         MatIconModule,
-        MatButton
+        MatButton,
+        MatProgressBarModule,
+        AsyncPipe
     ]
 })
 export class HeaderComponent implements OnInit {
@@ -23,6 +27,8 @@ export class HeaderComponent implements OnInit {
   private router = inject(Router);
 
   title = '';
+
+  loading$ = this.globalDataService.loading$;
 
   @Input() breadcrumb!: any;
 

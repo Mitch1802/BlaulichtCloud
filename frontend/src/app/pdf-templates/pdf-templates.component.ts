@@ -25,8 +25,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { IPdfTemplate } from '../_interface/pdf_template';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-pdf-templates',
@@ -46,9 +44,7 @@ import { AsyncPipe } from '@angular/common';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatIcon,
-    MatProgressBarModule,
-    AsyncPipe
+    MatIcon
   ],
   templateUrl: './pdf-templates.component.html',
   styleUrl: './pdf-templates.component.sass'
@@ -85,7 +81,6 @@ export class PdfTemplatesComponent implements OnInit {
   });
   
   readonlyMode = false;
-  loading$ = this.globalDataService.loading$;
 
   get tableVisible(): boolean {
     return this.formModul.disabled && (this.dataSource?.data?.length ?? 0) > 0;
