@@ -40,6 +40,10 @@
 		background: #f5f5f5;
 		text-align: left;
 	}
+
+	.main__ats_trager .center {
+		text-align: center;
+	}
 </style>
 
 <!--PDF:HEADER-->
@@ -114,6 +118,8 @@
 		<h1 class="main__header-title">ATS Träger - Tauglichkeit</h1>
 		{% elif payload.fmd_export_liste_typ == "leistungstest" %}
 		<h1 class="main__header-title">ATS Träger - Leistunstest</h1>
+		% elif payload.fmd_export_liste_typ == "gesamt" %}
+		<h1 class="main__header-title">FMD - Alle Mitglieder</h1>
 		{% endif %}
 	</div>
 
@@ -131,6 +137,10 @@
 					{% elif payload.fmd_export_liste_typ == "leistungstest" %}
 					<th>Leistungstest</th>
 					<th>Leistungstest Art</th>
+					{% elif payload.fmd_export_liste_typ == "gesamt" %}
+					<th class="center">Tauglich</th>
+					<th class="center">Arzt</th>
+					<th class="center">Leistungstest</th>
 					{% endif %}
 				</tr>
 			</thead>
@@ -147,6 +157,10 @@
 					{% elif payload.fmd_export_liste_typ == "leistungstest" %}
 					<td>{{ item.leistungstest|default:"" }}</td>
 					<td>{{ item.leistungstest_art|default:"" }}</td>
+					{% elif payload.fmd_export_liste_typ == "gesamt" %}
+					<td class="center">{{ item.liste_tauglich }}</td>
+					<td class="center">{{ item.liste_arzt }}</td>
+					<td class="center">{{ item.liste_leistungstest }}</td>
 					{% endif %}
 				</tr>
 				{% endfor %}

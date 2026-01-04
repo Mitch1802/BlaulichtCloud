@@ -57,6 +57,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
   modul = "fmd";
 
   mitglieder: IMitglied[] = [];
+  mitgliederGesamt: IMitglied[] = [];
   atstraeger: IATSTraeger[] = [];
   currentYear = new Date().getFullYear();
   activeTabIndex = 0;
@@ -203,6 +204,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
           const mains = erg.main as any[];
           this.mitglieder = erg.mitglieder as any[];
+          this.mitgliederGesamt = erg.mitglieder as any[];
           const memberMap = new Map<number, any>(this.mitglieder.map((m: any) => [m.pkid, m]));
 
           this.atstraeger = mains.map(item => {
@@ -751,6 +753,76 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   printLeistungstest(): void {
     this.printListe(this.atstraeger, "leistungstest");
+  }
+
+  printAlleMitglieder(): void {
+    const memberMap = new Map<number, any>(
+      this.atstraeger.map((a: any) => [Number(a.mitglied_id), a])
+    );
+
+    const toBool = (v: any): boolean =>
+      v === true || v === 1 || v === "1" ||
+      (typeof v === "string" && v.trim().toLowerCase() === "true");
+
+    const data_new = this.mitgliederGesamt.map((m: any) => {
+      const ats = memberMap.get(Number(m.pkid));
+
+      // BF: primär aus Mitglied, sonst aus ATS (falls vorhanden)
+      const isBF = toBool(m.hauptberuflich) || (ats ? toBool(ats.hauptberuflich) : false);
+
+      // ATS-Felder: nur anreichern wenn vorhanden, sonst leer lassen
+      const tauglichkeit = ats?.tauglichkeit ?? null;
+      const naechste_untersuchung = ats?.naechste_untersuchung ?? null;
+      const leistungstest = ats?.leistungstest ?? null;
+
+      const liste_tauglich =
+        tauglichkeit == null ? "" : (tauglichkeit === "tauglich" ? "Ja" : "Nein");
+
+      const liste_arzt =
+        naechste_untersuchung == null
+          ? ""
+          : (Number(naechste_untersuchung) <= this.currentYear ? "Nicht OK" : "OK");
+
+      const hasNoTest =
+        typeof leistungstest === "string" && leistungstest.trim().toLowerCase() === "nein";
+      const testJahr = leistungstest ? this.getYearFromDate(leistungstest) : "";
+
+      let liste_leistungstest = "";
+      if (leistungstest == null) {
+        liste_leistungstest = "";
+      } else if (hasNoTest) {
+        liste_leistungstest = "Nicht OK";
+      } else if (this.isLeistungstestOk(leistungstest)) {
+        liste_leistungstest = "OK";
+      } else {
+        liste_leistungstest = `Nicht OK${testJahr ? " | " + testJahr : ""}`;
+      }
+
+      // BF überschreibt Anzeige (egal ob ATS vorhanden ist)
+      if (isBF) {
+        return {
+          ...m,
+          tauglichkeit,
+          naechste_untersuchung,
+          leistungstest,
+          liste_tauglich: "Ja",
+          liste_arzt: "BF",
+          liste_leistungstest: "BF",
+        };
+      }
+
+      return {
+        ...m,
+        tauglichkeit,
+        naechste_untersuchung,
+        leistungstest,
+        liste_tauglich,
+        liste_arzt,
+        liste_leistungstest,
+      };
+    });
+
+    this.printListe(data_new, "gesamt");
   }
 
   printListe(data: any, typ: string): void {
