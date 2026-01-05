@@ -8,6 +8,8 @@ from .serializers import ModulKonfigurationSerializer
 from core_apps.common.permissions import HasAnyRolePermission, HasReadOnlyRolePermission, any_of
 from core_apps.users.models import Role
 from core_apps.users.serializers import RoleSerializer
+from core_apps.pdf.models import PdfTemplate
+from core_apps.pdf.serializers import PdfTemplateSerializer
 
 
 class ModulKonfigurationViewSet(ModelViewSet):
@@ -21,4 +23,5 @@ class ModulKonfigurationViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         resp = super().list(request, *args, **kwargs)
         rollen = RoleSerializer(Role.objects.all(), many=True).data
-        return Response({"main": resp.data, "rollen": rollen})
+        pdf = PdfTemplateSerializer(PdfTemplate.objects.all(), many=True).data
+        return Response({"main": resp.data, "rollen": rollen, "pdf": pdf})
