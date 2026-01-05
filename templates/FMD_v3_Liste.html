@@ -138,6 +138,7 @@
 					<th>Leistungstest</th>
 					<th>Leistungstest Art</th>
 					{% elif payload.fmd_export_liste_typ == "gesamt" %}
+					<th class="center">ATS-Träger</th>
 					<th class="center">Tauglich</th>
 					<th class="center">Arzt</th>
 					<th class="center">Leistungstest</th>
@@ -158,6 +159,7 @@
 					<td>{{ item.leistungstest|default:"" }}</td>
 					<td>{{ item.leistungstest_art|default:"" }}</td>
 					{% elif payload.fmd_export_liste_typ == "gesamt" %}
+					<td class="center">{{ item.liste_ats }}</td>
 					<td class="center">{{ item.liste_tauglich }}</td>
 					<td class="center">{{ item.liste_arzt }}</td>
 					<td class="center">{{ item.liste_leistungstest }}</td>

@@ -755,6 +755,26 @@ export class FmdComponent implements OnInit, AfterViewInit {
     this.printListe(this.atstraeger, "leistungstest");
   }
 
+  private getYearSafe(value: any): number | null {
+    if (value == null) return null;
+
+    // falls du schon Jahreszahlen als "2027" bekommst
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+
+    if (typeof value === "string") {
+      const v = value.trim().toLowerCase();
+      if (!v || v === "nein" || v === "none" || v === "null") return null;
+
+      // "2027" direkt als Jahr
+      const asNum = Number(v);
+      if (Number.isFinite(asNum) && asNum > 1900 && asNum < 3000) return asNum;
+    }
+
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return null;
+    return d.getFullYear();
+  }
+
   printAlleMitglieder(): void {
     const memberMap = new Map<number, any>(
       this.atstraeger.map((a: any) => [Number(a.mitglied_id), a])
@@ -764,13 +784,18 @@ export class FmdComponent implements OnInit, AfterViewInit {
       v === true || v === 1 || v === "1" ||
       (typeof v === "string" && v.trim().toLowerCase() === "true");
 
-    const data_new = this.mitgliederGesamt.map((m: any) => {
+    const data = this.mitgliederGesamt.map((m: any) => {
       const ats = memberMap.get(Number(m.pkid));
 
-      // BF: primär aus Mitglied, sonst aus ATS (falls vorhanden)
+      // BF primär aus Mitglied, sonst aus ATS
       const isBF = toBool(m.hauptberuflich) || (ats ? toBool(ats.hauptberuflich) : false);
 
-      // ATS-Felder: nur anreichern wenn vorhanden, sonst leer lassen
+      // ATS-Träger: wenn ATS-Datensatz vorhanden -> Ja, sonst Nein
+      // (Wenn du einen eigenen Mitglied-Flag hast, hier ergänzen: || toBool(m.ist_ats_traeger))
+      const istAtsTraeger = !!ats;
+      const liste_ats = istAtsTraeger ? "Ja" : "Nein";
+
+      // ATS Felder (leer wenn nicht vorhanden)
       const tauglichkeit = ats?.tauglichkeit ?? null;
       const naechste_untersuchung = ats?.naechste_untersuchung ?? null;
       const leistungstest = ats?.leistungstest ?? null;
@@ -778,14 +803,20 @@ export class FmdComponent implements OnInit, AfterViewInit {
       const liste_tauglich =
         tauglichkeit == null ? "" : (tauglichkeit === "tauglich" ? "Ja" : "Nein");
 
-      const liste_arzt =
-        naechste_untersuchung == null
-          ? ""
-          : (Number(naechste_untersuchung) <= this.currentYear ? "Nicht OK" : "OK");
+      // Arzt: Status + Jahr (wenn vorhanden)
+      const arztJahr = this.getYearSafe(naechste_untersuchung);
+      let liste_arzt = "";
+      if (arztJahr != null) {
+        liste_arzt = arztJahr <= this.currentYear ? `Nicht OK | ${arztJahr}` : `OK | ${arztJahr}`;
+      } else {
+        // keine Info -> leer lassen (so wolltest du es)
+        liste_arzt = "";
+      }
 
+      // Leistungstest (wie gehabt, nur Jahr safe)
       const hasNoTest =
         typeof leistungstest === "string" && leistungstest.trim().toLowerCase() === "nein";
-      const testJahr = leistungstest ? this.getYearFromDate(leistungstest) : "";
+      const testJahr = this.getYearSafe(leistungstest);
 
       let liste_leistungstest = "";
       if (leistungstest == null) {
@@ -798,16 +829,30 @@ export class FmdComponent implements OnInit, AfterViewInit {
         liste_leistungstest = `Nicht OK${testJahr ? " | " + testJahr : ""}`;
       }
 
-      // BF überschreibt Anzeige (egal ob ATS vorhanden ist)
+      // BF überschreibt Anzeige (egal ob ATS vorhanden)
       if (isBF) {
         return {
           ...m,
           tauglichkeit,
           naechste_untersuchung,
           leistungstest,
+          liste_ats: "Ja",
           liste_tauglich: "Ja",
           liste_arzt: "BF",
           liste_leistungstest: "BF",
+        };
+      }
+
+      if (liste_ats == "Nein") {
+        return {
+          ...m,
+          tauglichkeit,
+          naechste_untersuchung,
+          leistungstest,
+          liste_ats,
+          liste_tauglich: "-",
+          liste_arzt: "-",
+          liste_leistungstest: "-",
         };
       }
 
@@ -816,14 +861,18 @@ export class FmdComponent implements OnInit, AfterViewInit {
         tauglichkeit,
         naechste_untersuchung,
         leistungstest,
+        liste_ats,
         liste_tauglich,
         liste_arzt,
         liste_leistungstest,
       };
     });
 
-    this.printListe(data_new, "gesamt");
+    const data_sort = this.globalDataService.arraySortByKey(data, "nachname");
+
+    this.printListe(data_sort, "gesamt");
   }
+
 
   printListe(data: any, typ: string): void {
     const idPdfListe = this.modul_konfig['idPdfListe'];
