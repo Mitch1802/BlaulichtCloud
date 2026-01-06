@@ -172,6 +172,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
   ]
 
   modul_konfig: any = {};
+  pdf_konfig: any = {};
 
   @ViewChildren(BaseChartDirective) charts?: QueryList<BaseChartDirective>;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
@@ -201,6 +202,9 @@ export class FmdComponent implements OnInit, AfterViewInit {
         try {
           const konfigs = erg.modul_konfig.find((m: any) => m.modul === 'fmd');
           this.modul_konfig = konfigs?.konfiguration ?? [];
+          
+          const templates = erg.modul_konfig.find((m: any) => m.modul === 'pdf');
+          this.pdf_konfig = templates?.konfiguration ?? [];
 
           const mains = erg.main as any[];
           this.mitglieder = erg.mitglieder as any[];
@@ -703,7 +707,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   printChecklist(element: any): void {
     if (!element?.id) return;
-    const idPdfCheckliste = this.modul_konfig['idPdfCheckliste'];
+    const idPdfCheckliste = this.pdf_konfig['idPdfCheckliste'];
     const abfrageUrl = `pdf/templates/${idPdfCheckliste}/render`;
 
     let heute: any = new Date().toLocaleString('de-DE');
@@ -873,9 +877,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
     this.printListe(data_sort, "gesamt");
   }
 
-
   printListe(data: any, typ: string): void {
-    const idPdfListe = this.modul_konfig['idPdfListe'];
+    const idPdfListe = this.pdf_konfig['idPdfListe'];
     const abfrageUrl = `pdf/templates/${idPdfListe}/render`;
 
     let heute: any = new Date().toLocaleString('de-DE');
