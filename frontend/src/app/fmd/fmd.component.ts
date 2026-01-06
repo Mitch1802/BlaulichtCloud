@@ -726,7 +726,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
       "fw_plz": this.stammdaten.fw_plz,
       "fw_ort": this.stammdaten.fw_ort,
       "fw_email": this.stammdaten.fw_email,
-      "fw_telefon": this.stammdaten.fw_nummer,
+      "fw_telefon": this.stammdaten.fw_telefon,
       "mitglied_stbnr": element.stbnr ?? "",
       "mitglied_vorname": element.vorname ?? "",
       "mitglied_zuname": element.nachname ?? "",
@@ -897,7 +897,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
       "fw_plz": this.stammdaten.fw_plz,
       "fw_ort": this.stammdaten.fw_ort,
       "fw_email": this.stammdaten.fw_email,
-      "fw_telefon": this.stammdaten.fw_nummer,
+      "fw_telefon": this.stammdaten.fw_telefon,
       "ats_traeger_liste": data,
       "fmd_export_liste_typ": typ
     }
