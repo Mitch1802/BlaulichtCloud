@@ -20,6 +20,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { IStammdaten } from '../_interface/stammdaten';
 
 Chart.register(ChartDataLabels);
 
@@ -173,6 +174,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   modul_konfig: any = {};
   pdf_konfig: any = {};
+  stammdaten: any = {};
 
   @ViewChildren(BaseChartDirective) charts?: QueryList<BaseChartDirective>;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
@@ -205,6 +207,8 @@ export class FmdComponent implements OnInit, AfterViewInit {
           
           const templates = erg.modul_konfig.find((m: any) => m.modul === 'pdf');
           this.pdf_konfig = templates?.konfiguration ?? [];
+
+          this.stammdaten = <IStammdaten>erg.konfig[0];
 
           const mains = erg.main as any[];
           this.mitglieder = erg.mitglieder as any[];
@@ -716,13 +720,13 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
     const payload = {
       "druck_datum": heute,
-      "fw_name": "Freiwillige Feuerwehr Schwadorf",
-      "fw_street": "Bruckerstraße 8a",
-      "fw_plz": "2432",
-      "fw_ort": "Schwadorf",
-      "fw_email": "schwadorf@feuerwehr.gv.at",
-      "fw_telefon": "02230 22 22",
-      "fw_nummer": "03313",
+      "fw_name": this.stammdaten.fw_name,
+      "fw_nummer": this.stammdaten.fw_nummer,
+      "fw_street": this.stammdaten.fw_street,
+      "fw_plz": this.stammdaten.fw_plz,
+      "fw_ort": this.stammdaten.fw_ort,
+      "fw_email": this.stammdaten.fw_email,
+      "fw_telefon": this.stammdaten.fw_nummer,
       "mitglied_stbnr": element.stbnr ?? "",
       "mitglied_vorname": element.vorname ?? "",
       "mitglied_zuname": element.nachname ?? "",
@@ -887,13 +891,13 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
     const payload = {
       "druck_datum": heute,
-      "fw_name": "Freiwillige Feuerwehr Schwadorf",
-      "fw_street": "Bruckerstraße 8a",
-      "fw_plz": "2432",
-      "fw_ort": "Schwadorf",
-      "fw_email": "schwadorf@feuerwehr.gv.at",
-      "fw_telefon": "02230 22 22",
-      "fw_nummer": "03313",
+      "fw_name": this.stammdaten.fw_name,
+      "fw_nummer": this.stammdaten.fw_nummer,
+      "fw_street": this.stammdaten.fw_street,
+      "fw_plz": this.stammdaten.fw_plz,
+      "fw_ort": this.stammdaten.fw_ort,
+      "fw_email": this.stammdaten.fw_email,
+      "fw_telefon": this.stammdaten.fw_nummer,
       "ats_traeger_liste": data,
       "fmd_export_liste_typ": typ
     }
