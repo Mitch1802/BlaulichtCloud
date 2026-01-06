@@ -61,16 +61,20 @@ export class ModulKonfigurationComponent implements OnInit {
   });
 
   pdfExports = [
-    { key: 'idPdfCheckliste', label: 'FMD: Deckblatt (Checkliste)' },
-    { key: 'idPdfListe', label: 'FMD: Listen (Tauglichkeit/Leistungstest/Untersuchungen)' },
+    { key: 'idFmdDeckblatt', label: 'FMD: Deckblatt (Checkliste)' },
+    { key: 'idFmdListe', label: 'FMD: Listen (Tauglichkeit/Leistungstest/Untersuchungen)' },
+    { key: 'idVerwaltungTombola', label: 'VERWALTUNG: Tombolabestätigung' },
+    { key: 'idVerwaltungRechnung', label: 'VERWALTUNG: Rechnungsaufstellung' },
   ] as const;
 
   pdfTemplates: IPdfTemplate[] = [];
   private pdfTemplatesLoaded = false;
 
   pdfMappingForm = new FormGroup({
-    idPdfCheckliste: new FormControl<string | null>(null, Validators.required),
-    idPdfListe: new FormControl<string | null>(null, Validators.required),
+    idFmdDeckblatt: new FormControl<string | null>(null, Validators.required),
+    idFmdListe: new FormControl<string | null>(null, Validators.required),
+    idVerwaltungTombola: new FormControl<string | null>(null, Validators.required),
+    idVerwaltungRechnung: new FormControl<string | null>(null, Validators.required),
   });
 
   ngOnInit(): void {
@@ -139,7 +143,6 @@ export class ModulKonfigurationComponent implements OnInit {
   }
 
   datenSpeichern(): void {
-    // Achtung: bei pdf prüfen wir pdfMappingForm zusätzlich
     if (this.formModul.invalid) {
       this.globalDataService.erstelleMessage('error', 'Bitte alle Pflichtfelder korrekt ausfüllen!');
       return;
@@ -154,13 +157,13 @@ export class ModulKonfigurationComponent implements OnInit {
         return;
       }
 
-      // OPTION A: NUR IDs speichern
       objekt.konfiguration = {
-        idPdfCheckliste: this.pdfMappingForm.controls['idPdfCheckliste'].value,
-        idPdfListe: this.pdfMappingForm.controls['idPdfListe'].value,
+        idFmdDeckblatt: this.pdfMappingForm.controls['idFmdDeckblatt'].value,
+        idFmdListe: this.pdfMappingForm.controls['idFmdListe'].value,
+        idVerwaltungTombola: this.pdfMappingForm.controls['idVerwaltungTombola'].value,
+        idVerwaltungRechnung: this.pdfMappingForm.controls['idVerwaltungRechnung'].value,
       };
 
-      // (optional, aber sinnvoll): JSON-String im formModul sauber halten
       this.formModul.controls['konfiguration'].setValue(
         JSON.stringify(objekt.konfiguration, null, 2),
         { emitEvent: false }
@@ -246,8 +249,10 @@ export class ModulKonfigurationComponent implements OnInit {
 
   private initPdfMappingFromConfigObject(cfg: any): void {
     this.pdfMappingForm.patchValue({
-      idPdfCheckliste: cfg?.idPdfCheckliste ?? null,
-      idPdfListe: cfg?.idPdfListe ?? null,
+      idFmdDeckblatt: cfg?.idFmdDeckblatt ?? null,
+      idFmdListe: cfg?.idFmdListe ?? null,
+      idVerwaltungTombola: cfg?.idVerwaltungTombola ?? null,
+      idVerwaltungRechnung: cfg?.idVerwaltungRechnung ?? null,
     }, { emitEvent: false });
 
     this.syncPdfMappingToKonfigurationControl();

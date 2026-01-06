@@ -711,7 +711,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
 
   printChecklist(element: any): void {
     if (!element?.id) return;
-    const idPdfCheckliste = this.pdf_konfig['idPdfCheckliste'];
+    const idPdfCheckliste = this.pdf_konfig['idFmdDeckblatt'];
     const abfrageUrl = `pdf/templates/${idPdfCheckliste}/render`;
 
     let heute: any = new Date().toLocaleString('de-DE');
@@ -882,7 +882,7 @@ export class FmdComponent implements OnInit, AfterViewInit {
   }
 
   printListe(data: any, typ: string): void {
-    const idPdfListe = this.pdf_konfig['idPdfListe'];
+    const idPdfListe = this.pdf_konfig['idFmdListe'];
     const abfrageUrl = `pdf/templates/${idPdfListe}/render`;
 
     let heute: any = new Date().toLocaleString('de-DE');
