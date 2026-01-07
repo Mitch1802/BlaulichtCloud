@@ -122,13 +122,18 @@ class FahrzeugCheckCreateView(APIView):
         )
 
         item_ids = [r["item_id"] for r in ser.validated_data["results"]]
-        items = RaumItem.objects.select_related("raum__fahrzeug").filter(id__in=item_ids)
+
+        items = RaumItem.objects.select_related("raum").filter(
+            id__in=item_ids,
+            raum__fahrzeug_id=fahrzeug.id,
+        )
+
         item_map = {i.id: i for i in items}
 
         results_bulk = []
         for r in ser.validated_data["results"]:
             item = item_map.get(r["item_id"])
-            if not item or item.raum.fahrzeug_id != fahrzeug.id:
+            if not item:
                 return Response(
                     {"detail": f"Item {r['item_id']} gehört nicht zu diesem Fahrzeug."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -136,13 +141,14 @@ class FahrzeugCheckCreateView(APIView):
 
             results_bulk.append(
                 FahrzeugCheckItem(
-                    check=check,
+                    fahrzeug_check=check,  # falls du das Feld umbenannt hast
                     item=item,
                     status=r["status"],
-                    menge_aktuel=r.get("menge_aktuel", None),
+                    menge_aktuel=r.get("menge_aktuel"),
                     notiz=r.get("notiz", ""),
                 )
             )
+
 
         FahrzeugCheckItem.objects.bulk_create(results_bulk)
         return Response({"id": check.id}, status=status.HTTP_201_CREATED)

@@ -67,8 +67,8 @@ class FahrzeugCheckItem(TimeStampedModel):
         MISSING = "missing", "Fehlt"
         DAMAGED = "damaged", "Beschädigt"
 
-    check = models.ForeignKey(FahrzeugCheck, on_delete=models.CASCADE, related_name="results")
-    item = models.ForeignKey(verbose_name=_("Item"), RaumItem, on_delete=models.PROTECT)
+    fahrzeug_check = models.ForeignKey(FahrzeugCheck, on_delete=models.CASCADE, related_name="results")
+    item = models.ForeignKey(RaumItem, verbose_name=_("Item"), on_delete=models.PROTECT)
     status = models.CharField(verbose_name=_("Status"), max_length=20, choices=Status.choices, default=Status.OK)
     menge_aktuel = models.DecimalField(verbose_name=_("Menge Aktuel"), max_digits=10, decimal_places=2, null=True, blank=True)
     notiz = models.CharField(verbose_name=_("Notiz"), max_length=255, blank=True, default="")
