@@ -172,6 +172,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.ScopedRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
+        "dj_rest_auth": "10/min",          # Login / auth endpoints
         "public_pin_verify": "5/min",  # z.B. 5 pro Minute pro IP
     },
 }
