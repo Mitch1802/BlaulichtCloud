@@ -56,7 +56,7 @@ export class AtemschutzGeraeteComponent implements OnInit {
   breadcrumb: any = [];
   dataSource = new MatTableDataSource<IAtemschutzGeraet>(this.geraete);
   dataSourcePruefungen = new MatTableDataSource<IAtemschutzGeraetProtokoll>(this.pruefungen);
-  sichtbareSpalten: string[] = ['inv_nr', 'typ', 'art', 'actions'];
+  sichtbareSpalten: string[] = ['inv_nr', 'typ', 'art', 'standort', 'actions'];
   sichtbareSpaltenPruefungen: string[] = ['datum', 'taetigkeit', 'name_pruefer', 'actions'];
 
   formModul = new FormGroup({
