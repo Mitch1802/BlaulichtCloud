@@ -57,11 +57,18 @@
     "icon": "picture_as_pdf",
     "modul": "PDF Templates",
     "rolle": "ADMIN",
-    "routerlink": "/template"
+    "routerlink": "/pdf_template"
   },
   {
     "icon": "settings",
     "modul": "Konfiguration",
     "rolle": "ADMIN",
     "routerlink": "/konfiguration"
+  },
+  {
+    "icon": "manage_accounts",
+    "modul": "Eigene Daten",
+    "rolle": "ADMIN, MITGLIED",
+    "routerlink": "/eigene_daten"
   }
+]

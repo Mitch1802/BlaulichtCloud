@@ -6,8 +6,11 @@
 
 ### FEATURES / BUGS
 
+***V2.0.0***
+- Frontend: Neue 3 Layer Architektur
+
 ***V1.0.0***
-- ...
+- First Version 
 
 
 ## Github Action
