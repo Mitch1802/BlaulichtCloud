@@ -108,7 +108,7 @@ class UserSelfSerializer(serializers.ModelSerializer):
         model = User
         # NUR das, was ein User selbst ändern darf:
         fields = ("id", "username", "first_name", "last_name", "password1")
-        read_only_fields = ("id")
+        read_only_fields = ("id", "roles")
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
