@@ -11,10 +11,10 @@ from .views import (
 
 router = DefaultRouter()
 router.register("rolle", RoleViewSet, basename="role")
-router.register("self", CustomUserDetailsView, basename="self")
 
 urlpatterns = [
     path("", UserListView.as_view(), name="user-list"),
+    path("self/", CustomUserDetailsView.as_view(), name="user-self"),
     path("<uuid:id>/", UserRetrieveUpdateDestroyView.as_view(), name="user-retrieve-update-destroy"),
     path("change_password/<uuid:id>/", ChangePasswordView.as_view(), name="user-change-password"),
     path("", include(router.urls)),

@@ -6,14 +6,13 @@ from dj_rest_auth.views import LogoutView
 
 from .models import User, Role
 from .renderers import UserJSONRenderer
-from .serializers import UserSerializer, ChangePasswordSerializer, RoleSerializer
+from .serializers import UserSerializer, ChangePasswordSerializer, RoleSerializer, UserSelfSerializer
 from core_apps.common.permissions import HasAnyRolePermission
 
 
 class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserSelfSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "MITGLIED")]
-    lookup_field = "id"
 
     def get_object(self):
         return self.request.user

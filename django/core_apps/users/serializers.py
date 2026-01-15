@@ -103,6 +103,16 @@ class UserDetailSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "username", "roles"]
 
+class UserSelfSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # NUR das, was ein User selbst ändern darf:
+        fields = ("id", "username", "first_name", "last_name", "password1")
+        read_only_fields = ("id")
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
 
