@@ -13,6 +13,7 @@ from core_apps.common.permissions import HasAnyRolePermission
 class CustomUserDetailsView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "MITGLIED")]
+    lookup_field = "id"
 
     def get_object(self):
         return self.request.user
