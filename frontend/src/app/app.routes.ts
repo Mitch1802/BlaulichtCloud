@@ -15,6 +15,7 @@ import { AtemschutzGeraeteComponent } from './_template/atemschutz-geraete/atems
 import { AtemschutzMaskenComponent } from './_template/atemschutz-masken/atemschutz-masken.component';
 import { AtemschutzDienstbuchComponent } from './_template/atemschutz-dienstbuch/atemschutz-dienstbuch.component';
 import { PdfTemplatesComponent } from './pdf-templates/pdf-templates.component';
+import { EigeneDatenComponent } from './eigene-daten/eigene-daten.component';
 
 export const routes: Routes = [
   {
@@ -67,6 +68,9 @@ export const routes: Routes = [
   },
   {
     path: 'konfiguration', component: KonfigurationComponent
+  },
+  {
+    path: 'eigene_daten', component: EigeneDatenComponent
   },
   {
     path: '*', component: LoginComponent

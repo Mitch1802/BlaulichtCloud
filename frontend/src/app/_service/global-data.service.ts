@@ -316,7 +316,13 @@ export class GlobalDataService {
   patch(modul: string, id: any, daten: any, filesVorhanden?: boolean): Observable<any[]> {
     const isFD = typeof FormData !== 'undefined' && daten instanceof FormData;
     const headers = this.ladeHeaders(isFD ?? false);
-    const url = `${this.AppUrl}${modul}/${id}/`;
+    let url = ''
+    if (id !== '') {
+      url += `${this.AppUrl}${modul}/${id}/`;
+    } else {
+      url += `${this.AppUrl}${modul}/`;
+    }
+    
     return this.withLoading(this.http.patch<any[]>(url, daten, { headers }));
   }
 
@@ -414,6 +420,9 @@ export class GlobalDataService {
     } else if (page == 'V_KO') {
       link = '/konfiguration';
       kuerzel = 'Konfiguration';
+    } else if (page == 'V_ED') {
+      link = '/eigene_daten';
+      kuerzel = 'Eigene Daten';
     }
 
     const btn = {
