@@ -129,17 +129,17 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }}
+      
+      - name: Deploy to testserver via SSH
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.TESTSERVER_HOST }}
+          username: ${{ secrets.TESTSERVER_USER }}
+          key: ${{ secrets.TESTSERVER_SSH_KEY }}
+          port: 22
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+            /srv/blaulichtcloud/app_manager.sh update "${{ env.VERSION }}"
 
-      - name: Verify Docker Images Integrity
-        run: |
-          echo "Überprüfe das PostgreSQL-Image:"
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:db-${{ env.VERSION }} psql --version
-
-          echo "Überprüfe das API-Image:"
-          docker run --rm --entrypoint gunicorn ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:api-${{ env.VERSION }} --version
-
-          echo "Überprüfe das Nginx-Image:"
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPO }}:nginx-${{ env.VERSION }} nginx -v
-
-      - name: List local Docker images
-        run: docker images

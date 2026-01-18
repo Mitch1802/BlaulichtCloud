@@ -7,25 +7,46 @@ import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-start',
-    templateUrl: './start.component.html',
-    styleUrls: ['./start.component.sass'],
-    imports: [
+  selector: 'app-start',
+  templateUrl: './start.component.html',
+  styleUrls: ['./start.component.sass'],
+  imports: [
     HeaderComponent,
     MatCardModule,
     RouterLink,
     MatIconModule
-]
+  ]
 })
 export class StartComponent implements OnInit {
   private globalDataService = inject(GlobalDataService);
 
   breadcrumb: any = [];
-  start_konfig:any = [];
-  username = '';   
-  meine_rollen = '';             
-  meineRollenKeys: string[] = [];       
-  visibleItems: any[] = []; 
+  start_konfig: any = [];
+  username = '';
+  meine_rollen = '';
+  meineRollenKeys: string[] = [];
+  visibleItems: any[] = [];
+
+  defaultKonfig: any[] = [
+    {
+      "icon": "tune",
+      "modul": "Modul Konfiguration",
+      "rolle": "ADMIN",
+      "routerlink": "/modul_konfiguration"
+    },
+    {
+      "icon": "engineering",
+      "modul": "Benutzerverwaltung",
+      "rolle": "ADMIN",
+      "routerlink": "/benutzer"
+    },
+    {
+      "icon": "settings",
+      "modul": "Konfiguration",
+      "rolle": "ADMIN",
+      "routerlink": "/konfiguration"
+    },
+  ];
 
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '1');
@@ -39,9 +60,15 @@ export class StartComponent implements OnInit {
     this.globalDataService.get("modul_konfiguration").subscribe({
       next: (erg: any) => {
         try {
-          const konfigs = erg.main.find((m: any) => m.modul === 'start');
-          this.start_konfig = konfigs?.konfiguration ?? [];
+          const main = Array.isArray(erg?.main) ? erg.main : [];
 
+          if (main.length > 0) {
+            const konfigs = main.find((m: any) => m.modul === 'start');
+            this.start_konfig = konfigs?.konfiguration ?? [];
+          } else {
+            this.start_konfig = this.defaultKonfig;
+          }
+          
           this.visibleItems = this.start_konfig.filter((item: any) =>
             item.rolle
               .split(',')

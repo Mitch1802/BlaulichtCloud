@@ -75,7 +75,7 @@ EOF
     # Docker Compose File holen
     echo "Lade docker-compose.yml ..."
     curl -sSL -o "$INSTALL_PATH/docker-compose.yml" \
-        "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/docker-compose.yml" || {
+        "https://raw.githubusercontent.com/Mitch1802/blaulicht-cloud-platform/main/install/docker-compose.yml" || {
         echo "Fehler beim Herunterladen der docker-compose.yml"
         exit 1
     }
@@ -105,16 +105,22 @@ EOF
 
     docker compose exec api python manage.py shell -c "\
 from django.contrib.auth import get_user_model; \
+from core_apps.users.models import Role; \
 User = get_user_model(); \
-u, _ = User.objects.get_or_create(username='admin'); \
-u.set_password('$SUPERUSER_PASSWORD'); \
-u.first_name = 'CreatedSuperuser'; \
-u.last_name = 'CreatedSuperuser'; \
+# Superuser anlegen/aktualisieren
+u, _ = User.objects.get_or_create(username='admin', defaults={'first_name': 'Created', 'last_name': 'Superuser'}); \
 u.is_superuser = True; \
-u.is_verwaltung = True; \
 u.is_staff = True; \
+u.set_password('$SUPERUSER_PASSWORD'); \
 u.save(); \
-print('Admin-Passwort gesetzt: $SUPERUSER_PASSWORD')"
+# Rollen anlegen, falls nicht vorhanden
+r_admin, _ = Role.objects.get_or_create(key='ADMIN', defaults={'verbose_name': 'ADMIN'}); \
+r_member, _ = Role.objects.get_or_create(key='MITGLIED', defaults={'verbose_name': 'MITGLIED'}); \
+# Nur ADMIN-Rolle zuweisen
+u.roles.set([r_admin]); \
+u.save(); \
+print('Admin-Passwort gesetzt: $SUPERUSER_PASSWORD'); \
+print('Rollen zugewiesen:', [r.key for r in u.roles.all()])"
 
     echo "----------------------------------------"
     echo "INSTALLATION ABGESCHLOSSEN."
@@ -142,7 +148,7 @@ function do_update() {
     # Docker-Compose neu herunterladen
     echo "Aktualisiere docker-compose.yml aus GitHub ..."
     curl -sSL -o "docker-compose.yml" \
-        "https://raw.githubusercontent.com/Mitch1802/BlaulichtCloud/main/install/docker-compose.yml" || {
+        "https://raw.githubusercontent.com/Mitch1802/blaulicht-cloud-platform/main/install/docker-compose.yml" || {
         echo "Fehler beim Herunterladen der docker-compose.yml"
         exit 1
     }
