@@ -167,7 +167,7 @@ export class MitgliedComponent implements OnInit {
     });
 
     let url = `${this.modul}/import`;
-    this.globalDataService.post(this.modul, result, false).subscribe({
+    this.globalDataService.post(url, result, false).subscribe({
         next: (erg: any) => {
           this.globalDataService.erstelleMessage(
             'success',
