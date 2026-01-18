@@ -14,6 +14,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import * as Papa from 'papaparse';
+import { MatSort } from '@angular/material/sort';
 
 type RenameMap = {
   [originalKey: string]: string;
@@ -34,17 +35,27 @@ type RenameMap = {
     MatCheckbox,
     MatTableModule,
     MatPaginatorModule,
+    MatSort,
     MatIconModule
 ],
     templateUrl: './mitglied.component.html',
     styleUrl: './mitglied.component.sass'
 })
 
-export class MitgliedComponent implements OnInit, AfterViewInit {
+export class MitgliedComponent implements OnInit {
   globalDataService = inject(GlobalDataService);
   router = inject(Router);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  dataSource = new MatTableDataSource<IMitglied>([]);
+
+  @ViewChild(MatPaginator) set matPaginator(p: MatPaginator | undefined) {
+    if (p) this.dataSource.paginator = p;
+  }
+
+  @ViewChild(MatSort) set matSort(s: MatSort | undefined) {
+    if (s) this.dataSource.sort = s;
+  }
+
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   title = "Mitglieder Verwaltung";
@@ -52,7 +63,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
 
   mitglieder: IMitglied[] = [];
   breadcrumb: any = [];
-  dataSource = new MatTableDataSource<IMitglied>(this.mitglieder);
 
   formAuswahl = new FormGroup({
     mitglied: new FormControl(0)
@@ -77,10 +87,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
   });
 
   sichtbareSpaltenMitglieder: string[] = ['stbnr', 'vorname', 'nachname', 'actions'];
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }
 
   ngOnInit(): void {
     sessionStorage.setItem("PageNumber", "2");
@@ -131,7 +137,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
     });
   }
 
-
   transformArray<T extends Record<string, any>>(
     inputArray: T[],
     keysToPickAndRename: RenameMap
@@ -147,6 +152,11 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
     });
   }
 
+  applyFilter(value: string): void {
+    this.dataSource.filter = (value || '').trim().toLowerCase();
+    this.matPaginator?.firstPage();
+  }
+
   sendToBackend(entries: any[]): void {
     // keyAlt: "keyNeu"
     let result = this.transformArray(entries, {
@@ -156,17 +166,21 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       "GEBURTSDATUM": "geburtsdatum"
     });
 
+    let url = `${this.modul}/import`;
     this.globalDataService.post(this.modul, result, false).subscribe({
         next: (erg: any) => {
-          try {
-            this.mitglieder.push(erg);
-            this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
-            this.dataSource.data = this.mitglieder;
+          this.globalDataService.erstelleMessage(
+            'success',
+            `${erg.created} importiert, ${erg.skipped.length} übersprungen`
+          );
 
-            this.globalDataService.erstelleMessage('success', 'Import erfolgreich gespeichert!');
-          } catch (e: any) {
-            this.globalDataService.erstelleMessage('error', e);
-          }
+          this.globalDataService.get(this.modul).subscribe({
+            next: (list: any) => {
+              this.mitglieder = this.globalDataService.arraySortByKey(list, 'stbnr');
+              this.dataSource.data = this.mitglieder;
+            },
+            error: (error: any) => this.globalDataService.errorAnzeigen(error)
+          });
         },
         error: (error: any) => this.globalDataService.errorAnzeigen(error)
       });
@@ -216,7 +230,6 @@ export class MitgliedComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 
   neueDetails(): void {
     this.formModul.enable();
