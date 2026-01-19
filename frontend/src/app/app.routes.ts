@@ -16,6 +16,10 @@ import { AtemschutzMaskenComponent } from './_template/atemschutz-masken/atemsch
 import { AtemschutzDienstbuchComponent } from './_template/atemschutz-dienstbuch/atemschutz-dienstbuch.component';
 import { PdfTemplatesComponent } from './pdf-templates/pdf-templates.component';
 import { EigeneDatenComponent } from './eigene-daten/eigene-daten.component';
+import { FahrzeugComponent } from './fahrzeug/fahrzeug.component';
+import { VerwaltungComponent } from './verwaltung/verwaltung.component';
+import { FahrzeugCheckComponent } from './fahrzeug/fahrzeug-check.component';
+import { FahrzeugPublicPinComponent } from './fahrzeug/fahrzeug-public-pin.component';
 
 export const routes: Routes = [
   {
@@ -56,6 +60,21 @@ export const routes: Routes = [
   },
   {
     path: 'inventar', component: InventarComponent
+  },
+  {
+    path: "fahrzeug", component: FahrzeugComponent
+  },
+  {
+    path: "fahrzeuge/:id/check", component: FahrzeugCheckComponent
+  },
+  {
+    path: "public/fahrzeuge/:publicId", component: FahrzeugPublicPinComponent
+  },
+  {
+    path: "public/fahrzeuge/:publicId/check", component: FahrzeugCheckComponent
+  },
+  {
+    path: 'verwaltung', component: VerwaltungComponent
   },
   {
     path: 'pdf_template', component: PdfTemplatesComponent

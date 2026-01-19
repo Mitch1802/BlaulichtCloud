@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { SpinnerComponent } from './spinner/spinner.component';
 import { RouterOutlet } from '@angular/router';
 
 
@@ -7,7 +6,6 @@ import { RouterOutlet } from '@angular/router';
     selector: 'app-root',
     templateUrl: './app.component.html',
     imports: [
-        SpinnerComponent,
         RouterOutlet
     ],
     styleUrls: [

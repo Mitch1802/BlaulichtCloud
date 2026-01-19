@@ -399,6 +399,9 @@ export class GlobalDataService {
     } else if (page == 'NEWS') {
       link = '/news';
       kuerzel = 'News';
+    } else if (page == 'FZ') {
+      link = '/fahrzeug';
+      kuerzel = 'Fahrzeug';
     } else if (page == 'INV') {
       link = '/inventar';
       kuerzel = 'Inventar';
