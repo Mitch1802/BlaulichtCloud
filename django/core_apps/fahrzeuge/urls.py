@@ -2,10 +2,13 @@ from django.urls import path
 from .views import (
     PublicPinVerifyView, PublicFahrzeugDetailView,
     FahrzeugDetailAuthView, FahrzeugCheckCreateView,
-    FahrzeugPinAdminView, FahrzeugPinDisableAdminView, FahrzeugPinRotateAdminView
+    FahrzeugPinAdminView, FahrzeugPinDisableAdminView, 
+    FahrzeugPinRotateAdminView, FahrzeugListAuthView
 )
 
 urlpatterns = [
+    path("fahrzeuge", FahrzeugListAuthView.as_view()),
+    
     # public
     path("public/fahrzeuge/<str:public_id>/pin/verify", PublicPinVerifyView.as_view()),
     path("public/fahrzeuge/<str:public_id>", PublicFahrzeugDetailView.as_view()),

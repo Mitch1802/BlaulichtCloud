@@ -3,6 +3,12 @@ from rest_framework import serializers
 from .models import Fahrzeug, FahrzeugRaum, RaumItem, FahrzeugCheckItem
 
 
+class FahrzeugListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fahrzeug
+        fields = ["id", "name", "bezeichnung", "public_id"]
+
+
 # -----------------------------
 # PUBLIC (PIN) -> KEINE IDs, KEIN Hash, KEIN pin_enabled, KEINE Timestamps
 # -----------------------------

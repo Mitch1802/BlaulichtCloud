@@ -7,11 +7,12 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import ListAPIView
 
 from core_apps.common.permissions import HasAnyRolePermission
 
 from .models import Fahrzeug, FahrzeugCheck, FahrzeugCheckItem, RaumItem
-from .serializers import FahrzeugPublicDetailSerializer, FahrzeugCheckCreateSerializer, FahrzeugDetailSerializer
+from .serializers import FahrzeugListSerializer, FahrzeugPublicDetailSerializer, FahrzeugCheckCreateSerializer, FahrzeugDetailSerializer
 
 
 PUBLIC_TOKEN_TTL_MIN = 60  # 60 Minuten
@@ -35,6 +36,14 @@ def read_public_token(token: str) -> dict | None:
         return payload
     except Exception:
         return None
+
+
+
+
+class FahrzeugListAuthView(ListAPIView):
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG")]
+    queryset = Fahrzeug.objects.all().order_by("name")
+    serializer_class = FahrzeugListSerializer
 
 
 class PublicPinVerifyView(APIView):
