@@ -12,19 +12,19 @@ router.register(r"fahrzeuge", FahrzeugViewSet, basename="fahrzeuge")
 urlpatterns = [
     # nested
     path(
-        "fahrzeuge/<int:fahrzeug_id>/raeume/",
+        "fahrzeuge/<uuid:fahrzeug_id>/raeume/",
         FahrzeugRaumViewSet.as_view({"get": "list", "post": "create"}),
     ),
     path(
-        "fahrzeuge/<int:fahrzeug_id>/raeume/<int:pk>/",
+        "fahrzeuge/<uuid:fahrzeug_id>/raeume/<uuid:id>/",
         FahrzeugRaumViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
     ),
     path(
-        "raeume/<int:raum_id>/items/",
+        "raeume/<uuid:raum_id>/items/",
         RaumItemViewSet.as_view({"get": "list", "post": "create"}),
     ),
     path(
-        "raeume/<int:raum_id>/items/<int:pk>/",
+        "raeume/<uuid:raum_id>/items/<uuid:id>/",
         RaumItemViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
     ),
 ]
