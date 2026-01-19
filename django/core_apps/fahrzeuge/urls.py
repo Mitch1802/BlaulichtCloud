@@ -1,22 +1,32 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import (
-    PublicPinVerifyView, PublicFahrzeugDetailView,
-    FahrzeugDetailAuthView, FahrzeugCheckCreateView,
-    FahrzeugPinAdminView, FahrzeugPinDisableAdminView, 
-    FahrzeugPinRotateAdminView, FahrzeugListAuthView
+    FahrzeugViewSet,
+    FahrzeugRaumViewSet,
+    RaumItemViewSet,
 )
 
+router = DefaultRouter(trailing_slash=False)
+router.register(r"fahrzeuge", FahrzeugViewSet, basename="fahrzeuge")
+
 urlpatterns = [
-    path("fahrzeuge/", FahrzeugListAuthView.as_view()),
-
-    path("public/fahrzeuge/<str:public_id>/pin/verify/", PublicPinVerifyView.as_view()),
-    path("public/fahrzeuge/<str:public_id>/", PublicFahrzeugDetailView.as_view()),
-
-    path("fahrzeuge/<int:pk>/", FahrzeugDetailAuthView.as_view()),
-    path("fahrzeuge/<int:fahrzeug_id>/checks/", FahrzeugCheckCreateView.as_view()),
-
-    path("fahrzeuge/<int:fahrzeug_id>/pin/", FahrzeugPinAdminView.as_view()),
-    path("fahrzeuge/<int:fahrzeug_id>/pin/disable/", FahrzeugPinDisableAdminView.as_view()),
-    path("fahrzeuge/<int:fahrzeug_id>/pin/rotate/", FahrzeugPinRotateAdminView.as_view()),
+    # nested
+    path(
+        "fahrzeuge/<int:fahrzeug_id>/raeume",
+        FahrzeugRaumViewSet.as_view({"get": "list", "post": "create"}),
+    ),
+    path(
+        "fahrzeuge/<int:fahrzeug_id>/raeume/<int:pk>",
+        FahrzeugRaumViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
+    ),
+    path(
+        "raeume/<int:raum_id>/items",
+        RaumItemViewSet.as_view({"get": "list", "post": "create"}),
+    ),
+    path(
+        "raeume/<int:raum_id>/items/<int:pk>",
+        RaumItemViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
+    ),
 ]
 
+urlpatterns += router.urls

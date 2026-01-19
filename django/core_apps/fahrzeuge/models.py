@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password, check_password
 
 from core_apps.common.models import TimeStampedModel
 
+
 class Fahrzeug(TimeStampedModel):
     name = models.CharField(verbose_name=_("Name"), max_length=120)
     bezeichnung = models.CharField(verbose_name=_("Bezeichnung"), max_length=50, blank=True, default="")
@@ -19,12 +20,10 @@ class Fahrzeug(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if not self.public_id:
-            # kurz, aber nicht erratbar genug; 16-24 chars sind in der Praxis ok
             self.public_id = get_random_string(24)
         super().save(*args, **kwargs)
 
     def set_pin(self, pin: str):
-        # pin als password-hash speichern
         self.public_pin_hash = make_password(pin)
         self.pin_enabled = True
 
