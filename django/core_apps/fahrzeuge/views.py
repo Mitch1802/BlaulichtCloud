@@ -26,6 +26,7 @@ class FahrzeugViewSet(viewsets.ModelViewSet):
         HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
     ]
     queryset = Fahrzeug.objects.prefetch_related("raeume__items").order_by("name")
+    lookup_field = "id"
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -44,6 +45,7 @@ class FahrzeugRaumViewSet(viewsets.ModelViewSet):
         HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
     ]
     serializer_class = FahrzeugRaumSerializer
+    lookup_field = "id"
 
     def get_queryset(self):
         return FahrzeugRaum.objects.filter(
@@ -64,6 +66,7 @@ class RaumItemViewSet(viewsets.ModelViewSet):
         HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
     ]
     serializer_class = RaumItemSerializer
+    lookup_field = "id"
 
     def get_queryset(self):
         return RaumItem.objects.filter(
