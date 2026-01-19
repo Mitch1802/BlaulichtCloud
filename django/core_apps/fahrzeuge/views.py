@@ -38,8 +38,6 @@ def read_public_token(token: str) -> dict | None:
         return None
 
 
-
-
 class FahrzeugListAuthView(ListAPIView):
     permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG")]
     queryset = Fahrzeug.objects.all().order_by("name")
