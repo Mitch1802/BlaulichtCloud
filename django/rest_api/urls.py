@@ -22,4 +22,5 @@ urlpatterns = [
     path(settings.API_URL + "atemschutz/", include("core_apps.atemschutz_geraete.urls")),
     path(settings.API_URL + "atemschutz/", include("core_apps.messgeraete.urls")),
     path(settings.API_URL + "pdf/", include("core_apps.pdf.urls")),
+    path(settings.API_URL, include("core_apps.fahrzeuge.urls")),
 ]
