@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.hashers import make_password, check_password
 
 from core_apps.common.models import TimeStampedModel
 
@@ -19,14 +18,8 @@ class Fahrzeug(TimeStampedModel):
             self.public_id = get_random_string(24)
         super().save(*args, **kwargs)
 
-    def set_pin(self, pin: str):
-        self.public_pin_hash = make_password(pin)
-        self.pin_enabled = True
-
-    def check_pin(self, pin: str) -> bool:
-        if not self.pin_enabled or not self.public_pin_hash:
-            return False
-        return check_password(pin, self.public_pin_hash)
+    class Meta:
+        ordering = ["name", "pkid"]
 
 
 class FahrzeugRaum(TimeStampedModel):
@@ -35,7 +28,7 @@ class FahrzeugRaum(TimeStampedModel):
     reihenfolge = models.PositiveIntegerField(verbose_name=_("Reihenfolge"), default=0)
 
     class Meta:
-        ordering = ["reihenfolge", "id"]
+        ordering = ["reihenfolge", "pkid"]
 
 
 class RaumItem(TimeStampedModel):
@@ -47,13 +40,16 @@ class RaumItem(TimeStampedModel):
     reihenfolge = models.PositiveIntegerField(verbose_name=_("Reihenfolge"), default=0)
 
     class Meta:
-        ordering = ["reihenfolge", "id"]
+        ordering = ["reihenfolge", "pkid"]
 
 
 class FahrzeugCheck(TimeStampedModel):
     fahrzeug = models.ForeignKey(Fahrzeug, on_delete=models.CASCADE, related_name="checks")
     title = models.CharField(verbose_name=_("Titel"), max_length=120, blank=True, default="")
     notiz = models.TextField(verbose_name=_("Notiz"), blank=True, default="")
+
+    class Meta:
+        ordering = ["-created_at", "-pkid"]
 
 
 class FahrzeugCheckItem(TimeStampedModel):
@@ -65,5 +61,8 @@ class FahrzeugCheckItem(TimeStampedModel):
     fahrzeug_check = models.ForeignKey(FahrzeugCheck, on_delete=models.CASCADE, related_name="results")
     item = models.ForeignKey(RaumItem, verbose_name=_("Item"), on_delete=models.PROTECT)
     status = models.CharField(verbose_name=_("Status"), max_length=20, choices=Status.choices, default=Status.OK)
-    menge_aktuel = models.DecimalField(verbose_name=_("Menge Aktuel"), max_digits=10, decimal_places=2, null=True, blank=True)
+    menge_aktuel = models.DecimalField(verbose_name=_("Menge Aktuell"), max_digits=10, decimal_places=2, null=True, blank=True)
     notiz = models.CharField(verbose_name=_("Notiz"), max_length=255, blank=True, default="")
+
+    class Meta:
+        ordering = ["pkid"]

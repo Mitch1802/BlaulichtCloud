@@ -5,10 +5,9 @@ from .views import (
     FahrzeugViewSet,
     FahrzeugRaumViewSet,
     RaumItemViewSet,
+    FahrzeugCheckCreateView,
     PublicPinVerifyView,
     PublicFahrzeugDetailView,
-    FahrzeugCheckListCreateView,
-    FahrzeugCheckDetailView,
 )
 
 router = DefaultRouter()
@@ -16,7 +15,18 @@ router.register(r"fahrzeuge", FahrzeugViewSet, basename="fahrzeuge")
 
 urlpatterns = [
     # -------------------------
-    # NESTED CRUD (AUTH)
+    # PUBLIC (globaler PIN)
+    # -------------------------
+    path("public/pin/verify/", PublicPinVerifyView.as_view()),
+    path("public/fahrzeuge/<str:public_id>/", PublicFahrzeugDetailView.as_view()),
+
+    # -------------------------
+    # AUTH: CHECK speichern
+    # -------------------------
+    path("fahrzeuge/<uuid:fahrzeug_id>/checks/", FahrzeugCheckCreateView.as_view()),
+
+    # -------------------------
+    # NESTED: RÄUME
     # -------------------------
     path(
         "fahrzeuge/<uuid:fahrzeug_id>/raeume/",
@@ -24,41 +34,20 @@ urlpatterns = [
     ),
     path(
         "fahrzeuge/<uuid:fahrzeug_id>/raeume/<uuid:id>/",
-        FahrzeugRaumViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
+        FahrzeugRaumViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
     ),
+
+    # -------------------------
+    # NESTED: ITEMS
+    # -------------------------
     path(
         "raeume/<uuid:raum_id>/items/",
         RaumItemViewSet.as_view({"get": "list", "post": "create"}),
     ),
     path(
         "raeume/<uuid:raum_id>/items/<uuid:id>/",
-        RaumItemViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
+        RaumItemViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
     ),
-
-    # -------------------------
-    # PUBLIC (PIN -> readonly token -> detail)
-    # -------------------------
-    path(
-        "public/pin/verify/",
-        PublicPinVerifyView.as_view(),
-    ),
-    path(
-        "public/fahrzeuge/<str:public_id>/",
-        PublicFahrzeugDetailView.as_view(),
-    ),
-
-    # -------------------------
-    # CHECK
-    # -------------------------
-    path(
-        "fahrzeuge/<uuid:fahrzeug_id>/checks/",
-        FahrzeugCheckListCreateView.as_view(),
-    ),
-    path(
-        "fahrzeuge/<uuid:fahrzeug_id>/checks/<uuid:check_id>/",
-        FahrzeugCheckDetailView.as_view(),
-    ),
-
 ]
 
 urlpatterns += router.urls

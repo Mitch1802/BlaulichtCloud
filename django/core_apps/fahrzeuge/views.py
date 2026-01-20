@@ -1,14 +1,11 @@
-from datetime import timedelta
-
+from django.conf import settings
 from django.core import signing
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from django.utils.crypto import get_random_string
 
 from rest_framework import viewsets, permissions, status
-from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 
 from core_apps.common.permissions import HasAnyRolePermission
 
@@ -17,137 +14,55 @@ from .serializers import (
     FahrzeugListSerializer,
     FahrzeugDetailSerializer,
     FahrzeugCrudSerializer,
-    FahrzeugPublicDetailSerializer,
     FahrzeugRaumSerializer,
+    FahrzeugRaumCrudSerializer,
     RaumItemSerializer,
+    RaumItemCrudSerializer,
+    FahrzeugPublicDetailSerializer,
     FahrzeugCheckCreateSerializer,
-    FahrzeugCheckListSerializer,
-    FahrzeugCheckDetailSerializer,
 )
 
-PUBLIC_TOKEN_TTL_MIN = 60  # 60 Minuten
-PUBLIC_TOKEN_SALT = "fahrzeug_public_pin_v1"
 
-
-def make_public_token(fahrzeug_public_id: str) -> str:
-    payload = {
-        "public_id": fahrzeug_public_id,
-        "scope": "readonly",
-        "exp": (timezone.now() + timedelta(minutes=PUBLIC_TOKEN_TTL_MIN)).timestamp(),
-    }
-    return signing.dumps(payload, salt=PUBLIC_TOKEN_SALT)
+# ==========================================================
+# Public Token (globaler PIN -> Token ist NICHT an Fahrzeug gebunden)
+# ==========================================================
+def make_public_token() -> str:
+    payload = {"scope": "public_readonly"}
+    return signing.dumps(payload, salt="fahrzeug_public_pin_v2")
 
 
 def read_public_token(token: str) -> dict | None:
     try:
-        payload = signing.loads(
+        ttl_min = getattr(settings, "PUBLIC_TOKEN_TTL_MIN", 60)
+        return signing.loads(
             token,
-            salt=PUBLIC_TOKEN_SALT,
-            max_age=PUBLIC_TOKEN_TTL_MIN * 60,
+            salt="fahrzeug_public_pin_v2",
+            max_age=ttl_min * 60,
         )
-        return payload
     except Exception:
         return None
 
 
-# =========================
-# AUTH: FAHRZEUG (LIST/DETAIL/CRUD) - UUID lookup via field "id"
-# =========================
-class FahrzeugViewSet(viewsets.ModelViewSet):
-    permission_classes = [
-        permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-    ]
-    queryset = Fahrzeug.objects.prefetch_related("raeume__items").order_by("name")
-
-    lookup_field = "id"
-    lookup_url_kwarg = "id"
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return FahrzeugListSerializer
-        if self.action == "retrieve":
-            return FahrzeugDetailSerializer
-        return FahrzeugCrudSerializer
-
-
-# =========================
-# AUTH: NESTED RÄUME (per Fahrzeug UUID)
-# =========================
-class FahrzeugRaumViewSet(viewsets.ModelViewSet):
-    permission_classes = [
-        permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-    ]
-    serializer_class = FahrzeugRaumSerializer
-
-    lookup_field = "id"
-    lookup_url_kwarg = "id"
-
-    def get_queryset(self):
-        return FahrzeugRaum.objects.filter(
-            fahrzeug__id=self.kwargs["fahrzeug_id"]   # UUID filter
-        ).order_by("reihenfolge", "pkid")
-
-    def perform_create(self, serializer):
-        fahrzeug = get_object_or_404(Fahrzeug, id=self.kwargs["fahrzeug_id"])
-        serializer.save(fahrzeug=fahrzeug)
-
-
-# =========================
-# AUTH: NESTED ITEMS (per Raum UUID)
-# =========================
-class RaumItemViewSet(viewsets.ModelViewSet):
-    permission_classes = [
-        permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-    ]
-    serializer_class = RaumItemSerializer
-
-    lookup_field = "id"
-    lookup_url_kwarg = "id"
-
-    def get_queryset(self):
-        return RaumItem.objects.filter(
-            raum__id=self.kwargs["raum_id"]  # UUID filter
-        ).order_by("reihenfolge", "pkid")
-
-    def perform_create(self, serializer):
-        raum = get_object_or_404(FahrzeugRaum, id=self.kwargs["raum_id"])
-        serializer.save(raum=raum)
-
-
-# =========================
-# PUBLIC: PIN VERIFY -> bearer token (readonly)
-# =========================
 class PublicPinVerifyView(APIView):
     permission_classes = [permissions.AllowAny]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "public_pin_verify"
 
-    def post(self, request, public_id: str):
+    def post(self, request):
         pin = str(request.data.get("pin", "")).strip()
         if not pin:
             return Response({"detail": "PIN fehlt."}, status=status.HTTP_400_BAD_REQUEST)
 
-        fahrzeug = get_object_or_404(Fahrzeug, public_id=public_id)
-
-        if not fahrzeug.pin_enabled:
+        if not getattr(settings, "PUBLIC_PIN_ENABLED", False):
             return Response({"detail": "PIN ist deaktiviert."}, status=status.HTTP_403_FORBIDDEN)
 
-        if not fahrzeug.check_pin(pin):
+        if pin != getattr(settings, "PUBLIC_FAHRZEUG_PIN", ""):
             return Response({"detail": "PIN falsch."}, status=status.HTTP_403_FORBIDDEN)
 
-        token = make_public_token(fahrzeug.public_id)
-        return Response(
-            {"access_token": token, "expires_in": PUBLIC_TOKEN_TTL_MIN * 60},
-            status=status.HTTP_200_OK
-        )
+        ttl_min = getattr(settings, "PUBLIC_TOKEN_TTL_MIN", 60)
+        return Response({"access_token": make_public_token(), "expires_in": ttl_min * 60})
 
 
-# =========================
-# PUBLIC: READONLY Fahrzeug detail (rooms/items) via token
-# =========================
 class PublicFahrzeugDetailView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -158,45 +73,90 @@ class PublicFahrzeugDetailView(APIView):
 
         token = auth.removeprefix("Bearer ").strip()
         payload = read_public_token(token)
-
-        if (
-            not payload
-            or payload.get("public_id") != public_id
-            or payload.get("scope") != "readonly"
-        ):
+        if not payload or payload.get("scope") != "public_readonly":
             return Response({"detail": "Token ungültig/abgelaufen."}, status=status.HTTP_401_UNAUTHORIZED)
 
         fahrzeug = get_object_or_404(
             Fahrzeug.objects.prefetch_related("raeume__items"),
-            public_id=public_id
+            public_id=public_id,
         )
+        return Response(FahrzeugPublicDetailSerializer(fahrzeug).data)
 
-        return Response(FahrzeugPublicDetailSerializer(fahrzeug).data, status=status.HTTP_200_OK)
+
+# ==========================================================
+# Auth CRUD: Fahrzeuge
+# ==========================================================
+class FahrzeugViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
+    ]
+    queryset = Fahrzeug.objects.prefetch_related("raeume__items").order_by("name")
+    lookup_field = "id"  # UUID aus TimeStampedModel
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FahrzeugListSerializer
+        if self.action == "retrieve":
+            return FahrzeugDetailSerializer
+        return FahrzeugCrudSerializer
 
 
-# =========================
-# CHECK
-# =========================
-class FahrzeugCheckListCreateView(APIView):
+# ==========================================================
+# Nested: Räume
+# ==========================================================
+class FahrzeugRaumViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
+    ]
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return FahrzeugRaum.objects.filter(fahrzeug_id=self.kwargs["fahrzeug_id"]).order_by("reihenfolge", "pkid")
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return FahrzeugRaumSerializer
+        return FahrzeugRaumCrudSerializer
+
+    def perform_create(self, serializer):
+        fahrzeug = get_object_or_404(Fahrzeug, id=self.kwargs["fahrzeug_id"])
+        serializer.save(fahrzeug=fahrzeug)
+
+
+# ==========================================================
+# Nested: Items
+# ==========================================================
+class RaumItemViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
+    ]
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return RaumItem.objects.filter(raum_id=self.kwargs["raum_id"]).order_by("reihenfolge", "pkid")
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return RaumItemSerializer
+        return RaumItemCrudSerializer
+
+    def perform_create(self, serializer):
+        raum = get_object_or_404(FahrzeugRaum, id=self.kwargs["raum_id"])
+        serializer.save(raum=raum)
+
+
+# ==========================================================
+# Check speichern (Auth)
+# ==========================================================
+class FahrzeugCheckCreateView(APIView):
     permission_classes = [
         permissions.IsAuthenticated,
         HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
     ]
 
-    # LIST
-    def get(self, request, fahrzeug_id):
-        fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
-
-        qs = (
-            FahrzeugCheck.objects
-            .filter(fahrzeug=fahrzeug)
-            .prefetch_related("results")
-            .order_by("-created_at")
-        )
-
-        return Response(FahrzeugCheckListSerializer(qs, many=True).data, status=status.HTTP_200_OK)
-
-    # CREATE
     def post(self, request, fahrzeug_id):
         ser = FahrzeugCheckCreateSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -211,13 +171,14 @@ class FahrzeugCheckListCreateView(APIView):
 
         item_ids = [r["item_id"] for r in ser.validated_data["results"]]
 
-        items = RaumItem.objects.select_related("raum", "raum__fahrzeug").filter(
+        # Items müssen zu diesem Fahrzeug gehören -> Filter über raum__fahrzeug_id
+        items = RaumItem.objects.select_related("raum").filter(
             id__in=item_ids,
-            raum__fahrzeug__id=fahrzeug.id,
+            raum__fahrzeug_id=fahrzeug.id,
         )
         item_map = {i.id: i for i in items}
 
-        results_bulk = []
+        bulk = []
         for r in ser.validated_data["results"]:
             item = item_map.get(r["item_id"])
             if not item:
@@ -226,7 +187,7 @@ class FahrzeugCheckListCreateView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            results_bulk.append(
+            bulk.append(
                 FahrzeugCheckItem(
                     fahrzeug_check=check,
                     item=item,
@@ -236,21 +197,5 @@ class FahrzeugCheckListCreateView(APIView):
                 )
             )
 
-        FahrzeugCheckItem.objects.bulk_create(results_bulk)
+        FahrzeugCheckItem.objects.bulk_create(bulk)
         return Response({"id": str(check.id)}, status=status.HTTP_201_CREATED)
-
-
-class FahrzeugCheckDetailView(APIView):
-    permission_classes = [
-        permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-    ]
-
-    def get(self, request, fahrzeug_id, check_id):
-        # check muss zu fahrzeug gehören
-        check = get_object_or_404(
-            FahrzeugCheck.objects.prefetch_related("results__item__raum"),
-            id=check_id,
-            fahrzeug__id=fahrzeug_id,
-        )
-        return Response(FahrzeugCheckDetailSerializer(check).data, status=status.HTTP_200_OK)

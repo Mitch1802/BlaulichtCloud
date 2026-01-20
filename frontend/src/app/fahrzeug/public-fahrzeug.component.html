@@ -2,94 +2,103 @@
 
 <mat-card class="m-2 p-2">
   @if (!verified) {
-  <h2>Fahrzeug Check (Public)</h2>
-  <div style="opacity:.8; margin-bottom:10px;">
-    Bitte PIN eingeben. Es wird nichts gespeichert.
-  </div>
-
-  <form [formGroup]="pinForm" style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
-    <mat-form-field style="width:180px;">
-      <mat-label>PIN</mat-label>
-      <input matInput type="password" inputmode="numeric" formControlName="pin" />
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" type="button" (click)="verifyPin()" [disabled]="loading">
-      <mat-icon>lock_open</mat-icon>
-      Freischalten
-    </button>
-  </form>
-  } @else {
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    <div>
-      <h2 style="margin:0;">Public Checkliste</h2>
-      @if (fahrzeug) {
-      <div style="opacity:.8;">
-        {{ fahrzeug.name }} — {{ fahrzeug.bezeichnung }}
-      </div>
-      }
+    <h2>Fahrzeug Check (Public)</h2>
+    <div style="opacity:.8; margin-bottom:10px;">
+      Bitte PIN eingeben. Es wird nichts gespeichert.
     </div>
 
-    <button mat-stroked-button type="button" (click)="logoutPublic()">
-      <mat-icon>logout</mat-icon>
-      PIN vergessen
-    </button>
-  </div>
+    <form [formGroup]="pinForm" style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+      <mat-form-field style="width:180px;">
+        <mat-label>PIN</mat-label>
+        <input matInput type="password" inputmode="numeric" formControlName="pin" />
+      </mat-form-field>
 
-  <mat-divider class="my-2"></mat-divider>
-
-  @if (!fahrzeug) {
-  <div style="opacity:.7;">Lade Daten…</div>
+      <button mat-raised-button color="primary" type="button" (click)="verifyPin()" [disabled]="loading">
+        <mat-icon>lock_open</mat-icon>
+        Freischalten
+      </button>
+    </form>
   } @else {
-  <div style="opacity:.75; margin-bottom:10px;">
-    Hinweis: Dieser Check ist nur lokal im Browser (kein Speichern).
-  </div>
-
-  <mat-accordion>
-    @for (raum of fahrzeug.raeume; track raum.name) {
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>{{ raum.name }}</mat-panel-title>
-        <mat-panel-description>{{ raum.items.length }} Items</mat-panel-description>
-      </mat-expansion-panel-header>
-
-      @for (item of raum.items; track item.reihenfolge) {
-      <div style="padding:10px 0; border-bottom:1px solid #eee;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-          <div style="flex:1;">
-            <strong>{{ item.name }}</strong>
-            <span style="opacity:.8;"> — Soll: {{ item.menge }} {{ item.einheit }}</span>
-            @if (item.notiz) {
-            <span style="opacity:.7;"> • {{ item.notiz }}</span>
-            }
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h2 style="margin:0;">Public Checkliste</h2>
+        @if (fahrzeug) {
+          <div style="opacity:.8;">
+            {{ fahrzeug.name }} — {{ fahrzeug.bezeichnung }}
           </div>
-
-          <mat-select [value]="draftFor(raum.name, item).status"
-            (selectionChange)="setStatus(raum.name, item, $any($event.value))">
-            @for (opt of STATUS_OPTIONS; track opt.value) {
-            <mat-option [value]="opt.value">
-              {{ opt.label }}
-            </mat-option>
-            }
-          </mat-select>
-
-
-          <mat-form-field style="width:140px;">
-            <mat-label>Ist-Menge</mat-label>
-            <input matInput type="number" [value]="draftFor(raum.name, item).menge_aktuel ?? ''"
-              (input)="setIst(raum.name, item, $any($event.target).value)" />
-          </mat-form-field>
-        </div>
-
-        <mat-form-field style="width:100%; margin-top:6px;">
-          <mat-label>Notiz</mat-label>
-          <input matInput [value]="draftFor(raum.name, item).notiz ?? ''"
-            (input)="setNotiz(raum.name, item, $any($event.target).value)" />
-        </mat-form-field>
+        }
       </div>
-      }
-    </mat-expansion-panel>
+
+      <button mat-stroked-button type="button" (click)="logoutPublic()">
+        <mat-icon>logout</mat-icon>
+        PIN vergessen
+      </button>
+    </div>
+
+    <mat-divider class="my-2"></mat-divider>
+
+    @if (!fahrzeug) {
+      <div style="opacity:.7;">Lade Daten…</div>
+    } @else {
+      <div style="opacity:.75; margin-bottom:10px;">
+        Hinweis: Dieser Check ist nur lokal im Browser (kein Speichern).
+      </div>
+
+      <mat-accordion>
+        @for (raum of fahrzeug.raeume; track raum.name) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ raum.name }}</mat-panel-title>
+              <mat-panel-description>{{ raum.items.length }} Items</mat-panel-description>
+            </mat-expansion-panel-header>
+
+            @for (item of raum.items; track item.reihenfolge) {
+              <div style="padding:10px 0; border-bottom:1px solid #eee;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                  <div style="flex:1;">
+                    <strong>{{ item.name }}</strong>
+                    <span style="opacity:.8;"> — Soll: {{ item.menge }} {{ item.einheit }}</span>
+                    @if (item.notiz) {
+                      <span style="opacity:.7;"> • {{ item.notiz }}</span>
+                    }
+                  </div>
+
+                  <mat-form-field style="width:180px;">
+                    <mat-label>Status</mat-label>
+                    <mat-select
+                      [value]="draft[getKey(raum.name, item)]?.status ?? 'ok'"
+                      (selectionChange)="setStatus(raum.name, item, $any($event.value))"
+                    >
+                      @for (opt of statusOptions; track opt.value) {
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field style="width:140px;">
+                    <mat-label>Ist-Menge</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      [value]="draft[getKey(raum.name, item)]?.menge_aktuel ?? ''"
+                      (input)="setIst(raum.name, item, $any($event.target).value)"
+                    />
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field style="width:100%; margin-top:6px;">
+                  <mat-label>Notiz</mat-label>
+                  <input
+                    matInput
+                    [value]="draft[getKey(raum.name, item)]?.notiz ?? ''"
+                    (input)="setNotiz(raum.name, item, $any($event.target).value)"
+                  />
+                </mat-form-field>
+              </div>
+            }
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
     }
-  </mat-accordion>
-  }
   }
 </mat-card>
