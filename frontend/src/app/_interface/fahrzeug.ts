@@ -19,13 +19,13 @@ export interface IFahrzeugPublic {
 }
 
 export interface IFahrzeugAuth extends IFahrzeugPublic {
-  id: number;
+  id: string;
   raeume: Array<{
-    id: number;
+    id: string;
     name: string;
     reihenfolge: number;
     items: Array<{
-      id: number;
+      id: string;
       name: string;
       menge: number;
       einheit: string;
@@ -42,14 +42,14 @@ export interface ICheckDraftItem {
 }
 
 export interface IFahrzeugList {
-  id: number;
+  id: string;
   name: string;
   bezeichnung: string;
   public_id: string;
 }
 
 export interface IRaumItem {
-  id: number;
+  id: string;
   name: string;
   menge: number;
   einheit: string;
@@ -58,14 +58,14 @@ export interface IRaumItem {
 }
 
 export interface IFahrzeugRaum {
-  id: number;
+  id: string;
   name: string;
   reihenfolge: number;
   items: IRaumItem[];
 }
 
 export interface IFahrzeugDetail {
-  id: number;
+  id: string;
   name: string;
   bezeichnung: string;
   beschreibung: string;
