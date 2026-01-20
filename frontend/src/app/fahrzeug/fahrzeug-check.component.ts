@@ -17,11 +17,9 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
-import { HeaderComponent } from "../_template/header/header.component";
 import { GlobalDataService } from "../_service/global-data.service";
-import { CheckStatus, IFahrzeugDetail } from "../_interface/fahrzeug";
-import { CHECK_STATUS_OPTIONS, CheckStatus } from "../_const/check-status";
-
+import { IFahrzeugDetail } from "../_interface/fahrzeug";
+import { CHECK_STATUS_OPTIONS, CheckStatus } from "./fahrzeug.constants";
 
 type ResultFG = FormGroup<{
   item_id: FormControl<string>;
@@ -30,15 +28,18 @@ type ResultFG = FormGroup<{
   notiz: FormControl<string>;
 }>;
 
+type CheckForm = FormGroup<{
+  title: FormControl<string>;
+  notiz: FormControl<string>;
+  results: FormArray<ResultFG>;
+}>;
+
 @Component({
   standalone: true,
   selector: "app-fahrzeug-check",
   imports: [
     CommonModule,
     ReactiveFormsModule,
-
-    HeaderComponent,
-
     MatCardModule,
     MatButtonModule,
     MatInputModule,
@@ -56,32 +57,21 @@ export class FahrzeugCheckComponent implements OnInit {
 
   breadcrumb: { label: string; url?: string }[] = [];
 
-  fahrzeugId!: string;
+  fahrzeugId = "";
   fahrzeug: IFahrzeugDetail | null = null;
-  readonly STATUS_OPTIONS = CHECK_STATUS_OPTIONS;
 
-  form = this.fb.group({
-    title: this.fb.control<string>("", { nonNullable: true }),
-    notiz: this.fb.control<string>("", { nonNullable: true }),
+  statusOptions = CHECK_STATUS_OPTIONS;
+
+  form: CheckForm = this.fb.group({
+    title: this.fb.control("", { nonNullable: true }),
+    notiz: this.fb.control("", { nonNullable: true }),
     results: this.fb.array<ResultFG>([]),
   });
 
-  get resultsFA(): FormArray<ResultFG> {
-    return this.form.controls.results;
-  }
-
   ngOnInit(): void {
-    sessionStorage.setItem("PageNumber", "3");
-    sessionStorage.setItem("Page3", "FZ");
     this.breadcrumb = this.gds.ladeBreadcrumb();
-
-    const id = this.route.snapshot.paramMap.get("id");
-    if (!id) {
-      this.gds.erstelleMessage("error", "Fahrzeug-ID fehlt.");
-      this.router.navigate(["/fahrzeuge"]);
-      return;
-    }
-    this.fahrzeugId = id;
+    this.fahrzeugId = String(this.route.snapshot.paramMap.get("id") ?? "");
+    if (!this.fahrzeugId) return;
 
     this.load();
   }
@@ -96,26 +86,25 @@ export class FahrzeugCheckComponent implements OnInit {
     });
   }
 
+  private makeResultFG(itemId: string, mengeSoll: number): ResultFG {
+    return this.fb.group({
+      item_id: this.fb.control(itemId, { nonNullable: true, validators: [Validators.required] }),
+      status: this.fb.control<CheckStatus>("ok", { nonNullable: true, validators: [Validators.required] }),
+      menge_aktuel: this.fb.control<number | null>(mengeSoll ?? null),
+      notiz: this.fb.control("", { nonNullable: true }),
+    });
+  }
+
   private buildForm(): void {
-    this.resultsFA.clear();
+    const arr = this.form.controls.results;
+    arr.clear();
 
-    if (!this.fahrzeug) return;
+    const fz = this.fahrzeug;
+    if (!fz) return;
 
-    for (const raum of this.fahrzeug.raeume ?? []) {
+    for (const raum of fz.raeume ?? []) {
       for (const item of raum.items ?? []) {
-        this.resultsFA.push(
-          this.fb.group({
-            item_id: this.fb.control<string>(item.id, {
-              nonNullable: true,
-              validators: [Validators.required],
-            }),
-            status: ["ok" as CheckStatus, Validators.required],
-            menge_aktuel: this.fb.control<number | null>(
-              item.menge ?? null
-            ),
-            notiz: this.fb.control<string>("", { nonNullable: true }),
-          })
-        );
+        arr.push(this.makeResultFG(String(item.id), Number(item.menge)));
       }
     }
   }
@@ -123,20 +112,20 @@ export class FahrzeugCheckComponent implements OnInit {
   submit(): void {
     this.form.markAllAsTouched();
 
-    if (!this.fahrzeugId || this.form.invalid) {
+    if (this.form.invalid) {
       this.gds.erstelleMessage("error", "Check unvollständig");
       return;
     }
 
-    // Backend erwartet { title?, notiz?, results: [...] }
+    // Backend erwartet: { title?, notiz?, results: [{item_id,status,menge_aktuel?,notiz?}] }
     const payload = {
-      title: this.form.controls.title.value ?? "",
-      notiz: this.form.controls.notiz.value ?? "",
-      results: this.resultsFA.getRawValue().map((r) => ({
-        item_id: r.item_id,
-        status: r.status,
-        menge_aktuel: r.menge_aktuel ?? null,
-        notiz: r.notiz ?? "",
+      title: this.form.controls.title.value,
+      notiz: this.form.controls.notiz.value,
+      results: this.form.controls.results.controls.map((fg) => ({
+        item_id: fg.controls.item_id.value,
+        status: fg.controls.status.value,
+        menge_aktuel: fg.controls.menge_aktuel.value ?? null,
+        notiz: fg.controls.notiz.value ?? "",
       })),
     };
 

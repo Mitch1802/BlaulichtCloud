@@ -1,56 +1,50 @@
 <app-header [breadcrumb]="breadcrumb"></app-header>
 
-<mat-card class="m-2">
-  @if (fahrzeug) {
-    <h2>Fahrzeug Check – {{ fahrzeug.name }}</h2>
+<mat-card class="m-2 p-2">
+  <h2>Fahrzeug Check – {{ fahrzeug?.name }}</h2>
 
-    <form [formGroup]="form" style="display:flex; flex-direction:column; gap:12px;">
-      <mat-form-field>
-        <mat-label>Titel</mat-label>
-        <input matInput formControlName="title" />
-      </mat-form-field>
+  <form [formGroup]="form" style="display:flex; flex-direction:column; gap:12px;">
+    <mat-form-field>
+      <mat-label>Titel</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>Notiz</mat-label>
-        <textarea matInput rows="2" formControlName="notiz"></textarea>
-      </mat-form-field>
+    <mat-form-field>
+      <mat-label>Notiz</mat-label>
+      <textarea matInput rows="2" formControlName="notiz"></textarea>
+    </mat-form-field>
 
-      <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
 
-      <div formArrayName="results">
-        @for (ctrl of resultsFA.controls; track $index; let i = $index) {
-          <mat-card class="my-1 p-1" [formGroupName]="i">
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
-              <mat-form-field>
-                <mat-label>Status</mat-label>
-                <mat-select formControlName="status">
-                  @for (opt of STATUS_OPTIONS; track opt.value) {
-                    <mat-option [value]="opt.value">
-                      {{ opt.label }}
-                    </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
+    <div formArrayName="results">
+      @for (ctrl of form.controls.results.controls; track $index; let i = $index) {
+        <mat-card class="my-1 p-2" [formGroupName]="i">
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <mat-form-field style="width:200px;">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                @for (opt of statusOptions; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-              <mat-form-field>
-                <mat-label>Menge (Ist)</mat-label>
-                <input matInput type="number" formControlName="menge_aktuel" />
-              </mat-form-field>
+            <mat-form-field style="width:160px;">
+              <mat-label>Menge</mat-label>
+              <input matInput type="number" formControlName="menge_aktuel" />
+            </mat-form-field>
 
-              <mat-form-field style="flex:1;">
-                <mat-label>Notiz</mat-label>
-                <input matInput formControlName="notiz" />
-              </mat-form-field>
-            </div>
-          </mat-card>
-        }
-      </div>
+            <mat-form-field style="flex:1; min-width:240px;">
+              <mat-label>Notiz</mat-label>
+              <input matInput formControlName="notiz" />
+            </mat-form-field>
+          </div>
+        </mat-card>
+      }
+    </div>
 
-      <button mat-raised-button color="primary" type="button" (click)="submit()">
-        Check abschließen
-      </button>
-    </form>
-  } @else {
-    <div style="opacity:0.7;">Lade Fahrzeug…</div>
-  }
+    <button mat-raised-button color="primary" type="button" (click)="submit()">
+      Check abschließen
+    </button>
+  </form>
 </mat-card>

@@ -1,5 +1,3 @@
-export type CheckStatus = "ok" | "missing" | "damaged";
-
 export interface IFahrzeugPublic {
   name: string;
   bezeichnung: string;
