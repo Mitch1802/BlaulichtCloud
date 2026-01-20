@@ -226,80 +226,80 @@ class FahrzeugPinRotateAdminView(APIView):
         return Response({"detail": "PIN rotiert.", "pin": new_pin}, status=status.HTTP_200_OK)
 
 
-    class FahrzeugCheckListCreateView(APIView):
-        permission_classes = [
-            permissions.IsAuthenticated,
-            HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-        ]
+class FahrzeugCheckListCreateView(APIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
+    ]
 
-        # LIST
-        def get(self, request, fahrzeug_id):
-            fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
+    # LIST
+    def get(self, request, fahrzeug_id):
+        fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
 
-            qs = (
-                FahrzeugCheck.objects
-                .filter(fahrzeug=fahrzeug)
-                .prefetch_related("results")
-                .order_by("-created_at")
-            )
+        qs = (
+            FahrzeugCheck.objects
+            .filter(fahrzeug=fahrzeug)
+            .prefetch_related("results")
+            .order_by("-created_at")
+        )
 
-            return Response(FahrzeugCheckListSerializer(qs, many=True).data, status=status.HTTP_200_OK)
+        return Response(FahrzeugCheckListSerializer(qs, many=True).data, status=status.HTTP_200_OK)
 
-        # CREATE
-        def post(self, request, fahrzeug_id):
-            ser = FahrzeugCheckCreateSerializer(data=request.data)
-            ser.is_valid(raise_exception=True)
+    # CREATE
+    def post(self, request, fahrzeug_id):
+        ser = FahrzeugCheckCreateSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
 
-            fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
+        fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
 
-            check = FahrzeugCheck.objects.create(
-                fahrzeug=fahrzeug,
-                title=ser.validated_data.get("title", ""),
-                notiz=ser.validated_data.get("notiz", ""),
-            )
+        check = FahrzeugCheck.objects.create(
+            fahrzeug=fahrzeug,
+            title=ser.validated_data.get("title", ""),
+            notiz=ser.validated_data.get("notiz", ""),
+        )
 
-            item_ids = [r["item_id"] for r in ser.validated_data["results"]]
+        item_ids = [r["item_id"] for r in ser.validated_data["results"]]
 
-            items = RaumItem.objects.select_related("raum", "raum__fahrzeug").filter(
-                id__in=item_ids,
-                raum__fahrzeug__id=fahrzeug.id,
-            )
-            item_map = {i.id: i for i in items}
+        items = RaumItem.objects.select_related("raum", "raum__fahrzeug").filter(
+            id__in=item_ids,
+            raum__fahrzeug__id=fahrzeug.id,
+        )
+        item_map = {i.id: i for i in items}
 
-            results_bulk = []
-            for r in ser.validated_data["results"]:
-                item = item_map.get(r["item_id"])
-                if not item:
-                    return Response(
-                        {"detail": f"Item {r['item_id']} gehört nicht zu diesem Fahrzeug."},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-
-                results_bulk.append(
-                    FahrzeugCheckItem(
-                        fahrzeug_check=check,
-                        item=item,
-                        status=r["status"],
-                        menge_aktuel=r.get("menge_aktuel"),
-                        notiz=r.get("notiz", ""),
-                    )
+        results_bulk = []
+        for r in ser.validated_data["results"]:
+            item = item_map.get(r["item_id"])
+            if not item:
+                return Response(
+                    {"detail": f"Item {r['item_id']} gehört nicht zu diesem Fahrzeug."},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            FahrzeugCheckItem.objects.bulk_create(results_bulk)
-            return Response({"id": str(check.id)}, status=status.HTTP_201_CREATED)
-
-
-    class FahrzeugCheckDetailView(APIView):
-        permission_classes = [
-            permissions.IsAuthenticated,
-            HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-        ]
-
-        def get(self, request, fahrzeug_id, check_id):
-            # check muss zu fahrzeug gehören
-            check = get_object_or_404(
-                FahrzeugCheck.objects.prefetch_related("results__item__raum"),
-                id=check_id,
-                fahrzeug__id=fahrzeug_id,
+            results_bulk.append(
+                FahrzeugCheckItem(
+                    fahrzeug_check=check,
+                    item=item,
+                    status=r["status"],
+                    menge_aktuel=r.get("menge_aktuel"),
+                    notiz=r.get("notiz", ""),
+                )
             )
-            return Response(FahrzeugCheckDetailSerializer(check).data, status=status.HTTP_200_OK)
+
+        FahrzeugCheckItem.objects.bulk_create(results_bulk)
+        return Response({"id": str(check.id)}, status=status.HTTP_201_CREATED)
+
+
+class FahrzeugCheckDetailView(APIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
+    ]
+
+    def get(self, request, fahrzeug_id, check_id):
+        # check muss zu fahrzeug gehören
+        check = get_object_or_404(
+            FahrzeugCheck.objects.prefetch_related("results__item__raum"),
+            id=check_id,
+            fahrzeug__id=fahrzeug_id,
+        )
+        return Response(FahrzeugCheckDetailSerializer(check).data, status=status.HTTP_200_OK)
