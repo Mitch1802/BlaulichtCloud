@@ -1,13 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, ViewChild, inject } from "@angular/core";
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -23,12 +16,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { HeaderComponent } from "../_template/header/header.component";
 import { GlobalDataService } from "../_service/global-data.service";
 
-import {
-  IFahrzeugDetail,
-  IFahrzeugList,
-  IFahrzeugRaum,
-  IRaumItem,
-} from "../_interface/fahrzeug";
+import { IFahrzeugDetail, IFahrzeugList, IFahrzeugRaum, IRaumItem } from "../_interface/fahrzeug";
 
 type ItemDraftFG = FormGroup<{
   name: FormControl<string>;
@@ -71,12 +59,13 @@ export class FahrzeugComponent implements OnInit {
   dataSource = new MatTableDataSource<IFahrzeugList>([]);
   sichtbareSpalten: string[] = ["name", "bezeichnung", "public_id", "actions"];
 
-  selectedId: number | null = null;
+  // UUID!
+  selectedId: string | null = null;
   selected: IFahrzeugDetail | null = null;
 
   // Fahrzeug (create/update)
   fahrzeugForm = this.fb.group({
-    id: this.fb.control<number | null>(null),
+    id: this.fb.control<string | null>(null),
     name: this.fb.control<string>("", { nonNullable: true, validators: [Validators.required] }),
     bezeichnung: this.fb.control<string>("", { nonNullable: true }),
     beschreibung: this.fb.control<string>("", { nonNullable: true }),
@@ -88,8 +77,8 @@ export class FahrzeugComponent implements OnInit {
     reihenfolge: this.fb.control<number>(0, { nonNullable: true }),
   });
 
-  // Item-Form pro Raum (nur Add-Form, nicht Edit)
-  itemForms = new Map<number, ItemDraftFG>();
+  // Item-Form pro Raum (UUID key)
+  itemForms = new Map<string, ItemDraftFG>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -98,7 +87,6 @@ export class FahrzeugComponent implements OnInit {
     sessionStorage.setItem("PageNumber", "2");
     sessionStorage.setItem("Page2", "FZ");
     this.breadcrumb = this.gds.ladeBreadcrumb();
-
     this.loadList();
   }
 
@@ -118,7 +106,7 @@ export class FahrzeugComponent implements OnInit {
   }
 
   selectRow(row: IFahrzeugList): void {
-    this.selectedId = row.id;
+    this.selectedId = row.id; // UUID string
     this.loadDetail(row.id);
 
     this.fahrzeugForm.setValue({
@@ -129,7 +117,7 @@ export class FahrzeugComponent implements OnInit {
     });
   }
 
-  private loadDetail(id: number): void {
+  private loadDetail(id: string): void {
     this.gds.get(`${this.modul}/${id}`).subscribe({
       next: (res: any) => {
         this.selected = res as IFahrzeugDetail;
@@ -138,7 +126,7 @@ export class FahrzeugComponent implements OnInit {
           beschreibung: this.selected?.beschreibung ?? "",
         });
 
-        // Item-Add-Forms initialisieren pro Raum
+        // Item-Add-Forms pro Raum initialisieren
         this.itemForms.clear();
         (this.selected?.raeume ?? []).forEach((r) => {
           this.itemForms.set(r.id, this.createItemDraftForm());
@@ -233,6 +221,7 @@ export class FahrzeugComponent implements OnInit {
       reihenfolge: this.raumForm.controls.reihenfolge.value,
     };
 
+    // URL: /fahrzeuge/<uuid>/raeume/
     this.gds.post(`fahrzeuge/${this.selectedId}/raeume`, payload).subscribe({
       next: () => {
         this.gds.erstelleMessage("success", "Raum angelegt.");
@@ -252,6 +241,7 @@ export class FahrzeugComponent implements OnInit {
     if (!this.selectedId) return;
     if (!confirm(`Raum "${raum.name}" wirklich löschen? (Items werden mitgelöscht)`)) return;
 
+    // URL: /fahrzeuge/<uuid>/raeume/<uuid>/
     this.gds.delete(`fahrzeuge/${this.selectedId}/raeume`, raum.id).subscribe({
       next: () => {
         this.gds.erstelleMessage("success", "Raum gelöscht.");
@@ -274,7 +264,7 @@ export class FahrzeugComponent implements OnInit {
     });
   }
 
-  itemFormFor(raumId: number): ItemDraftFG {
+  itemFormFor(raumId: string): ItemDraftFG {
     const f = this.itemForms.get(raumId);
     if (f) return f;
 
@@ -300,6 +290,7 @@ export class FahrzeugComponent implements OnInit {
       reihenfolge: f.controls.reihenfolge.value,
     };
 
+    // URL: /raeume/<uuid>/items/
     this.gds.post(`raeume/${raum.id}/items`, payload).subscribe({
       next: () => {
         this.gds.erstelleMessage("success", "Item angelegt.");
@@ -313,6 +304,7 @@ export class FahrzeugComponent implements OnInit {
   deleteItem(raum: IFahrzeugRaum, item: IRaumItem): void {
     if (!confirm(`Item "${item.name}" wirklich löschen?`)) return;
 
+    // URL: /raeume/<uuid>/items/<uuid>/
     this.gds.delete(`raeume/${raum.id}/items`, item.id).subscribe({
       next: () => {
         this.gds.erstelleMessage("success", "Item gelöscht.");
