@@ -10,7 +10,8 @@ from .views import (
     FahrzeugPinAdminView,
     FahrzeugPinDisableAdminView,
     FahrzeugPinRotateAdminView,
-    FahrzeugCheckCreateView,
+    FahrzeugCheckListCreateView,
+    FahrzeugCheckDetailView,
 )
 
 router = DefaultRouter()
@@ -69,9 +70,14 @@ urlpatterns = [
     # CHECK
     # -------------------------
     path(
-    "fahrzeuge/<uuid:fahrzeug_id>/checks/",
-    FahrzeugCheckCreateView.as_view(),
-),
+        "fahrzeuge/<uuid:fahrzeug_id>/checks/",
+        FahrzeugCheckListCreateView.as_view(),
+    ),
+    path(
+        "fahrzeuge/<uuid:fahrzeug_id>/checks/<uuid:check_id>/",
+        FahrzeugCheckDetailView.as_view(),
+    ),
+
 ]
 
 urlpatterns += router.urls

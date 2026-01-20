@@ -4,6 +4,7 @@ from .models import (
     Fahrzeug,
     FahrzeugRaum,
     RaumItem,
+    FahrzeugCheck,
     FahrzeugCheckItem,
 )
 
@@ -163,3 +164,56 @@ class FahrzeugCheckCreateSerializer(serializers.Serializer):
                 "results darf nicht leer sein."
             )
         return data
+
+
+ 
+
+class FahrzeugCheckItemReadSerializer(serializers.ModelSerializer):
+    item_id = serializers.UUIDField(source="item.id", read_only=True)
+    item_name = serializers.CharField(source="item.name", read_only=True)
+    ziel_menge = serializers.DecimalField(source="item.menge", max_digits=10, decimal_places=2, read_only=True)
+    einheit = serializers.CharField(source="item.einheit", read_only=True)
+    raum_name = serializers.CharField(source="item.raum.name", read_only=True)
+
+    class Meta:
+        model = FahrzeugCheckItem
+        fields = [
+            "id",            
+            "item_id",
+            "item_name",
+            "raum_name",
+            "status",
+            "ziel_menge",
+            "menge_aktuel",
+            "einheit",
+            "notiz",
+        ]
+
+
+class FahrzeugCheckListSerializer(serializers.ModelSerializer):
+    # Kurz für Liste
+    results_count = serializers.IntegerField(source="results.count", read_only=True)
+
+    class Meta:
+        model = FahrzeugCheck
+        fields = [
+            "id",          
+            "created_at",
+            "title",
+            "notiz",
+            "results_count",
+        ]
+
+
+class FahrzeugCheckDetailSerializer(serializers.ModelSerializer):
+    results = FahrzeugCheckItemReadSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = FahrzeugCheck
+        fields = [
+            "id",
+            "created_at",
+            "title",
+            "notiz",
+            "results",
+        ]
