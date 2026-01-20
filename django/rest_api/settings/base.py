@@ -49,7 +49,8 @@ LOCAL_APPS = [
     "core_apps.atemschutz_geraete",
     "core_apps.messgeraete",
     "core_apps.pdf",
-    "core_apps.fahrzeuge"
+    "core_apps.fahrzeuge",
+    "core_apps.verwaltung"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
