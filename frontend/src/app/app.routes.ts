@@ -70,7 +70,7 @@ export const routes: Routes = [
   },
   {
     path: 'pdf_template',
-    loadComponent: () => import("./pdf-template/pdf-template.component").then(m => m.PdfTemplatesComponent),
+    loadComponent: () => import("./pdf-templates/pdf-templates.component").then(m => m.PdfTemplatesComponent),
   },
   {
     path: 'modul_konfiguration',
