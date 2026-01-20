@@ -20,6 +20,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { GlobalDataService } from "../_service/global-data.service";
 import { IFahrzeugDetail } from "../_interface/fahrzeug";
 import { CHECK_STATUS_OPTIONS, CheckStatus } from "./fahrzeug.constants";
+import { HeaderComponent } from "../_template/header/header.component";
 
 type ResultFG = FormGroup<{
   item_id: FormControl<string>;
@@ -38,6 +39,7 @@ type CheckForm = FormGroup<{
   standalone: true,
   selector: "app-fahrzeug-check",
   imports: [
+    HeaderComponent,
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,

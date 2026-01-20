@@ -1,3 +1,5 @@
+import { CheckStatus } from "../fahrzeug/fahrzeug.constants";
+
 export interface IFahrzeugPublic {
   name: string;
   bezeichnung: string;
