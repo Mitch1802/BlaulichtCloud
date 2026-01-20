@@ -14,10 +14,6 @@ class Fahrzeug(TimeStampedModel):
     # Public Zugriff (QR / URL)
     public_id = models.CharField(verbose_name=_("Public Id"), max_length=32, unique=True, editable=False)
 
-    # PIN niemals im Klartext speichern
-    public_pin_hash = models.CharField(verbose_name=_("Public Pin Hash"), max_length=128, blank=True, default="")
-    pin_enabled = models.BooleanField(verbose_name=_("Pin Aktiv"), default=False)
-
     def save(self, *args, **kwargs):
         if not self.public_id:
             self.public_id = get_random_string(24)

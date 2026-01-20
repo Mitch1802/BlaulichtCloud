@@ -175,57 +175,8 @@ class PublicFahrzeugDetailView(APIView):
 
 
 # =========================
-# AUTH: PIN ADMIN (set/disable/rotate)
+# CHECK
 # =========================
-class FahrzeugPinAdminView(APIView):
-    permission_classes = [
-        permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-    ]
-
-    def post(self, request, fahrzeug_id):
-        fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
-
-        pin = str(request.data.get("pin", "")).strip()
-        if not pin.isdigit() or len(pin) < 4:
-            return Response(
-                {"detail": "PIN muss mindestens 4-stellig und numerisch sein."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        fahrzeug.set_pin(pin)
-        fahrzeug.save()
-        return Response({"detail": "PIN gesetzt."}, status=status.HTTP_200_OK)
-
-
-class FahrzeugPinDisableAdminView(APIView):
-    permission_classes = [
-        permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-    ]
-
-    def post(self, request, fahrzeug_id):
-        fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
-        fahrzeug.pin_enabled = False
-        fahrzeug.public_pin_hash = ""
-        fahrzeug.save()
-        return Response({"detail": "PIN deaktiviert."}, status=status.HTTP_200_OK)
-
-
-class FahrzeugPinRotateAdminView(APIView):
-    permission_classes = [
-        permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "FAHRZEUG"),
-    ]
-
-    def post(self, request, fahrzeug_id):
-        fahrzeug = get_object_or_404(Fahrzeug, id=fahrzeug_id)
-        new_pin = get_random_string(4, allowed_chars="0123456789")
-        fahrzeug.set_pin(new_pin)
-        fahrzeug.save()
-        return Response({"detail": "PIN rotiert.", "pin": new_pin}, status=status.HTTP_200_OK)
-
-
 class FahrzeugCheckListCreateView(APIView):
     permission_classes = [
         permissions.IsAuthenticated,

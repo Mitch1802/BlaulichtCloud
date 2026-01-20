@@ -15,6 +15,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { HeaderComponent } from "../_template/header/header.component";
 import { GlobalDataService } from "../_service/global-data.service";
 import { IFahrzeugPublic } from "../_interface/fahrzeug";
+import { CHECK_STATUS_OPTIONS, CheckStatus } from "../_const/check-status";
+
 
 type CheckStatus = "ok" | "missing" | "damaged";
 
@@ -45,15 +47,18 @@ export class PublicFahrzeugComponent implements OnInit {
   breadcrumb: { label: string; url?: string }[] = [];
 
   publicId = "";
-  token: string | null = null;
+  token: string | null = null;readonly STATUS_OPTIONS = CHECK_STATUS_OPTIONS;
 
   loading = false;
   verified = false;
 
   fahrzeug: IFahrzeugPublic | null = null;
 
-  // local-only draft (wird NICHT gespeichert)
-  draft: Record<string, { status: CheckStatus; menge_aktuel?: number | null; notiz?: string }> = {};
+  draft: Record<
+    string,
+    { status: CheckStatus; menge_aktuel?: number | null; notiz?: string }
+  > = {};
+
 
   pinForm = this.fb.group({
     pin: this.fb.control<string>("", {
@@ -76,7 +81,7 @@ export class PublicFahrzeugComponent implements OnInit {
   }
 
   private tokenKey(): string {
-    return `public_token_${this.publicId}`;
+    return `public_token_global`;
   }
 
   verifyPin(): void {
@@ -87,7 +92,7 @@ export class PublicFahrzeugComponent implements OnInit {
     this.loading = true;
 
     this.gds
-      .post(`public/fahrzeuge/${this.publicId}/pin/verify`, { pin })
+      .post(`public/pin/verify`, { pin })
       .subscribe({
         next: (res: any) => {
           const access = String(res?.access_token ?? "");

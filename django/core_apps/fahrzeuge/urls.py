@@ -7,9 +7,6 @@ from .views import (
     RaumItemViewSet,
     PublicPinVerifyView,
     PublicFahrzeugDetailView,
-    FahrzeugPinAdminView,
-    FahrzeugPinDisableAdminView,
-    FahrzeugPinRotateAdminView,
     FahrzeugCheckListCreateView,
     FahrzeugCheckDetailView,
 )
@@ -42,28 +39,12 @@ urlpatterns = [
     # PUBLIC (PIN -> readonly token -> detail)
     # -------------------------
     path(
-        "public/fahrzeuge/<str:public_id>/pin/verify/",
+        "public/pin/verify/",
         PublicPinVerifyView.as_view(),
     ),
     path(
         "public/fahrzeuge/<str:public_id>/",
         PublicFahrzeugDetailView.as_view(),
-    ),
-
-    # -------------------------
-    # AUTH: PIN ADMIN (UUID via fahrzeug_id)
-    # -------------------------
-    path(
-        "fahrzeuge/<uuid:fahrzeug_id>/pin/",
-        FahrzeugPinAdminView.as_view(),
-    ),
-    path(
-        "fahrzeuge/<uuid:fahrzeug_id>/pin/disable/",
-        FahrzeugPinDisableAdminView.as_view(),
-    ),
-    path(
-        "fahrzeuge/<uuid:fahrzeug_id>/pin/rotate/",
-        FahrzeugPinRotateAdminView.as_view(),
     ),
 
     # -------------------------

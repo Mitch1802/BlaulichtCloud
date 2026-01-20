@@ -24,9 +24,11 @@
               <mat-form-field>
                 <mat-label>Status</mat-label>
                 <mat-select formControlName="status">
-                  <mat-option value="ok">OK</mat-option>
-                  <mat-option value="missing">Fehlt</mat-option>
-                  <mat-option value="damaged">Defekt</mat-option>
+                  @for (opt of STATUS_OPTIONS; track opt.value) {
+                    <mat-option [value]="opt.value">
+                      {{ opt.label }}
+                    </mat-option>
+                  }
                 </mat-select>
               </mat-form-field>
 

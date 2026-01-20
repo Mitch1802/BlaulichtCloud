@@ -20,6 +20,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { HeaderComponent } from "../_template/header/header.component";
 import { GlobalDataService } from "../_service/global-data.service";
 import { CheckStatus, IFahrzeugDetail } from "../_interface/fahrzeug";
+import { CHECK_STATUS_OPTIONS, CheckStatus } from "../_const/check-status";
+
 
 type ResultFG = FormGroup<{
   item_id: FormControl<string>;
@@ -56,6 +58,7 @@ export class FahrzeugCheckComponent implements OnInit {
 
   fahrzeugId!: string;
   fahrzeug: IFahrzeugDetail | null = null;
+  readonly STATUS_OPTIONS = CHECK_STATUS_OPTIONS;
 
   form = this.fb.group({
     title: this.fb.control<string>("", { nonNullable: true }),
@@ -106,10 +109,7 @@ export class FahrzeugCheckComponent implements OnInit {
               nonNullable: true,
               validators: [Validators.required],
             }),
-            status: this.fb.control<CheckStatus>("ok", {
-              nonNullable: true,
-              validators: [Validators.required],
-            }),
+            status: ["ok" as CheckStatus, Validators.required],
             menge_aktuel: this.fb.control<number | null>(
               item.menge ?? null
             ),

@@ -218,3 +218,6 @@ LOGGING = {
     },
     "root": {"level": "INFO", "handlers": ["console"]},
 }
+
+PUBLIC_FAHRZEUG_PIN = env("PUBLIC_FAHRZEUG_PIN", "")
+PUBLIC_PIN_ENABLED = bool(PUBLIC_FAHRZEUG_PIN)
