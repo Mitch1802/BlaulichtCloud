@@ -1,97 +1,94 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { StartComponent } from './start/start.component';
-import { UserComponent } from './user/user.component';
-import { KonfigurationComponent } from './konfiguration/konfiguration.component';
-import { MitgliedComponent } from './mitglied/mitglied.component';
-import { FmdComponent } from './fmd/fmd.component';
-import { ModulKonfigurationComponent } from './modul-konfiguration/modul-konfiguration.component';
-import { AtemschutzComponent } from './atemschutz/atemschutz.component';
-import { NewsComponent } from './news/news.component';
-import { InventarComponent } from './inventar/inventar.component';
-import { NewsExternComponent } from './news-extern/news-extern.component';
-import { AtemschutzMessgeraeteComponent } from './_template/atemschutz-messgeraete/atemschutz-messgeraete.component';
-import { AtemschutzGeraeteComponent } from './_template/atemschutz-geraete/atemschutz-geraete.component';
-import { AtemschutzMaskenComponent } from './_template/atemschutz-masken/atemschutz-masken.component';
-import { AtemschutzDienstbuchComponent } from './_template/atemschutz-dienstbuch/atemschutz-dienstbuch.component';
-import { PdfTemplatesComponent } from './pdf-templates/pdf-templates.component';
-import { EigeneDatenComponent } from './eigene-daten/eigene-daten.component';
-import { FahrzeugComponent } from './fahrzeug/fahrzeug.component';
-import { VerwaltungComponent } from './verwaltung/verwaltung.component';
-import { FahrzeugCheckComponent } from './fahrzeug/fahrzeug-check.component';
-import { FahrzeugPublicPinComponent } from './fahrzeug/fahrzeug-public-pin.component';
 
 export const routes: Routes = [
   {
     path: '', redirectTo: 'login', pathMatch: 'full'
   },
   {
-    path: 'login', component: LoginComponent
+    path: 'login',
+    loadComponent: () => import("./login/login.component").then(m => m.LoginComponent),
   },
   {
-    path: 'start', component: StartComponent
+    path: 'start',
+    loadComponent: () => import("./start/start.component").then(m => m.StartComponent),
   },
   {
-    path: 'fmd', component: FmdComponent
+    path: 'fmd',
+    loadComponent: () => import("./fmd/fmd.component").then(m => m.FmdComponent),
   },
   {
-    path: 'mitglied', component: MitgliedComponent
+    path: 'mitglied',
+    loadComponent: () => import("./mitglied/mitglied.component").then(m => m.MitgliedComponent),
   },
   {
-    path: 'atemschutz', component: AtemschutzComponent
+    path: 'atemschutz',
+    loadComponent: () => import("./atemschutz/atemschutz.component").then(m => m.AtemschutzComponent),
   },
   {
-    path: 'atemschutz/masken', component: AtemschutzMaskenComponent
+    path: 'atemschutz/masken',
+    loadComponent: () => import("./_template/atemschutz-masken/atemschutz-masken.component").then(m => m.AtemschutzMaskenComponent),
   },
   {
-    path: 'atemschutz/geraete', component: AtemschutzGeraeteComponent
+    path: 'atemschutz/geraete',
+    loadComponent: () => import("./_template/atemschutz-geraete/atemschutz-geraete.component").then(m => m.AtemschutzGeraeteComponent),
   },
   {
-    path: 'atemschutz/messgeraete', component: AtemschutzMessgeraeteComponent
+    path: 'atemschutz/messgeraete',
+    loadComponent: () => import("./_template/atemschutz-messgeraete/atemschutz-messgeraete.component").then(m => m.AtemschutzMessgeraeteComponent),
   },
   {
-    path: 'atemschutz/dienstbuch', component: AtemschutzDienstbuchComponent
+    path: 'atemschutz/dienstbuch',
+    loadComponent: () => import("./_template/atemschutz-dienstbuch/atemschutz-dienstbuch.component").then(m => m.AtemschutzDienstbuchComponent),
   },
   {
-    path: 'news', component: NewsComponent
+    path: 'news',
+    loadComponent: () => import("./news/news.component").then(m => m.NewsComponent),
   },
   {
-    path: 'newsfeed', component: NewsExternComponent
+    path: 'newsfeed',
+    loadComponent: () => import("./news-extern/news-extern.component").then(m => m.NewsExternComponent),
   },
   {
-    path: 'inventar', component: InventarComponent
+    path: 'inventar',
+    loadComponent: () => import("./inventar/inventar.component").then(m => m.InventarComponent),
   },
   {
-    path: "fahrzeug", component: FahrzeugComponent
+    path: "fahrzeuge",
+    loadComponent: () => import("./fahrzeug/fahrzeug.component").then(m => m.FahrzeugComponent),
   },
   {
-    path: "fahrzeuge/:id/check", component: FahrzeugCheckComponent
+    path: "fahrzeuge/:id/check",
+    loadComponent: () => import("./fahrzeug/fahrzeug-check.component").then(m => m.FahrzeugCheckComponent),
   },
   {
-    path: "public/fahrzeuge/:publicId", component: FahrzeugPublicPinComponent
+    path: "public/fahrzeuge/:publicId",
+    loadComponent: () => import("./fahrzeug/public-fahrzeug.component").then(m => m.PublicFahrzeugComponent),
   },
   {
-    path: "public/fahrzeuge/:publicId/check", component: FahrzeugCheckComponent
+    path: 'verwaltung',
+    loadComponent: () => import("./verwaltung/verwaltung.component").then(m => m.VerwaltungComponent),
   },
   {
-    path: 'verwaltung', component: VerwaltungComponent
+    path: 'pdf_template',
+    loadComponent: () => import("./pdf-template/pdf-template.component").then(m => m.PdfTemplatesComponent),
   },
   {
-    path: 'pdf_template', component: PdfTemplatesComponent
+    path: 'modul_konfiguration',
+    loadComponent: () => import("./modul-konfiguration/modul-konfiguration.component").then(m => m.ModulKonfigurationComponent),
   },
   {
-    path: 'modul_konfiguration', component: ModulKonfigurationComponent
+    path: 'benutzer',
+    loadComponent: () => import("./user/user.component").then(m => m.UserComponent),
   },
   {
-    path: 'benutzer', component: UserComponent
+    path: 'konfiguration',
+    loadComponent: () => import("./konfiguration/konfiguration.component").then(m => m.KonfigurationComponent),
   },
   {
-    path: 'konfiguration', component: KonfigurationComponent
+    path: 'eigene_daten',
+    loadComponent: () => import("./eigene-daten/eigene-daten.component").then(m => m.EigeneDatenComponent),
   },
   {
-    path: 'eigene_daten', component: EigeneDatenComponent
-  },
-  {
-    path: '*', component: LoginComponent
+    path: '**', redirectTo: 'login'
   }
 ];

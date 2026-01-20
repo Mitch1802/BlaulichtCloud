@@ -1,128 +1,151 @@
+import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject } from "@angular/core";
-import { CommonModule } from '@angular/common';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FormsModule } from "@angular/forms";
 
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 import { HeaderComponent } from "../_template/header/header.component";
 import { GlobalDataService } from "../_service/global-data.service";
-import { FahrzeugePublicService } from "../_service/fahrzeuge-public.service";
-import { IFahrzeugAuth, IFahrzeugPublic, ICheckDraftItem, CheckStatus } from "../_interface/fahrzeug";
+import { CheckStatus, IFahrzeugDetail } from "../_interface/fahrzeug";
+
+type ResultFG = FormGroup<{
+  item_id: FormControl<string>;
+  status: FormControl<CheckStatus>;
+  menge_aktuel: FormControl<number | null>;
+  notiz: FormControl<string>;
+}>;
 
 @Component({
   standalone: true,
   selector: "app-fahrzeug-check",
   imports: [
     CommonModule,
+    ReactiveFormsModule,
+
     HeaderComponent,
-    FormsModule,
+
     MatCardModule,
     MatButtonModule,
-    MatExpansionModule,
-    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatDividerModule,
+    MatFormFieldModule,
   ],
   templateUrl: "./fahrzeug-check.component.html",
 })
 export class FahrzeugCheckComponent implements OnInit {
+  private gds = inject(GlobalDataService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private gds = inject(GlobalDataService);
-  private publicApi = inject(FahrzeugePublicService);
+  private fb = inject(FormBuilder);
 
-  breadcrumb: any[] = [];
+  breadcrumb: { label: string; url?: string }[] = [];
 
-  isPublic = false;
-  publicId: string | null = null;
-  fahrzeugId: number | null = null;
+  fahrzeugId!: string;
+  fahrzeug: IFahrzeugDetail | null = null;
 
-  fahrzeugPublic: IFahrzeugPublic | null = null;
-  fahrzeugAuth: IFahrzeugAuth | null = null;
+  form = this.fb.group({
+    title: this.fb.control<string>("", { nonNullable: true }),
+    notiz: this.fb.control<string>("", { nonNullable: true }),
+    results: this.fb.array<ResultFG>([]),
+  });
 
-  draft: Record<string, ICheckDraftItem> = {};
+  get resultsFA(): FormArray<ResultFG> {
+    return this.form.controls.results;
+  }
 
   ngOnInit(): void {
+    sessionStorage.setItem("PageNumber", "3");
+    sessionStorage.setItem("Page3", "FZ");
     this.breadcrumb = this.gds.ladeBreadcrumb();
 
-    this.publicId = this.route.snapshot.paramMap.get("publicId");
-    this.isPublic = !!this.publicId;
-
-    if (this.isPublic) {
-      const token = sessionStorage.getItem(`public_token_${this.publicId}`);
-      if (!token) {
-        this.router.navigate(["/public/fahrzeuge", this.publicId]);
-        return;
-      }
-      this.publicApi.getPublicFahrzeug(this.publicId!, token).subscribe({
-        next: (res) => (this.fahrzeugPublic = res),
-        error: (err: any) => this.gds.errorAnzeigen(err),
-      });
+    const id = this.route.snapshot.paramMap.get("id");
+    if (!id) {
+      this.gds.erstelleMessage("error", "Fahrzeug-ID fehlt.");
+      this.router.navigate(["/fahrzeuge"]);
       return;
     }
+    this.fahrzeugId = id;
 
-    this.fahrzeugId = Number(this.route.snapshot.paramMap.get("id"));
+    this.load();
+  }
+
+  private load(): void {
     this.gds.get(`fahrzeuge/${this.fahrzeugId}`).subscribe({
-      next: (res: any) => (this.fahrzeugAuth = res as IFahrzeugAuth),
-      error: (err: any) => this.gds.errorAnzeigen(err),
+      next: (fz: any) => {
+        this.fahrzeug = fz as IFahrzeugDetail;
+        this.buildForm();
+      },
+      error: (e) => this.gds.errorAnzeigen(e),
     });
   }
 
-  keyFor(raum: any, item: any): string {
-    if (!this.isPublic) return String(item.id);
-    return `${(raum.name ?? '').trim()}::${item.reihenfolge ?? 0}::${(item.name ?? '').trim()}`.toLowerCase();
+  private buildForm(): void {
+    this.resultsFA.clear();
+
+    if (!this.fahrzeug) return;
+
+    for (const raum of this.fahrzeug.raeume ?? []) {
+      for (const item of raum.items ?? []) {
+        this.resultsFA.push(
+          this.fb.group({
+            item_id: this.fb.control<string>(item.id, {
+              nonNullable: true,
+              validators: [Validators.required],
+            }),
+            status: this.fb.control<CheckStatus>("ok", {
+              nonNullable: true,
+              validators: [Validators.required],
+            }),
+            menge_aktuel: this.fb.control<number | null>(
+              item.menge ?? null
+            ),
+            notiz: this.fb.control<string>("", { nonNullable: true }),
+          })
+        );
+      }
+    }
   }
 
-  ensureDraft(key: string): void {
-    if (!this.draft[key]) this.draft[key] = { status: "ok" };
-  }
+  submit(): void {
+    this.form.markAllAsTouched();
 
-  setStatus(raum: any, item: any, status: CheckStatus): void {
-    const k = this.keyFor(raum, item);
-    this.ensureDraft(k);
-    this.draft[k].status = status;
-  }
-
-  setIst(raum: any, item: any, value: any): void {
-    const k = this.keyFor(raum, item);
-    this.ensureDraft(k);
-    const num = value === "" || value === null || value === undefined ? null : Number(value);
-    this.draft[k].menge_aktuel = Number.isFinite(num as number) ? (num as number) : null;
-  }
-
-  setNotiz(raum: any, item: any, value: any): void {
-    const k = this.keyFor(raum, item);
-    this.ensureDraft(k);
-    this.draft[k].notiz = String(value ?? "");
-  }
-
-  save(): void {
-    if (this.isPublic || !this.fahrzeugId) return;
-
-    const results = Object.entries(this.draft).map(([key, v]) => ({
-      item_id: Number(key),
-      status: v.status ?? "ok",
-      menge_aktuel: v.menge_aktuel ?? null,
-      notiz: v.notiz ?? "",
-    }));
-
-    if (results.length === 0) {
-      this.gds.erstelleMessage("info", "Keine Einträge zum Speichern.");
+    if (!this.fahrzeugId || this.form.invalid) {
+      this.gds.erstelleMessage("error", "Check unvollständig");
       return;
     }
 
-    this.gds.post(`fahrzeuge/${this.fahrzeugId}/checks`, { results }).subscribe({
+    // Backend erwartet { title?, notiz?, results: [...] }
+    const payload = {
+      title: this.form.controls.title.value ?? "",
+      notiz: this.form.controls.notiz.value ?? "",
+      results: this.resultsFA.getRawValue().map((r) => ({
+        item_id: r.item_id,
+        status: r.status,
+        menge_aktuel: r.menge_aktuel ?? null,
+        notiz: r.notiz ?? "",
+      })),
+    };
+
+    this.gds.post(`fahrzeuge/${this.fahrzeugId}/checks`, payload).subscribe({
       next: () => {
-        this.gds.erstelleMessage("success", "Check gespeichert.");
-        this.draft = {};
+        this.gds.erstelleMessage("success", "Check gespeichert");
+        this.router.navigate(["/fahrzeuge"]);
       },
-      error: (err: any) => this.gds.errorAnzeigen(err),
+      error: (e) => this.gds.errorAnzeigen(e),
     });
   }
 }

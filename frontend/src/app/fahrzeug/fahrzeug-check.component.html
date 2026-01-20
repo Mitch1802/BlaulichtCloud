@@ -1,149 +1,54 @@
 <app-header [breadcrumb]="breadcrumb"></app-header>
 
-<div class="row justify-content-center content">
-  <div class="col-12 col-md-10 p-0 m-0">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          @if (isPublic) { Public Check } @else { Fahrzeug Check (Login) }
-        </mat-card-title>
-      </mat-card-header>
+<mat-card class="m-2">
+  @if (fahrzeug) {
+    <h2>Fahrzeug Check – {{ fahrzeug.name }}</h2>
 
-      <mat-card-content>
+    <form [formGroup]="form" style="display:flex; flex-direction:column; gap:12px;">
+      <mat-form-field>
+        <mat-label>Titel</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
 
-        @if (isPublic) {
-          @if (fahrzeugPublic) {
-            <h3>{{ fahrzeugPublic?.name }}</h3>
+      <mat-form-field>
+        <mat-label>Notiz</mat-label>
+        <textarea matInput rows="2" formControlName="notiz"></textarea>
+      </mat-form-field>
 
-            <mat-accordion>
-              @for (raum of fahrzeugPublic?.raeume ?? []; track raum.name) {
-                <mat-expansion-panel>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>{{ raum.name }}</mat-panel-title>
-                  </mat-expansion-panel-header>
+      <mat-divider></mat-divider>
 
-                  @for (item of raum.items; track item.name) {
-                    <div class="py-2 border-bottom">
-                      <div class="d-flex flex-wrap gap-3 align-items-start">
-                        <div class="flex-grow-1">
-                          <b>{{ item.name }}</b><br />
-                          <small>
-                            Soll: {{ item.menge }} {{ item.einheit }}
-                            @if (item.notiz) { • {{ item.notiz }} }
-                          </small>
-                        </div>
+      <div formArrayName="results">
+        @for (ctrl of resultsFA.controls; track $index; let i = $index) {
+          <mat-card class="my-1 p-1" [formGroupName]="i">
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <mat-form-field>
+                <mat-label>Status</mat-label>
+                <mat-select formControlName="status">
+                  <mat-option value="ok">OK</mat-option>
+                  <mat-option value="missing">Fehlt</mat-option>
+                  <mat-option value="damaged">Defekt</mat-option>
+                </mat-select>
+              </mat-form-field>
 
-                        <mat-form-field appearance="outline" style="width: 160px;">
-                          <mat-label>Status</mat-label>
-                          <mat-select
-                            [ngModel]="(draft[keyFor(raum,item)]?.status ?? 'ok')"
-                            (ngModelChange)="setStatus(raum,item,$event)"
-                          >
-                            <mat-option value="ok">OK</mat-option>
-                            <mat-option value="missing">Fehlt</mat-option>
-                            <mat-option value="damaged">Beschädigt</mat-option>
-                          </mat-select>
-                        </mat-form-field>
+              <mat-form-field>
+                <mat-label>Menge (Ist)</mat-label>
+                <input matInput type="number" formControlName="menge_aktuel" />
+              </mat-form-field>
 
-                        <mat-form-field appearance="outline" style="width: 140px;">
-                          <mat-label>Ist</mat-label>
-                          <input
-                            matInput
-                            type="number"
-                            [ngModel]="draft[keyFor(raum,item)]?.menge_aktuel"
-                            (ngModelChange)="setIst(raum,item,$event)"
-                          />
-                        </mat-form-field>
-
-                        <mat-form-field appearance="outline" style="min-width: 220px; flex: 1;">
-                          <mat-label>Notiz</mat-label>
-                          <input
-                            matInput
-                            [ngModel]="draft[keyFor(raum,item)]?.notiz"
-                            (ngModelChange)="setNotiz(raum,item,$event)"
-                          />
-                        </mat-form-field>
-                      </div>
-                    </div>
-                  }
-                </mat-expansion-panel>
-              }
-            </mat-accordion>
-
-            <div class="mt-3 text-muted">
-              Public Modus: nur prüfen – es wird nichts gespeichert.
+              <mat-form-field style="flex:1;">
+                <mat-label>Notiz</mat-label>
+                <input matInput formControlName="notiz" />
+              </mat-form-field>
             </div>
-          } @else {
-            <div class="text-muted">Lade Fahrzeug…</div>
-          }
-        } @else {
-          @if (fahrzeugAuth) {
-            <h3>{{ fahrzeugAuth?.name }}</h3>
-
-            <mat-accordion>
-              @for (raum of fahrzeugAuth?.raeume ?? []; track raum.id) {
-                <mat-expansion-panel>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>{{ raum.name }}</mat-panel-title>
-                  </mat-expansion-panel-header>
-
-                  @for (item of raum.items; track item.id) {
-                    <div class="py-2 border-bottom">
-                      <div class="d-flex flex-wrap gap-3 align-items-start">
-                        <div class="flex-grow-1">
-                          <b>{{ item.name }}</b><br />
-                          <small>
-                            Soll: {{ item.menge }} {{ item.einheit }}
-                            @if (item.notiz) { • {{ item.notiz }} }
-                          </small>
-                        </div>
-
-                        <mat-form-field appearance="outline" style="width: 160px;">
-                          <mat-label>Status</mat-label>
-                          <mat-select
-                            [ngModel]="(draft[keyFor(raum,item)]?.status ?? 'ok')"
-                            (ngModelChange)="setStatus(raum,item,$event)"
-                          >
-                            <mat-option value="ok">OK</mat-option>
-                            <mat-option value="missing">Fehlt</mat-option>
-                            <mat-option value="damaged">Beschädigt</mat-option>
-                          </mat-select>
-                        </mat-form-field>
-
-                        <mat-form-field appearance="outline" style="width: 140px;">
-                          <mat-label>Ist</mat-label>
-                          <input
-                            matInput
-                            type="number"
-                            [ngModel]="draft[keyFor(raum,item)]?.menge_aktuel"
-                            (ngModelChange)="setIst(raum,item,$event)"
-                          />
-                        </mat-form-field>
-
-                        <mat-form-field appearance="outline" style="min-width: 220px; flex: 1;">
-                          <mat-label>Notiz</mat-label>
-                          <input
-                            matInput
-                            [ngModel]="draft[keyFor(raum,item)]?.notiz"
-                            (ngModelChange)="setNotiz(raum,item,$event)"
-                          />
-                        </mat-form-field>
-                      </div>
-                    </div>
-                  }
-                </mat-expansion-panel>
-              }
-            </mat-accordion>
-
-            <button mat-raised-button color="primary" class="mt-3" (click)="save()">
-              Speichern
-            </button>
-          } @else {
-            <div class="text-muted">Lade Fahrzeug…</div>
-          }
+          </mat-card>
         }
+      </div>
 
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
+      <button mat-raised-button color="primary" type="button" (click)="submit()">
+        Check abschließen
+      </button>
+    </form>
+  } @else {
+    <div style="opacity:0.7;">Lade Fahrzeug…</div>
+  }
+</mat-card>

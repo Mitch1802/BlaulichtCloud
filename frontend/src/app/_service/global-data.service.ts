@@ -400,8 +400,8 @@ export class GlobalDataService {
       link = '/news';
       kuerzel = 'News';
     } else if (page == 'FZ') {
-      link = '/fahrzeug';
-      kuerzel = 'Fahrzeug';
+      link = '/fahrzeuge';
+      kuerzel = 'Fahrzeug Beladung';
     } else if (page == 'INV') {
       link = '/inventar';
       kuerzel = 'Inventar';
@@ -489,5 +489,13 @@ export class GlobalDataService {
     const footer = "Version " + environment.version + "\n" + String.fromCharCode(169) + " " + year + " by " + author;
     return footer;
   }
+
+  getWithBearer(modul: string, token: string): Observable<any[]> {
+    const headers = this.ladeHeaders(false).set("Authorization", "Bearer " + token);
+    const url = this.AppUrl + modul + '/';
+    const response: any = this.http.get<any[]>(url, { headers });
+    return this.withLoading(response);
+  }
+
 
 }
