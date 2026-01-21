@@ -41,8 +41,6 @@ export class VerwaltungComponent implements OnInit {
   pdf_konfig: any = {};
   stammdaten: any = {};
 
-
-
   formRechnung = new FormGroup({
     adress_name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     adresse_strasse: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -90,6 +88,13 @@ export class VerwaltungComponent implements OnInit {
     heute = heute.split(",");
     heute = heute[0];
 
+    let betrag_total = 0
+    let pos = this.formRechnung.controls.positionen.value;
+    for (let i = 0; i < pos.length; i++) {
+      betrag_total += Number(pos[i].preis);
+      pos[i].preis = Number(pos[i].preis).toFixed(2);
+    }
+
     const payload = {
       "fw_name": this.stammdaten.fw_name,
       "fw_nummer": this.stammdaten.fw_nummer,
@@ -98,6 +103,10 @@ export class VerwaltungComponent implements OnInit {
       "fw_ort": this.stammdaten.fw_ort,
       "fw_email": this.stammdaten.fw_email,
       "fw_telefon": this.stammdaten.fw_telefon,
+      "fw_konto": this.stammdaten.fw_konto,
+      "fw_iban": this.stammdaten.fw_iban,
+      "fw_bic": this.stammdaten.fw_bic,
+      "fw_kdt": this.stammdaten.fw_kdt,
       "invoice_datum": heute,
       "customer_name": this.formRechnung.controls.adress_name.value,
       "customer_street": this.formRechnung.controls.adresse_strasse.value,
@@ -107,6 +116,7 @@ export class VerwaltungComponent implements OnInit {
       "invoice_anrede": this.formRechnung.controls.anrede.value,
       "invoice_text": this.formRechnung.controls.text.value,
       "invoice_items": this.formRechnung.controls.positionen.value,
+      "invoice_total_betrag": betrag_total.toFixed(2)
     }
 
     this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
