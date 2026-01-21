@@ -190,30 +190,16 @@ class PdfTemplateTestView(APIView):
 
             "qr_text": "https://blaulichtcloud.at/",
 
-            "invoice_nummer": "EV-00",
             "invoice_datum": "01.01.2026",
+            "invoice_betreff": "",
+            "invoice_anrede": "",
+            "invoice_text": "",
             "invoice_items": [
                 {
-                    "name": "Material", 
-                    "note": "Bemerkung", 
-                    "qty": 2, 
-                    "price": "15.00", 
-                    "total": "30.00"
+                    "bezeichnung": "Material", 
+                    "preis": "30,00"
                 }
             ],
-            "invoice_hinweis": "",
-            "invoice_referenz": "",
-            "invoice_terms": "",
-            "invoice_anrede": "",
-            "invoice_kopftext": "",
-            "invoice_fusstext": "",
-
-            "title": "Testdokument",
-            "betreff": "...",
-            "einsatz_ort": "B10 Schwadorf",
-            "einsatz_datum": "01.01.2026",
-            "einsatzberichtnummer": "25/12",
-            "taetigkeit": "Reinigung der Straße nach VU...",
 
             "mitglied_stbnr": 123,
             "mitglied_vorname": "Max",
