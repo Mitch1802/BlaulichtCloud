@@ -191,13 +191,17 @@ class PdfTemplateTestView(APIView):
             "qr_text": "https://blaulichtcloud.at/",
 
             "invoice_datum": "01.01.2026",
-            "invoice_betreff": "",
-            "invoice_anrede": "",
-            "invoice_text": "",
+            "invoice_betreff": "Rechnung Bus Landesjugendlager",
+            "invoice_anrede": "Werte Kameraden",
+            "invoice_text": "Hiermit übermittelt die Feuerwehr Schwadorf die Rechnung für den Anteil am Bustransport zum und vom Landesjugendlager 2025.",
             "invoice_items": [
                 {
                     "bezeichnung": "Material", 
                     "preis": "30,00"
+                },
+                {
+                    "bezeichnung": "Material2", 
+                    "preis": "15,00"
                 }
             ],
 
