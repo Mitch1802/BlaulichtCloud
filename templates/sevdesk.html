@@ -1,0 +1,635 @@
+<!-- invoice -->
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<!-- MAIN STYLING -->
+		<style>
+			@media print {
+				@page {
+					size: A4 portrait;
+					margin: 50mm 15mm 15mm 20mm;
+
+					@top-center {
+						content: element(headerIdentifier);
+					}
+
+					@left-middle {
+						content: element(foldlinesIdentifier);
+					}
+
+					@bottom-left {
+						content: element(footerIdentifier);
+					}
+				}
+			}
+
+			.foldline1 {
+				position: absolute;
+				left: 0;
+				top: 55mm;
+				width: 4mm;
+				border-bottom: 0.5pt solid #000;
+			}
+
+			.foldline2 {
+				position: absolute;
+				left: 0;
+				top: 160mm;
+				width: 4mm;
+				border-bottom: 0.5pt solid #000;
+			}
+
+			.foldline3 {
+				position: absolute;
+				left: 0;
+				top: 98.5mm;
+				width: 7mm;
+				border-bottom: 0.5pt solid #000;
+			}
+
+			aside.foldlines {
+				position: running(foldlinesIdentifier);
+			}
+
+			body {
+				counter-reset: position;
+				margin: 0;
+			}
+
+			header {
+				position: running(headerIdentifier);
+				width: 100%;
+				display: flex;
+				text-align: center;
+				justify-content: center;
+				padding-bottom: 5mm;
+			}
+
+			.header__logo {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 30mm;
+			}
+
+			.header__logo .logo {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+				object-position: left top;
+				display: block;
+			}
+
+			div.empfaenger {
+				position: absolute;
+				left: 1mm;
+				top: 7mm; /* Startwert */
+				width: 85mm;
+				white-space: pre-line;
+				overflow-wrap: break-word;
+				word-break: normal;
+			}
+
+			div.informationen {
+				position: absolute;
+				top: 20mm;
+				right: 0;
+			}
+
+			table.positionen__table {
+				border-collapse: collapse;
+				table-layout: fixed;
+				border-spacing: 0;
+				margin: 4mm 0 0 0;
+				width: 100%;
+			}
+
+			table.positionen__table tr td {
+				padding: 1mm;
+			}
+
+			table.positionen__table thead td {
+				hyphens: auto;
+				word-break: break-word;
+				overflow-wrap: break-word;
+			}
+
+			table.positionen__table tbody tr {
+				page-break-inside: auto;
+			}
+
+			td.center {
+				text-align: center;
+			}
+
+			td.right {
+				text-align: right;
+			}
+
+			div.positionen__total {
+				text-align: end;
+				justify-content: end;
+				padding: 1mm;
+				margin-bottom: 10mm;
+			}
+
+			footer {
+				position: running(footerIdentifier);
+				width: 155.8mm;
+				overflow: hidden;
+			}
+
+			footer .pagecount {
+				position: absolute;
+				bottom: 7.5mm;
+				right: -10mm;
+				width: 10mm;
+				text-align: center;
+			}
+
+			.page::before {
+				content: counter(page);
+			}
+
+			.totalPages::before {
+				content: counter(pages);
+			}
+
+			div.addressline {
+				position: absolute;
+				left: 1mm;
+				top: 0mm;
+				width: 85mm;
+				font-size: 6pt;
+				line-height: 8pt;
+				white-space: nowrap;
+			}
+
+			.fusstext__terms__konto {
+				display: table;
+				width: 100%;
+			}
+
+			.fusstext__terms__konto-links,
+			.fusstext__terms__konto-rechts {
+				display: table-cell;
+				vertical-align: top;
+			}
+
+			.fusstext__terms__konto-links {
+				width: 60%;
+			}
+
+			.fusstext__terms__konto-rechts {
+				width: 40%;
+				text-align: right;
+				padding-left: 5mm;
+			}
+
+			.epcQr {
+				width: 20mm;
+				height: auto;
+				display: inline-block;
+			}
+		</style>
+		<!-- MAIN STYLING ENDE -->
+
+		<!-- CUSTOM STYLING -->
+		<style>
+			@font-face {
+				font-family: "Inter";
+				src: url("https://my.sevdesk.de/assets/fonts/layout-templates/Inter/Inter_18pt-Regular.ttf")
+					format("truetype");
+				font-weight: normal;
+				font-style: normal;
+				font-display: swap;
+			}
+			@font-face {
+				font-family: "Inter";
+				src: url("https://my.sevdesk.de/assets/fonts/layout-templates/Inter/Inter_18pt-Bold.ttf")
+					format("truetype");
+				font-weight: bold;
+				font-style: normal;
+				font-display: swap;
+			}
+			@font-face {
+				font-family: "Inter";
+				src: url("https://my.sevdesk.de/assets/fonts/layout-templates/Inter/Inter_18pt-ExtraBold.ttf")
+					format("truetype");
+				font-weight: 800;
+				font-style: normal;
+				font-display: swap;
+			}
+			/* This is used for the HTML b tags */
+			@font-face {
+				font-family: "Inter";
+				src: url("https://my.sevdesk.de/assets/fonts/layout-templates/Inter/Inter_18pt-ExtraBold.ttf")
+					format("truetype");
+				font-weight: 600;
+				font-style: normal;
+				font-display: swap;
+			}
+			/* Inter_18pt-Italic */
+			@font-face {
+				font-family: "Inter";
+				src: url("https://my.sevdesk.de/assets/fonts/layout-templates/Inter/Inter_18pt-Italic.ttf")
+					format("truetype");
+				font-weight: normal;
+				font-style: italic;
+				font-display: swap;
+			}
+			@font-face {
+				font-family: "Inter28ExtraBold";
+				src: url("https://my.sevdesk.de/assets/fonts/layout-templates/Inter/Inter_28pt-ExtraBold.ttf")
+					format("truetype");
+				font-weight: 800;
+				font-style: normal;
+				font-display: swap;
+			}
+
+			body {
+				font-family: "Inter", sans-serif;
+				font-size: 9pt;
+				line-height: 11.5pt;
+				margin-right: 5mm;
+			}
+
+			header {
+				border-bottom: 1px solid #000;
+			}
+
+			.header__container-title {
+				font-size: 15pt;
+				line-height: 20pt;
+				font-weight: 700;
+			}
+
+			.header__container-value {
+				font-size: 7pt;
+				font-weight: 700;
+			}
+
+			div.addressline {
+				font-size: 6pt;
+				line-height: 8pt;
+			}
+
+			div.addressline .divider {
+				font-weight: 400;
+			}
+
+			div.addressline .divider::before {
+				content: " - ";
+			}
+
+			hr.invisible {
+				visibility: hidden;
+				clear: both;
+				margin: 0;
+				height: 34mm;
+			}
+
+			.informationen {
+				text-align: end;
+			}
+
+			table.kopftext__table .kopftext__table-row td {
+				padding-bottom: 2mm;
+			}
+
+			.kopftext__title {
+				justify-content: center;
+				text-align: center;
+				padding-bottom: 10mm;
+			}
+
+			.kopftext__title-text {
+				text-decoration: underline solid;
+				font-size: 18pt;
+				font-weight: 700;
+			}
+
+			.kopftext__table-label {
+				text-align: start;
+				vertical-align: top;
+			}
+
+			.kopftext__table-value {
+				text-align: start;
+				vertical-align: top;
+			}
+
+			.kopftext__table-value p {
+				padding: 0;
+				margin: 0;
+			}
+
+			table.positionen__table thead td {
+				font-weight: 700;
+				background-color: #ebebeb;
+			}
+
+			.positionen__total {
+				background-color: #ebebeb;
+			}
+
+			.positionen__total-label,
+			.positionen__total-value {
+				font-size: 10pt;
+				font-weight: 700;
+			}
+
+			.fusstext__terms {
+				margin-top: 10mm;
+			}
+
+			.fusstext__terms__konto-row {
+				font-weight: 700;
+			}
+
+			.signatur {
+				justify-content: center;
+				text-align: center;
+				margin-top: 10mm;
+			}
+
+			footer {
+				width: 100%;
+				font-size: 7pt;
+				line-height: 10pt;
+			}
+		</style>
+		<!-- CUSTOM STYLING -->
+	</head>
+	<body>
+		<!-- RUNNING-ELEMENTS -->
+		<!-- FALTMARKEN WENN TRUE-->
+		{{#parameter.printFoldLines_Y}}
+		<aside class="foldlines">
+			<hr class="foldline1" />
+			<hr class="foldline2" />
+			<hr class="foldline3" />
+		</aside>
+		{{/parameter.printFoldLines_Y}}
+		<!-- FALTMARKEN WENN TRUE ENDE -->
+
+		<!-- BRIEFKOPF -->
+		<header>
+			{{#data.is_logo}}
+			<div class="header__logo">
+				<img
+					style="
+						max-height: {{logoSize}}%;
+						max-width: 100%;
+						width: auto;
+						height: auto;
+						left: 0;
+						position: absolute;
+						top: 50%;
+						right: 100%;
+					"
+					class="logo"
+					alt="{{data.client.name}}"
+					src="data:image/png;base64,{{data.logo}}" />
+			</div>
+			{{/data.is_logo}}
+			<div class="header__container">
+				<span class="header__container-title"
+					>Freiwillige Feuerwehr {{data.client.address_city}}</span
+				>
+				<div class="header__container__row">
+					<span class="header__container-value"
+						>{{data.client.address_street}} |
+						{{data.client.address_zip}}
+						{{data.client.address_city}}</span
+					>
+				</div>
+				<div class="header__container__row">
+					<span class="header__container-value"
+						>{{# i18n }}E-Mail.{{/ i18n}}:
+						{{data.client.contact_email}} | {{# i18n }}Telefon
+						Feuerwehrhaus{{/ i18n}}:
+						{{data.client.contact_phone}}</span
+					>
+				</div>
+			</div>
+		</header>
+		<!-- BRIEFKOPF ENDE-->
+
+		<!-- FOOTER -->
+		<footer>
+			{{#parameter.printPageNumbers_Y}}
+			<div class="pagecount">
+				<span class="page"></span>/<span class="totalPages"></span>
+			</div>
+			{{/parameter.printPageNumbers_Y}}
+		</footer>
+		<!-- FOOTER ENDE -->
+		<!-- RUNNING-ELEMENTS ENDE -->
+
+		<!-- EMPFÄNGER -->
+		{{#parameter.printDeliveryReturn_Y}}
+		<div class="addressline">
+			{{data.client.name}}<span class="divider"></span>
+			{{data.client.address_street}} <span class="divider"></span>
+			{{data.client.address_zip}} {{data.client.address_city}}
+		</div>
+		{{/parameter.printDeliveryReturn_Y}}
+		<div class="empfaenger">{{data.object.address}}</div>
+		<!-- EMPFÄNGER ENDE -->
+
+		<!-- RECHNUNGSINFORMATIONEN -->
+		<div class="informationen">
+			{{# date }}{{data.object.invoice_date}}{{/ date }}<br />
+			{{# i18n }}Rechnungsnummer: {{/ i18n}}{{data.object.invoice_number}}
+		</div>
+		<!-- RECHNUNGSINFORMATIONEN ENDE -->
+
+		<hr class="invisible" />
+
+		<!-- KOPFTEXT -->
+		<div class="kopftext">
+			<div class="kopftext__title">
+				<span class="kopftext__title-text">Kostenaufstellung</span>
+			</div>
+			<table class="kopftext__table">
+				<tr class="kopftext__table-row">
+					<th class="kopftext__table-label">
+						{{# i18n }}Betrifft:{{/ i18n}}
+					</th>
+					<td class="kopftext__table-value">
+						Kostenersatz gem. § 79 Abs. 5 und § 81 Abs. 2 NÖ
+						Feuerwehrgesetz 2015 (NÖ FG 2015)
+					</td>
+				</tr>
+				<tr class="kopftext__table-row">
+					<th class="kopftext__table-label">
+						{{# i18n }}über:{{/ i18n}}
+					</th>
+					<td class="kopftext__table-value">
+						Einsatz der Freiwilligen Feuerwehr
+						{{data.client.address_city}} am {{# date
+						}}{{data.object.delivery_date}}{{/ date }}
+					</td>
+				</tr>
+				{{#data.object.customer_internal_note}}<!-- Referenznummer-->
+				<tr class="kopftext__table-row">
+					<th class="kopftext__table-label">
+						{{# i18n }}EB-NR.:{{/ i18n}}
+					</th>
+					<td class="kopftext__table-value">
+						{{data.object.customer_internal_note}}
+					</td>
+				</tr>
+				{{/data.object.customer_internal_note}}
+				<tr class="kopftext__table-row">
+					<th class="kopftext__table-label">
+						{{# i18n }}Einsatzort:{{/ i18n}}
+					</th>
+					<td class="kopftext__table-value">
+						{{data.object.header}}
+					</td>
+				</tr>
+				<tr class="kopftext__table-row">
+					<th class="kopftext__table-label">
+						{{# i18n }}Tätigkeit:{{/ i18n}}
+					</th>
+					<td class="kopftext__table-value">
+						{{{data.object.head_text}}}
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- KOPFTEXT ENDE -->
+
+		<!-- POSITIONEN -->
+		<div class="positionen">
+			<table class="positionen__table">
+				<thead>
+					<tr class="positionen__table-row">
+						<td style="width: 18.5mm" class="right">
+							{{# i18n }}Menge{{/ i18n}}
+						</td>
+						{{#parameter.printPartNumber_Y}}
+						<td style="width: 15mm" class="center">
+							{{# i18n }}TP{{/ i18n}}
+						</td>
+						<td>{{# i18n }}Bezeichnung{{/ i18n}}</td>
+						{{/parameter.printPartNumber_Y}}
+						{{^parameter.printPartNumber_Y}}
+						<td>{{# i18n }}Bezeichnung{{/ i18n}}</td>
+						{{/parameter.printPartNumber_Y}}
+						<td style="width: 15mm" class="right">
+							{{# i18n }}Tarifsatz{{/ i18n}}
+						</td>
+						<td style="width: 15mm" class="right">
+							{{# i18n }}Summe{{/ i18n}}
+						</td>
+					</tr>
+				</thead>
+
+				<tbody>
+					{{#data.object.positions}}
+					<tr class="position">
+						<td class="right">
+							{{#numberformat}}{{quantity}}{{/numberformat}}
+							{{unity_name}}
+						</td>
+						{{#parameter.printPartNumber_Y}}
+						<td class="center">{{part_number}}</td>
+						{{/parameter.printPartNumber_Y}}
+						<td>
+							<span class="position__title">{{{name}}}</span>
+						</td>
+						<td class="right">
+							{{#numberformat}}{{tax_price}}{{/numberformat}}
+						</td>
+						<td class="right">
+							{{#numberformat}}{{total}}{{/numberformat}}
+						</td>
+					</tr>
+					{{/data.object.positions}}
+				</tbody>
+			</table>
+			<div class="positionen__total">
+				<span class="positionen__total-label"
+					>Gesamtsumme in {{data.object.currency}}</span
+				>
+				<span class="positionen__total-value"
+					>{{#numberformat}}{{data.object.total}}{{/numberformat}}</span
+				>
+			</div>
+		</div>
+		<!-- POSITIONEN ENDE -->
+
+		<!-- FUSSTEXT -->
+		<div class="fusstext">
+			{{#data.object.foot_text}} {{data.object.foot_text}}
+			{{/data.object.foot_text}}
+
+			<div class="fusstext__hinweis">
+				Freiwillige Feuerwehren sind Körperschaften öffentlichen Rechtes
+				und als solche gem. § 2 Abs. 3 UStG 1994 von der Umsatzsteuer
+				befreit. Aus diesem Grund beinhaltet diese Kostenaufstellung
+				keine Mehrwertsteuer.
+			</div>
+			<div class="fusstext__terms">
+				{{#data.object.paymentterms}} {{data.object.paymentterms}}<br />
+				{{/data.object.paymentterms}}
+
+				<div class="fusstext__terms__konto">
+					<div class="fusstext__terms__konto-links">
+						<div class="fusstext__terms__konto-row">
+							<span class="fusstext__terms__konto-label"
+								>{{# i18n }}Konto{{/ i18n}}:</span
+							>
+							<span class="fusstext__terms__konto-value"
+								>Freiwillige Feuerwehr
+								{{data.client.address_city}}</span
+							>
+						</div>
+						<div class="fusstext__terms__konto-row">
+							<span class="fusstext__terms__konto-label"
+								>{{# i18n }}IBAN{{/ i18n}}:</span
+							>
+							<span class="fusstext__terms__konto-value"
+								>{{data.client.bank_iban}}</span
+							>
+						</div>
+						<div class="fusstext__terms__konto-row">
+							<span class="fusstext__terms__konto-label"
+								>{{# i18n }}BIC{{/ i18n}}:</span
+							>
+							<span class="fusstext__terms__konto-value"
+								>{{data.client.bank_bic}}</span
+							>
+						</div>
+						<div class="fusstext__terms__konto-row">
+							<span class="fusstext__terms__konto-label"
+								>{{# i18n }}Verwendungszweck{{/ i18n}}:</span
+							>
+							<span class="fusstext__terms__konto-value"
+								>{{data.object.invoice_number}}</span
+							>
+						</div>
+					</div>
+
+					<div class="fusstext__terms__konto-rechts">
+						{{#parameter.epcQrCode_Y}}{{#data.epc_qr.show}}
+						<img src="{{data.epc_qr.img_base64}}" class="epcQr" />
+						{{/data.epc_qr.show}}{{/parameter.epcQrCode_Y}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- FUSSTEXT ENDE -->
+
+		<!-- SIGNATUR -->
+		<div class="signatur">
+			<span>Der Feuerwehrkommandant</span><br />
+			<span>HBI Wolfgang Niederauer</span>
+		</div>
+		<!-- SIGNATUR ENDE -->
+	</body>
+</html>
