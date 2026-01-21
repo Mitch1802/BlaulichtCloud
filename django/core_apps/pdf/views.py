@@ -204,6 +204,7 @@ class PdfTemplateTestView(APIView):
                     "preis": "15,00"
                 }
             ],
+            "invoice_total_betrag": "45,00",
 
             "mitglied_stbnr": 123,
             "mitglied_vorname": "Max",
