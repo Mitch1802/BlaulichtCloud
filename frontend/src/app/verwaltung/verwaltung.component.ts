@@ -1,29 +1,34 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { GlobalDataService } from '../_service/global-data.service';
 import { MatCardModule } from '@angular/material/card';
 import { HeaderComponent } from '../_template/header/header.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IStammdaten } from '../_interface/stammdaten';
-import { IRechnung } from '../_interface/verwaltung';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 
-type RechnungPosition = { bezeichnung: string; preis: number };
+type RechnungPosition = {
+  bezeichnung: string;
+  preis: number;
+};
 
 @Component({
   selector: 'app-verwaltung',
+  standalone: true,
   imports: [
+    CommonModule,
     HeaderComponent,
     MatCardModule,
     MatTabsModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
     FormsModule,
+    MatFormFieldModule,
     MatInputModule,
     MatListModule,
     MatIconModule
@@ -39,9 +44,10 @@ export class VerwaltungComponent implements OnInit {
 
   breadcrumb: any = [];
   pdf_konfig: any = {};
-  stammdaten: any = {};
+  stammdaten: IStammdaten | null = null;
 
-  const PREIS_REGEX = /^\d+([.,]\d{1,2})?$/;
+  /** erlaubt: 12 | 12,5 | 12,50 | 12.50 */
+  private readonly PREIS_REGEX = /^\d+([.,]\d{1,2})?$/;
 
   formRechnung = new FormGroup({
     adress_name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -51,63 +57,119 @@ export class VerwaltungComponent implements OnInit {
     betreff: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     anrede: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     text: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    positionen: new FormControl<RechnungPosition[]>([], { nonNullable: true, validators: [Validators.required] }),
-  });
-
-
-  formRechnungPositionen = new FormGroup({
-    bezeichnung: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    preis: new FormControl('', {
+    positionen: new FormControl<RechnungPosition[]>([], {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(PREIS_REGEX)]
+      validators: [Validators.required]
     })
   });
 
-  private parsePreis(input: string): number | null {
-    const s = (input ?? '').trim();
-    if (!PREIS_REGEX.test(s)) return null;
-
-    const normalized = s.replace(',', '.');
-    const n = Number(normalized);
-    return Number.isFinite(n) ? n : null;
-  }
+  formRechnungPositionen = new FormGroup({
+    bezeichnung: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    preis: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.pattern(this.PREIS_REGEX)
+      ]
+    })
+  });
 
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '2');
     sessionStorage.setItem('Page2', 'VER');
+
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
 
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
           const templates = erg.modul_konfig.find((m: any) => m.modul === 'pdf');
-          this.pdf_konfig = templates?.konfiguration ?? [];
-          this.stammdaten = <IStammdaten>erg.konfig[0];
+          this.pdf_konfig = templates?.konfiguration ?? {};
+          this.stammdaten = erg.konfig?.[0] ?? null;
         } catch (e: any) {
-          this.globalDataService.erstelleMessage("error", e);
+          this.globalDataService.erstelleMessage('error', e);
         }
       },
-      error: (error: any) => {
-        this.globalDataService.errorAnzeigen(error);
-      }
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
+    });
+  }
+
+  private parsePreis(input: string): number | null {
+    const s = input.trim();
+    if (!this.PREIS_REGEX.test(s)) return null;
+
+    const normalized = s.replace(',', '.');
+    const value = Number(normalized);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  addPosition(): void {
+    if (this.formRechnungPositionen.invalid) {
+      this.formRechnungPositionen.markAllAsTouched();
+      return;
+    }
+
+    const bezeichnung = this.formRechnungPositionen.controls.bezeichnung.value.trim();
+    const preisText = this.formRechnungPositionen.controls.preis.value.trim();
+
+    const preis = this.parsePreis(preisText);
+    if (preis === null) {
+      this.formRechnungPositionen.controls.preis.setErrors({ pattern: true });
+      this.formRechnungPositionen.controls.preis.markAsTouched();
+      return;
+    }
+
+    const current = this.formRechnung.controls.positionen.value;
+    this.formRechnung.controls.positionen.setValue([
+      ...current,
+      { bezeichnung, preis }
+    ]);
+
+    this.formRechnung.controls.positionen.markAsDirty();
+    this.formRechnungPositionen.reset({ bezeichnung: '', preis: '' });
+  }
+
+  removePosition(index: number): void {
+    const current = this.formRechnung.controls.positionen.value;
+    if (index < 0 || index >= current.length) return;
+
+    this.formRechnung.controls.positionen.setValue(
+      current.filter((_, i) => i !== index)
+    );
+
+    this.formRechnung.controls.positionen.markAsDirty();
+  }
+
+  formRechnungReset(): void {
+    this.formRechnung.reset({
+      adress_name: '',
+      adresse_strasse: '',
+      adresse_plz: '',
+      adresse_ort: '',
+      betreff: '',
+      anrede: '',
+      text: '',
+      positionen: []
     });
   }
 
   printRechnung(): void {
+    if (!this.stammdaten) return;
+
     const idVerwaltungRechnung = this.pdf_konfig['idVerwaltungRechnung'];
     const abfrageUrl = `pdf/templates/${idVerwaltungRechnung}/render`;
 
-    let heute: any = new Date().toLocaleString('de-DE');
-    heute = heute.split(",")[0];
-
+    const heute = new Date().toLocaleDateString('de-DE');
     const pos = this.formRechnung.controls.positionen.value;
 
     const betrag_total = pos.reduce((sum, p) => sum + p.preis, 0);
 
-    // Falls dein PDF-Template Strings erwartet, hier sauber formatieren:
     const invoice_items = pos.map(p => ({
       bezeichnung: p.bezeichnung,
-      preis: p.preis.toFixed(2) // "12.50"
+      preis: p.preis.toFixed(2)
     }));
 
     const payload = {
@@ -136,65 +198,13 @@ export class VerwaltungComponent implements OnInit {
 
     this.globalDataService.postBlob(abfrageUrl, payload).subscribe({
       next: (blob: Blob) => {
-        if (blob.size === 0) {
+        if (!blob || blob.size === 0) {
           this.globalDataService.erstelleMessage('error', 'PDF ist leer (0 Bytes).');
           return;
         }
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        window.open(URL.createObjectURL(blob), '_blank');
       },
       error: (error: any) => this.globalDataService.errorAnzeigen(error)
     });
   }
-
-
-  formRechnungReset(): void {
-    this.formRechnung.reset({
-      adress_name: '',
-      adresse_strasse: '',
-      adresse_plz: '',
-      adresse_ort: '',
-      betreff: '',
-      anrede: '',
-      text: '',
-      positionen: []
-    })
-  }
-
-  addPosition(): void {
-    if (this.formRechnungPositionen.invalid) {
-      this.formRechnungPositionen.markAllAsTouched();
-      return;
-    }
-
-    const bezeichnung = this.formRechnungPositionen.controls.bezeichnung.value.trim();
-    const preisText = this.formRechnungPositionen.controls.preis.value.trim();
-
-    const preis = this.parsePreis(preisText);
-    if (preis === null) {
-      // falls doch was durchrutscht
-      this.formRechnungPositionen.controls.preis.setErrors({ pattern: true });
-      this.formRechnungPositionen.controls.preis.markAsTouched();
-      return;
-    }
-
-    const current = this.formRechnung.controls.positionen.value;
-    this.formRechnung.controls.positionen.setValue([...current, { bezeichnung, preis }]);
-    this.formRechnung.controls.positionen.markAsDirty();
-    this.formRechnung.controls.positionen.updateValueAndValidity();
-
-    this.formRechnungPositionen.reset({ bezeichnung: '', preis: '' });
-  }
-
-
-  removePosition(index: number): void {
-    const current = this.formRechnung.controls.positionen.value; // RechnungPosition[]
-    if (index < 0 || index >= current.length) return;
-
-    const next = current.filter((_, i) => i !== index);
-    this.formRechnung.controls.positionen.setValue(next);
-    this.formRechnung.controls.positionen.markAsDirty();
-    this.formRechnung.controls.positionen.updateValueAndValidity();
-  }
-
 }
