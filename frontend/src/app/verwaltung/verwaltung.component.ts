@@ -77,6 +77,10 @@ export class VerwaltungComponent implements OnInit {
     })
   });
 
+  formatPreis(p: number): string {
+    return p.toFixed(2).replace('.', ',');
+  }
+
   ngOnInit(): void {
     sessionStorage.setItem('PageNumber', '2');
     sessionStorage.setItem('Page2', 'VER');

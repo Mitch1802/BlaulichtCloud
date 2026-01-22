@@ -127,7 +127,7 @@
                 ) {
                   <mat-list-item class="row align-items-center">
                     <div class="col-7">{{ pos.bezeichnung }}</div>
-                    <div class="col-3">{{ pos.preis | number:'1.2-2':'de' }}</div>
+                    <div class="col-3">{{ formatPreis(pos.preis) }}</div>
                     <div class="col-2 text-end">
                       <button
                         mat-icon-button
