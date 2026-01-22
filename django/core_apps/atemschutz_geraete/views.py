@@ -9,6 +9,8 @@ from .serializers import AtemschutzGeraetSerializer, AtemschutzGeraetProtokollSe
 from core_apps.common.permissions import HasAnyRolePermission
 from core_apps.fmd.models import FMD
 from core_apps.fmd.serializers import FMDSerializer
+from core_apps.mitglieder.models import Mitglied
+from core_apps.mitglieder.serializers import MitgliedSerializer
     
 class AtemschutzGeraeteViewSet(ModelViewSet):
     queryset = AtemschutzGeraet.objects.all().order_by("inv_nr")
@@ -23,8 +25,9 @@ class AtemschutzGeraeteViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         resp = super().list(request, *args, **kwargs)
-        mitglieder = FMDSerializer(FMD.objects.all(), many=True).data
-        return Response({"main": resp.data, "mitglieder": mitglieder})
+        fmd = FMDSerializer(FMD.objects.all(), many=True).data
+        mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
+        return Response({"main": resp.data, "fmd": fmd, "mitglieder": mitglieder})
 
 class AtemschutzGeraeteProtokollViewSet(ModelViewSet):
     queryset = AtemschutzGeraetProtokoll.objects.all().order_by("datum")
@@ -52,5 +55,5 @@ class AtemschutzGeraeteDienstbuchViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         resp = super().list(request, *args, **kwargs)
-        mitglieder = FMDSerializer(FMD.objects.all(), many=True).data
+        mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
         return Response({"protokoll": resp.data, "mitglieder": mitglieder})

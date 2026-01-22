@@ -108,9 +108,25 @@ export class AtemschutzGeraeteComponent implements OnInit {
     this.globalDataService.get(this.modul).subscribe({
       next: (erg: any) => {
         try {
-          this.geraete = erg.main;
-          this.dataSource.data = erg.main;
-          this.mitglieder = erg.mitglieder
+          this.geraete = erg.main as any[];
+          this.dataSource.data = erg.main as any[];
+
+          const fmd = erg.fmd as any[];
+          const mitgliederGesamt= erg.mitglieder as any[];
+          const memberMap = new Map<number, any>(mitgliederGesamt.map((m: any) => [m.pkid, m]));
+
+          this.mitglieder = fmd.map(item => {
+            const mitg = memberMap.get(item.mitglied_id) || {};
+            return {
+              ...item,
+              stbnr: mitg.stbnr,
+              vorname: mitg.vorname,
+              nachname: mitg.nachname,
+              geburtsdatum: mitg.geburtsdatum,
+              hauptberuflich: mitg.hauptberuflich
+            };
+          });
+          this.mitglieder = this.globalDataService.arraySortByKey(this.mitglieder, 'stbnr');
         } catch (e: any) {
           this.globalDataService.erstelleMessage("error", e);
         }
