@@ -166,6 +166,7 @@
 	{{ payload.customer_plz }} {{ payload.customer_ort }}
 </div>
 
+<div class="text-right">Rechnungsnummer: {{ payload.invoice_nummer|default:"—" }}</div>
 <div class="text-right">Rechnungsdatum: {{ payload.invoice_datum|default:"—" }}</div>
 
 <h1 class="betreff">{{ payload.invoice_betreff }}</h1>
@@ -215,7 +216,8 @@
 	<span class="konditionen--bold">
 	Konto: {{ payload.fw_konto }}<br>
 	IBAN: {{ payload.fw_iban }}<br>
-	BIC: {{ payload.fw_bic }}</span>
+	BIC: {{ payload.fw_bic }}<br>
+	Verwendungszweck: {{ payload.invoice_nummer }}</span>
 </div>
 
 <div class="abschluss">

@@ -32,6 +32,9 @@
                   <mat-form-field>
                     <mat-label>Name</mat-label>
                     <input matInput type="text" formControlName="adress_name" />
+                    @if (formRechnung.controls.adress_name.hasError('required')) {
+                      <mat-error>Name ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-6 mb-3">
@@ -42,30 +45,54 @@
                       type="text"
                       formControlName="adresse_strasse"
                     />
+                    @if (formRechnung.controls.adresse_strasse.hasError('required')) {
+                      <mat-error>Straße ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-2 mb-3">
                   <mat-form-field>
                     <mat-label>PLZ</mat-label>
                     <input matInput type="text" formControlName="adresse_plz" />
+                    @if (formRechnung.controls.adresse_plz.hasError('required')) {
+                      <mat-error>PLZ ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-4 mb-3">
                   <mat-form-field>
                     <mat-label>Ort</mat-label>
                     <input matInput type="text" formControlName="adresse_ort" />
+                    @if (formRechnung.controls.adresse_ort.hasError('required')) {
+                      <mat-error>Ort ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
-                <div class="col-12 col-lg-12 mb-3">
+                <div class="col-12 col-lg-8 mb-3">
                   <mat-form-field>
                     <mat-label>Betreff</mat-label>
                     <input matInput type="text" formControlName="betreff" />
+                    @if (formRechnung.controls.betreff.hasError('required')) {
+                      <mat-error>Betreff ist erforderlich!</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="col-12 col-lg-4 mb-3">
+                  <mat-form-field>
+                    <mat-label>Rechnungsnummer</mat-label>
+                    <input matInput type="text" formControlName="invoice_nummer" />
+                    @if (formRechnung.controls.invoice_nummer.hasError('required')) {
+                      <mat-error>RE Nr. ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-12 mb-3">
                   <mat-form-field>
                     <mat-label>Anrede</mat-label>
                     <input matInput type="text" formControlName="anrede" />
+                    @if (formRechnung.controls.anrede.hasError('required')) {
+                      <mat-error>Anrede ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-12 mb-3">
@@ -77,10 +104,14 @@
                       formControlName="text"
                       rows="4"
                     ></textarea>
+                    @if (formRechnung.controls.text.hasError('required')) {
+                      <mat-error>Text ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
               </section>
             </form>
+            <hr class="mb-3">
             <form
               [formGroup]="formRechnungPositionen"
               (ngSubmit)="addPosition()"
@@ -90,19 +121,20 @@
                   <mat-form-field>
                     <mat-label>Bezeichnung</mat-label>
                     <input matInput type="text" formControlName="bezeichnung" />
+                    @if (formRechnungPositionen.controls.bezeichnung.hasError('required')) {
+                      <mat-error>Bezeichnung ist erforderlich!</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-3 mb-3">
                   <mat-form-field>
                     <mat-label>Preis</mat-label>
                     <input matInput type="text" formControlName="preis" />
-
                     @if (formRechnungPositionen.controls.preis.hasError('required')) {
-                      <mat-error>Preis ist erforderlich</mat-error>
+                      <mat-error>Preis ist erforderlich!</mat-error>
                     }
-
                     @if (formRechnungPositionen.controls.preis.hasError('pattern')) {
-                      <mat-error>Ungültiges Format (z. B. 12,50 oder 12.50)</mat-error>
+                      <mat-error>Ungültiges Format! (z. B. 12,50 oder 12.50)</mat-error>
                     }
                   </mat-form-field>
                 </div>

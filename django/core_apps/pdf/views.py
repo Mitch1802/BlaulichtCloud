@@ -191,6 +191,7 @@ class PdfTemplateTestView(APIView):
             "qr_text": "https://blaulichtcloud.at/",
 
             "invoice_datum": "01.01.2026",
+            "invoice_nummer": "EB-01",
             "invoice_betreff": "Rechnung Bus Landesjugendlager",
             "invoice_anrede": "Werte Kameraden",
             "invoice_text": "Hiermit übermittelt die Feuerwehr Schwadorf die Rechnung für den Anteil am Bustransport zum und vom Landesjugendlager 2025.",

@@ -50,6 +50,7 @@ export class VerwaltungComponent implements OnInit {
   private readonly PREIS_REGEX = /^\d+([.,]\d{1,2})?$/;
 
   formRechnung = new FormGroup({
+    invoice_nummer: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     adress_name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     adresse_strasse: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     adresse_plz: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -149,6 +150,7 @@ export class VerwaltungComponent implements OnInit {
 
   formRechnungReset(): void {
     this.formRechnung.reset({
+      invoice_nummer: '',
       adress_name: '',
       adresse_strasse: '',
       adresse_plz: '',
@@ -161,6 +163,7 @@ export class VerwaltungComponent implements OnInit {
   }
 
   printRechnung(): void {
+    if (this.formRechnung.valid == false) return;
     if (!this.stammdaten) return;
 
     const idVerwaltungRechnung = this.pdf_konfig['idVerwaltungRechnung'];
@@ -189,6 +192,7 @@ export class VerwaltungComponent implements OnInit {
       fw_bic: this.stammdaten.fw_bic,
       fw_kdt: this.stammdaten.fw_kdt,
       invoice_datum: heute,
+      invoice_nummer: this.formRechnung.controls.invoice_nummer.value,
       customer_name: this.formRechnung.controls.adress_name.value,
       customer_street: this.formRechnung.controls.adresse_strasse.value,
       customer_plz: this.formRechnung.controls.adresse_plz.value,
