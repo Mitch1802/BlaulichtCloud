@@ -7,8 +7,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import AtemschutzGeraet, AtemschutzGeraetProtokoll
 from .serializers import AtemschutzGeraetSerializer, AtemschutzGeraetProtokollSerializer
 from core_apps.common.permissions import HasAnyRolePermission
-from core_apps.mitglieder.models import Mitglied
-from core_apps.mitglieder.serializers import MitgliedSerializer
+from core_apps.fmd.models import FMD
+from core_apps.fmd.serializers import FMDSerializer
     
 class AtemschutzGeraeteViewSet(ModelViewSet):
     queryset = AtemschutzGeraet.objects.all().order_by("inv_nr")
@@ -23,7 +23,7 @@ class AtemschutzGeraeteViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         resp = super().list(request, *args, **kwargs)
-        mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
+        mitglieder = FMDSerializer(FMD.objects.all(), many=True).data
         return Response({"main": resp.data, "mitglieder": mitglieder})
 
 class AtemschutzGeraeteProtokollViewSet(ModelViewSet):
@@ -52,5 +52,5 @@ class AtemschutzGeraeteDienstbuchViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         resp = super().list(request, *args, **kwargs)
-        mitglieder = MitgliedSerializer(Mitglied.objects.all(), many=True).data
+        mitglieder = FMDSerializer(FMD.objects.all(), many=True).data
         return Response({"protokoll": resp.data, "mitglieder": mitglieder})
