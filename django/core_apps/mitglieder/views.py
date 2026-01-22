@@ -14,7 +14,7 @@ class MitgliedViewSet(ModelViewSet):
     serializer_class = MitgliedSerializer
     permission_classes = [
         permissions.IsAuthenticated,
-        HasAnyRolePermission.with_roles("ADMIN", "VERWALTUNG"),
+        HasAnyRolePermission.with_roles("ADMIN"),
     ]
     parser_classes = [JSONParser]
     lookup_field = "id"

@@ -10,7 +10,7 @@ from core_apps.konfiguration.serializers import KonfigurationSerializer
 
 
 class VerwaltungGetView(APIView):
-    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN")]
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "VERWALTUNG")]
 
     def get(self, request, *args, **kwargs):
         modul_konfig = ModulKonfigurationSerializer(ModulKonfiguration.objects.all(), many=True).data
