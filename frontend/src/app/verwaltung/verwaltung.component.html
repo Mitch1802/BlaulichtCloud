@@ -96,6 +96,14 @@
                   <mat-form-field>
                     <mat-label>Preis</mat-label>
                     <input matInput type="text" formControlName="preis" />
+
+                    @if (formRechnungPositionen.controls.preis.hasError('required')) {
+                      <mat-error>Preis ist erforderlich</mat-error>
+                    }
+
+                    @if (formRechnungPositionen.controls.preis.hasError('pattern')) {
+                      <mat-error>Ungültiges Format (z. B. 12,50 oder 12.50)</mat-error>
+                    }
                   </mat-form-field>
                 </div>
                 <div class="col-12 col-lg-3 mb-3">
@@ -119,8 +127,7 @@
                 ) {
                   <mat-list-item class="row align-items-center">
                     <div class="col-7">{{ pos.bezeichnung }}</div>
-                    <div class="col-3">{{ pos.preis }}</div>
-
+                    <div class="col-3">{{ pos.preis | number:'1.2-2':'de' }}</div>
                     <div class="col-2 text-end">
                       <button
                         mat-icon-button
