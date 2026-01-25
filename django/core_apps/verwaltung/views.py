@@ -26,8 +26,7 @@ class VerwaltungGetView(APIView):
 
         if include_sevdesk:
             token = os.getenv("SEVDESK_API_TOKEN", "422acb071f99fefd3e2c74d787fdfd98")
-            # base_url = os.getenv("SEVDESK_BASE_URL", "https://my.sevdesk.de/api/v1")
-            base_url = os.getenv("SEVDESK_BASE_URL", "http://sevdesk.local/api/v1")
+            base_url = os.getenv("SEVDESK_BASE_URL", "https://my.sevdesk.de/api/v1")
 
             if not token:
                 sevdesk_error = "SEVDESK_API_TOKEN missing"
