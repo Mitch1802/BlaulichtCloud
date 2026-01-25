@@ -65,3 +65,61 @@ class VerwaltungGetView(APIView):
         }
 
         return Response(payload)
+    
+
+class VerwaltungGetKontakteView(APIView):
+    permission_classes = [permissions.IsAuthenticated, HasAnyRolePermission.with_roles("ADMIN", "VERWALTUNG")]
+
+    def get(self, request, *args, **kwargs):
+        sevdesk_objects = None
+        sevdesk_objects2 = None
+        sevdesk_error = None
+        sevdesk_error2 = None
+        url = ""
+        url2 = ""
+
+        token = os.getenv("SEVDESK_API_TOKEN", "422acb071f99fefd3e2c74d787fdfd98")
+        base_url = os.getenv("SEVDESK_BASE_URL", "https://my.sevdesk.de/api/v1")
+
+        if not token:
+            sevdesk_error = "SEVDESK_API_TOKEN missing"
+        else: 
+            try:
+                url = f"{base_url}/Contact"
+                r = requests.get(
+                    url,
+                    headers={"Authorization": token},
+                    timeout=20,
+                )
+
+                if r.status_code == 200:
+                    data = r.json()
+                    sevdesk_objects = data.get("objects", data)
+                else:
+                    sevdesk_error = f"sevDesk request failed ({r.status_code})"
+                
+                
+
+                url2 = f"{base_url}/ContactAddress"                
+                r2 = requests.get(
+                    url2,
+                    headers={"Authorization": token},
+                    timeout=20,
+                )
+
+                if r2.status_code == 200:
+                    data2 = r2.json()
+                    sevdesk_objects2 = data2.get("objects", data2)
+                else:
+                    sevdesk_error2 = f"sevDesk request failed ({r.status_code})"
+            except requests.RequestException as e:
+                sevdesk_error2 = f"sevDesk request exception: {str(e)}"
+
+        payload = {
+                "Contact": sevdesk_objects,
+                "ContactAddress": sevdesk_objects2,
+                "error": sevdesk_error,
+                "error2": sevdesk_error2,
+        }
+
+        return Response(payload)
