@@ -11,6 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 
 type RechnungPosition = {
   bezeichnung: string;
@@ -31,7 +33,9 @@ type RechnungPosition = {
     MatFormFieldModule,
     MatInputModule,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    MatSelectModule,
+    MatOptionModule
   ],
   templateUrl: './verwaltung.component.html',
   styleUrl: './verwaltung.component.sass'
@@ -45,9 +49,14 @@ export class VerwaltungComponent implements OnInit {
   breadcrumb: any = [];
   pdf_konfig: any = {};
   stammdaten: IStammdaten | null = null;
+  kontakte: any = [];
 
   /** erlaubt: 12 | 12,5 | 12,50 | 12.50 */
   private readonly PREIS_REGEX = /^\d+([.,]\d{1,2})?$/;
+
+  formAuswahl = new FormGroup({
+    name: new FormControl('')
+  });
 
   formRechnung = new FormGroup({
     invoice_nummer: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -88,9 +97,15 @@ export class VerwaltungComponent implements OnInit {
 
     this.breadcrumb = this.globalDataService.ladeBreadcrumb();
 
-    this.globalDataService.get(this.modul).subscribe({
+    let param = {
+      'includeSevdesk': '1',
+      'sevdeskModul': 'Contact'
+    };
+
+    this.globalDataService.get(this.modul, param).subscribe({
       next: (erg: any) => {
         try {
+          this.kontakte = erg.sevdesk.objects ?? [];
           const templates = erg.modul_konfig.find((m: any) => m.modul === 'pdf');
           this.pdf_konfig = templates?.konfiguration ?? {};
           this.stammdaten = erg.konfig?.[0] ?? null;
@@ -214,5 +229,30 @@ export class VerwaltungComponent implements OnInit {
       },
       error: (error: any) => this.globalDataService.errorAnzeigen(error)
     });
+  }
+
+  sevdeskKontaktUebernehmen(): void {
+    const kontaktId = this.formAuswahl.controls.name.value;
+    if (!kontaktId) return;
+
+    this.globalDataService.get('verwaltung/kontakte').subscribe({
+      next: (erg: any) => {
+        try {
+          const kontakte = erg['Contact'];
+          const kontaktAdressen = erg['ContactAddress'];
+
+          const kontakt = kontakte.find((m: any) => m.id === kontaktId);
+          const kontaktAddresse = kontaktAdressen.find((m: any) => m.contact.id === kontaktId);
+          this.formRechnung.controls.adress_name.setValue(kontakt.name);
+          this.formRechnung.controls.adresse_strasse.setValue(kontaktAddresse.street);
+          this.formRechnung.controls.adresse_plz.setValue(kontaktAddresse.zip);
+          this.formRechnung.controls.adresse_ort.setValue(kontaktAddresse.city);
+        } catch (e: any) {
+          this.globalDataService.erstelleMessage('error', e);
+        }
+      },
+      error: (error: any) => this.globalDataService.errorAnzeigen(error)
+    });
+    
   }
 }
