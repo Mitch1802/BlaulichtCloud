@@ -22,8 +22,10 @@ class VerwaltungGetView(APIView):
         # --- sevDesk (optional via Queryparam aktivieren) ---
         include_sevdesk = request.query_params.get("includeSevdesk", "0") == "1"
         sevdesk_modul = request.query_params.get("sevdeskModul", "basics")
+        sevdesk_modul_id = request.query_params.get("sevdeskModulId")
         sevdesk_objects = None
         sevdesk_error = None
+        url = ""
 
         if include_sevdesk:
             token = os.getenv("SEVDESK_API_TOKEN", "422acb071f99fefd3e2c74d787fdfd98")
@@ -33,10 +35,14 @@ class VerwaltungGetView(APIView):
 
             if not token:
                 sevdesk_error = "SEVDESK_API_TOKEN missing"
-            else:
+            else: 
                 try:
+                    url = f"{base_url}/{sevdesk_modul}"
+
+                    if sevdesk_modul_id: url += f"/{sevdesk_modul_id}"
+
                     r = requests.get(
-                        f"{base_url}/{sevdesk_modul}",
+                        url,
                         headers={"Authorization": token},
                         timeout=20,
                     )
